@@ -32,6 +32,7 @@ import org.eclipse.dltk.core.DLTKCore;
 import org.eclipse.dltk.debug.core.model.ISourceOffsetLookup;
 import org.eclipse.dltk.internal.debug.core.model.DbgpService;
 import org.eclipse.dltk.internal.debug.core.model.HotCodeReplaceManager;
+import org.eclipse.dltk.internal.debug.core.model.RemoteDbgpService;
 import org.eclipse.dltk.internal.debug.core.model.ScriptDebugTarget;
 import org.osgi.framework.BundleContext;
 
@@ -64,10 +65,6 @@ public class DLTKDebugPlugin extends Plugin {
 
 		super.stop(context);
 
-		if (dbgpService != null) {
-			dbgpService.shutdown();
-		}
-
 		ILaunchManager launchManager = DebugPlugin.getDefault()
 				.getLaunchManager();
 		IDebugTarget[] targets = launchManager.getDebugTargets();
@@ -77,9 +74,19 @@ public class DLTKDebugPlugin extends Plugin {
 				((ScriptDebugTarget) target).shutdown();
 			}
 		}
+
+		if (dbgpService != null) {
+			dbgpService.shutdown();
+		}
+		if (remoteDbgpService != null) {
+			remoteDbgpService.shutdown();
+		}
+
 	}
 
 	private DbgpService dbgpService;
+
+	private RemoteDbgpService remoteDbgpService;
 
 	public synchronized IDbgpService getDbgpService() {
 		if (dbgpService == null) {
@@ -126,6 +133,16 @@ public class DLTKDebugPlugin extends Plugin {
 
 	public static void logWarning(String message) {
 		logWarning(message, null);
+	}
+
+	/**
+	 * @return
+	 */
+	public synchronized IDbgpService getRemoteDbgpService() {
+		if (remoteDbgpService == null) {
+			remoteDbgpService = new RemoteDbgpService();
+		}
+		return remoteDbgpService;
 	}
 
 	public static void logWarning(String message, Throwable t) {
@@ -215,6 +232,7 @@ public class DLTKDebugPlugin extends Plugin {
 		}
 		return (String[]) addresses.toArray(new String[addresses.size()]);
 	}
+
 
 	private static ISourceOffsetLookup sourceOffsetLookup = null;
 
