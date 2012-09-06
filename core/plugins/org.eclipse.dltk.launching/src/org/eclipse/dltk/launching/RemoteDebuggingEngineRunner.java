@@ -6,8 +6,10 @@ import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.dltk.compiler.util.Util;
 import org.eclipse.dltk.core.PreferencesLookupDelegate;
+import org.eclipse.dltk.debug.core.DLTKDebugPlugin;
 import org.eclipse.dltk.debug.core.IDbgpService;
 import org.eclipse.dltk.debug.core.model.IScriptDebugTarget;
+import org.eclipse.dltk.internal.debug.core.model.RemoteDbgpService;
 import org.eclipse.dltk.internal.debug.core.model.RemoteScriptDebugTarget;
 import org.eclipse.dltk.internal.debug.core.model.ScriptDebugTarget;
 
@@ -30,9 +32,7 @@ public abstract class RemoteDebuggingEngineRunner extends DebuggingEngineRunner 
 	@Override
 	protected String getSessionId(ILaunchConfiguration configuration)
 			throws CoreException {
-		return configuration.getAttribute(
-				ScriptLaunchConfigurationConstants.ATTR_DLTK_DBGP_SESSION_ID,
-				Util.EMPTY_STRING);
+		return "remote:" + getDbgpService().getPort();
 	}
 
 	/*
@@ -55,6 +55,7 @@ public abstract class RemoteDebuggingEngineRunner extends DebuggingEngineRunner 
 		try {
 			initializeLaunch(launch, config,
 					createPreferencesLookupDelegate(launch));
+			((RemoteDbgpService) getDbgpService()).connect();
 			final ScriptDebugTarget target = (ScriptDebugTarget) launch
 					.getDebugTarget();
 			waitDebuggerConnected(launch, new DebugSessionAcceptor(target,
@@ -65,12 +66,19 @@ public abstract class RemoteDebuggingEngineRunner extends DebuggingEngineRunner 
 		}
 	}
 
+	/**
+	 * @see org.eclipse.dltk.launching.DebuggingEngineRunner#getDbgpService()
+	 */
+	protected IDbgpService getDbgpService() {
+		return DLTKDebugPlugin.getDefault().getRemoteDbgpService();
+	}
+
 	/*
 	 * @see DebuggingEngineRunner#getDebuggingEngineId()
 	 */
 	@Override
 	protected String getDebuggingEngineId() {
-		return null;
+		return "remote";
 	}
 
 	/*

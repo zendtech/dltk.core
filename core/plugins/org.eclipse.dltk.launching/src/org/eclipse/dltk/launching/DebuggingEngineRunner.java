@@ -60,8 +60,7 @@ public abstract class DebuggingEngineRunner extends AbstractInterpreterRunner {
 
 	protected void initializeLaunch(ILaunch launch, InterpreterConfig config,
 			PreferencesLookupDelegate delegate) throws CoreException {
-		final IDbgpService service = DLTKDebugPlugin.getDefault()
-				.getDbgpService();
+		final IDbgpService service = getDbgpService();
 
 		if (!service.available()) {
 			abort(InterpreterMessages.errDbgpServiceNotAvailable, null);
@@ -95,6 +94,13 @@ public abstract class DebuggingEngineRunner extends AbstractInterpreterRunner {
 
 	private String getBindAddress() {
 		return DLTKDebugPlugin.getDefault().getBindAddress();
+	}
+
+	/**
+	 * @return
+	 */
+	protected IDbgpService getDbgpService() {
+		return DLTKDebugPlugin.getDefault().getDbgpService();
 	}
 
 	/**

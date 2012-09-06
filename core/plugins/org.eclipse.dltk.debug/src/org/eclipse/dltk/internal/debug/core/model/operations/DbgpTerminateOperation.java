@@ -19,7 +19,23 @@ public class DbgpTerminateOperation extends DbgpOperation {
 		super(thread, JOB_NAME, finish);
 	}
 
+	/**
+	 * @see org.eclipse.dltk.internal.debug.core.model.operations.DbgpOperation#process()
+	 */
 	protected void process() throws DbgpException {
-		callFinish(getCore().stop());
+		// And terminate operation is also executed when closing eclipse. Then
+		// it is possible that the job isn't even finished or executed.. Or the
+		// engine is already shutdown in the main thread.
+	}
+
+	/**
+	 * @see org.eclipse.dltk.internal.debug.core.model.operations.DbgpOperation#schedule()
+	 */
+	public void schedule() {
+		try {
+			callFinish(getCore().stop());
+		} catch (DbgpException ex) {
+			ex.printStackTrace();
+		}
 	}
 }
