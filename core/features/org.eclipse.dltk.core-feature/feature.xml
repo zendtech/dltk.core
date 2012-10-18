@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
-      id="org.eclipse.dltk.core"
+      id="org.eclipse.dltk.core.servoy"
       label="%featureName"
       version="4.0.0.qualifier"
       provider-name="%providerName"
-      plugin="org.eclipse.dltk"
+      plugin="org.eclipse.dltk.core"
       image="eclipse_update_120.jpg">
 
    <description url="http://www.eclipse.org/dltk">
@@ -23,9 +23,19 @@ http://www.eclipse.org/legal/epl-v10.html
       %license
    </license>
 
+   <url>
+      <update label="Servoy Update Site" url="http://www.servoy.com/developer/5xx_updates"/>
+      <discovery label="Servoy Update Site" url="http://www.servoy.com/developer/5xx_updates"/>
+   </url>
+
    <requires>
-      <import feature="org.eclipse.platform" version="3.4" match="greaterOrEqual"/>
-      <import feature="org.eclipse.emf.ecore" version="2.4" match="greaterOrEqual"/>
+      <import feature="org.eclipse.emf.common" version="2.5.0.v200906151043" match="greaterOrEqual"/>
+      <import feature="org.eclipse.emf.common.ui" version="2.5.0.v200906151043" match="greaterOrEqual"/>
+      <import feature="org.eclipse.emf.ecore" version="2.5.0.v200906151043" match="greaterOrEqual"/>
+      <import feature="org.eclipse.emf.edit" version="2.5.0.v200906151043" match="greaterOrEqual"/>
+      <import feature="org.eclipse.emf.edit.ui" version="2.5.0.v200906151043" match="greaterOrEqual"/>
+      <import feature="org.eclipse.platform" version="3.5.0.v20090611a-9gEeG1HFtQcmRThO4O3aR_fqSMvJR2sJ" match="greaterOrEqual"/>
+      <import feature="org.eclipse.rcp" version="3.5.0.v20090519-9SA0FwxFv6x089WEf-TWh11" match="greaterOrEqual"/>
    </requires>
 
    <plugin
@@ -79,34 +89,6 @@ http://www.eclipse.org/legal/epl-v10.html
 
    <plugin
          id="org.eclipse.dltk.validators.core"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="org.eclipse.dltk.validators.ui"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="org.eclipse.dltk"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="org.eclipse.dltk.testing"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="org.eclipse.dltk.validators.externalchecker"
          download-size="0"
          install-size="0"
          version="0.0.0"
