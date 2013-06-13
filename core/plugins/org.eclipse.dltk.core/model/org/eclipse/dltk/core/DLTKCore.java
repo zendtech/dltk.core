@@ -47,6 +47,7 @@ import org.eclipse.dltk.internal.core.ModelManager;
 import org.eclipse.dltk.internal.core.Region;
 import org.eclipse.dltk.internal.core.ScriptProject;
 import org.eclipse.dltk.internal.core.SetContainerOperation;
+import org.eclipse.dltk.internal.core.UserLibrary;
 import org.eclipse.dltk.internal.core.util.MementoTokenizer;
 import org.eclipse.dltk.internal.core.util.Util;
 import org.osgi.framework.BundleContext;
@@ -2316,6 +2317,40 @@ public class DLTKCore extends Plugin {
 	public static String[] getUserLibraryNames(IDLTKLanguageToolkit toolkit) {
 		return ModelManager.getUserLibraryManager()
 				.getUserLibraryNames(toolkit);
+	}
+
+	/**
+	 * Return version of specified library.
+	 * 
+	 * @param libName
+	 * @param toolkit
+	 * @return library version or {@link UserLibrary#DEFAULT_VERSION}
+	 */
+	public static String getUserLibraryVersion(String libName,
+			IDLTKLanguageToolkit toolkit) {
+		UserLibrary lib = ModelManager.getUserLibraryManager().getUserLibrary(
+				libName, toolkit);
+		if (lib != null) {
+			return lib.getLibraryVersion();
+		}
+		return null;
+	}
+
+	/**
+	 * Check if it is built-in user library.
+	 * 
+	 * @param libName
+	 * @param toolkit
+	 * @return <code>true</code> if it is a built-in user library
+	 */
+	public static boolean isBuiltInUserLibrary(String libName,
+			IDLTKLanguageToolkit toolkit) {
+		UserLibrary lib = ModelManager.getUserLibraryManager().getUserLibrary(
+				libName, toolkit);
+		if (lib != null) {
+			return lib.isBuiltIn();
+		}
+		return false;
 	}
 
 	public static void error(String message) {

@@ -50,11 +50,25 @@ public class BPUserLibraryElement {
 	private String fName;
 	private List fChildren;
 	private boolean fIsSystemLibrary;
+	private String fVersion;
+	private boolean fBuildIn;
 
 	public BPUserLibraryElement(String name, IBuildpathContainer container,
 			IScriptProject project) {
+		this(name, container, project, null);
+	}
+
+	public BPUserLibraryElement(String name, IBuildpathContainer container,
+			IScriptProject project, String version) {
+		this(name, container, project, version, false);
+	}
+
+	public BPUserLibraryElement(String name, IBuildpathContainer container,
+			IScriptProject project, String version, boolean builtIn) {
 		fName = name;
 		fChildren = new ArrayList();
+		fVersion = version;
+		fBuildIn = builtIn;
 		if (container != null) {
 			IBuildpathEntry[] entries = container.getBuildpathEntries();
 			BPListElement[] res = new BPListElement[entries.length];
@@ -75,15 +89,27 @@ public class BPUserLibraryElement {
 	}
 
 	public BPUserLibraryElement(String name, boolean isSystemLibrary,
-			BPListElement[] children) {
+			BPListElement[] children, String version, boolean builtIn) {
 		fName = name;
 		fChildren = new ArrayList();
+		fVersion = version;
+		fBuildIn = builtIn;
 		if (children != null) {
 			for (int i = 0; i < children.length; i++) {
 				fChildren.add(children[i]);
 			}
 		}
 		fIsSystemLibrary = isSystemLibrary;
+	}
+
+	public BPUserLibraryElement(String name, boolean isSystemLibrary,
+			BPListElement[] children, String version) {
+		this(name, isSystemLibrary, children, version, false);
+	}
+
+	public BPUserLibraryElement(String name, boolean isSystemLibrary,
+			BPListElement[] children) {
+		this(name, isSystemLibrary, children, null);
 	}
 
 	public BPListElement[] getChildren() {
@@ -96,11 +122,23 @@ public class BPUserLibraryElement {
 	}
 
 	public IPath getPath() {
-		return new Path(DLTKCore.USER_LIBRARY_CONTAINER_ID).append(fName);
+		IPath path = new Path(DLTKCore.USER_LIBRARY_CONTAINER_ID).append(fName);
+		if (fVersion != null) {
+			path = path.append(fVersion);
+		}
+		return path;
 	}
 
 	public boolean isSystemLibrary() {
 		return fIsSystemLibrary;
+	}
+
+	public String getVersion() {
+		return fVersion;
+	}
+
+	public boolean isfBuildIn() {
+		return fBuildIn;
 	}
 
 	public void add(BPListElement element) {

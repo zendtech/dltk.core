@@ -44,17 +44,33 @@ public class UserLibrary {
 
 	private static final String TAG_VERSION = "version"; //$NON-NLS-1$
 	private static final String TAG_USERLIBRARY = "userlibrary"; //$NON-NLS-1$
+	private static final String TAG_LIBRARYVERSION = "libraryVersion"; //$NON-NLS-1$
+	private static final String TAG_BUILT_IN = "builtIn"; //$NON-NLS-1$
 	private static final String TAG_PATH = "path"; //$NON-NLS-1$
 	private static final String TAG_ARCHIVE = "archive"; //$NON-NLS-1$
 	private static final String TAG_SYSTEMLIBRARY = "systemlibrary"; //$NON-NLS-1$
 
 	private boolean isSystemLibrary;
 	private IBuildpathEntry[] entries;
+	private String libraryVersion;
+	private boolean builtIn;
 
 	public UserLibrary(IBuildpathEntry[] entries, boolean isSystemLibrary) {
+		this(entries, isSystemLibrary, null, false);
+	}
+
+	public UserLibrary(IBuildpathEntry[] entries, boolean isSystemLibrary,
+			String libraryVersion) {
+		this(entries, isSystemLibrary, libraryVersion, false);
+	}
+
+	public UserLibrary(IBuildpathEntry[] entries, boolean isSystemLibrary,
+			String libraryVersion, boolean builtIn) {
 		Assert.isNotNull(entries);
 		this.entries = entries;
 		this.isSystemLibrary = isSystemLibrary;
+		this.libraryVersion = libraryVersion;
+		this.builtIn = builtIn;
 	}
 
 	public IBuildpathEntry[] getEntries() {
@@ -63,6 +79,14 @@ public class UserLibrary {
 
 	public boolean isSystemLibrary() {
 		return this.isSystemLibrary;
+	}
+
+	public String getLibraryVersion() {
+		return this.libraryVersion;
+	}
+
+	public boolean isBuiltIn() {
+		return builtIn;
 	}
 
 	/*
@@ -74,13 +98,17 @@ public class UserLibrary {
 		if (obj != null && obj.getClass() == getClass()) {
 			UserLibrary other = (UserLibrary) obj;
 			if (this.entries.length == other.entries.length
-					&& this.isSystemLibrary == other.isSystemLibrary) {
-				for (int i = 0; i < this.entries.length; i++) {
-					if (!this.entries[i].equals(other.entries[i])) {
-						return false;
+					&& this.isSystemLibrary == other.isSystemLibrary
+					&& this.builtIn == other.builtIn) {
+				if (this.libraryVersion == null
+						|| this.libraryVersion.equals(other.libraryVersion)) {
+					for (int i = 0; i < this.entries.length; i++) {
+						if (!this.entries[i].equals(other.entries[i])) {
+							return false;
+						}
 					}
+					return true;
 				}
-				return true;
 			}
 		}
 		return false;
@@ -101,9 +129,20 @@ public class UserLibrary {
 		}
 		return hashCode;
 	}
-
+	
 	public static String serialize(IBuildpathEntry[] entries,
 			boolean isSystemLibrary) throws IOException {
+		return serialize(entries, isSystemLibrary, null);
+	}
+
+	public static String serialize(IBuildpathEntry[] entries,
+			boolean isSystemLibrary, String libraryVersion) throws IOException {
+		return serialize(entries, isSystemLibrary, libraryVersion, false);
+	}
+
+	public static String serialize(IBuildpathEntry[] entries,
+			boolean isSystemLibrary, String libraryVersion, boolean builtIn)
+			throws IOException {
 		ByteArrayOutputStream s = new ByteArrayOutputStream();
 		OutputStreamWriter writer = new OutputStreamWriter(s, "UTF8"); //$NON-NLS-1$
 		XMLWriter xmlWriter = new XMLWriter(writer, null/*
@@ -116,6 +155,12 @@ public class UserLibrary {
 
 		HashMap library = new HashMap();
 		library.put(TAG_VERSION, String.valueOf(CURRENT_VERSION));
+		if (libraryVersion != null) {
+			library.put(TAG_LIBRARYVERSION, libraryVersion);
+		}
+		if (builtIn) {
+			library.put(TAG_BUILT_IN, String.valueOf(builtIn));
+		}
 		library.put(TAG_SYSTEMLIBRARY, String.valueOf(isSystemLibrary));
 		xmlWriter.printTag(TAG_USERLIBRARY, library, true, true, false);
 
@@ -191,6 +236,15 @@ public class UserLibrary {
 		boolean isSystem = Boolean.valueOf(
 				cpElement.getAttribute(TAG_SYSTEMLIBRARY)).booleanValue();
 
+		String version = cpElement.getAttribute(TAG_LIBRARYVERSION);
+
+		String builtInVal = cpElement.getAttribute(TAG_BUILT_IN);
+
+		boolean builtIn = false;
+		if (builtInVal != null) {
+			builtIn = Boolean.valueOf(builtInVal);
+		}
+
 		NodeList list = cpElement.getChildNodes();
 		int length = list.getLength();
 
@@ -225,7 +279,8 @@ public class UserLibrary {
 		IBuildpathEntry[] entries = (IBuildpathEntry[]) res
 				.toArray(new IBuildpathEntry[res.size()]);
 
-		return new UserLibrary(entries, isSystem);
+		return new UserLibrary(entries, isSystem, version.isEmpty() ? null
+				: version, builtIn);
 	}
 
 	public String toString() {

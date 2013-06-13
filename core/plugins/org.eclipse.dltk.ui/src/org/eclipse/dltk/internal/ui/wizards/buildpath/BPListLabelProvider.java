@@ -90,6 +90,13 @@ public class BPListLabelProvider extends LabelProvider {
 			name = Messages.format(
 					NewWizardMessages.CPListLabelProvider_systemlibrary, name);
 		}
+		if (element.getVersion() != null) {
+			name = Messages.format("{0} [{1}]",
+					new String[] { name, element.getVersion() });
+		}
+		if (element.isfBuildIn()) {
+			name = Messages.format("{0} [built-in]", new String[] { name });
+		}
 		return name;
 	}
 

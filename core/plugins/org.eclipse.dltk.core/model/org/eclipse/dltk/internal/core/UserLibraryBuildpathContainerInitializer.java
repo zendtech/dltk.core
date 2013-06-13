@@ -98,7 +98,8 @@ public class UserLibraryBuildpathContainerInitializer extends
 	}
 
 	private boolean isUserLibraryContainer(IPath path) {
-		return path != null && path.segmentCount() == 2
+		return path != null
+				&& (path.segmentCount() == 2 || path.segmentCount() == 3)
 				&& DLTKCore.USER_LIBRARY_CONTAINER_ID.equals(path.segment(0));
 	}
 
@@ -112,11 +113,13 @@ public class UserLibraryBuildpathContainerInitializer extends
 			throws CoreException {
 		if (isUserLibraryContainer(containerPath)) {
 			String name = containerPath.segment(1);
+			String version = containerPath.segment(2);
 			if (containerSuggestion != null) {
 				ModelManager
 						.getUserLibraryManager()
 						.setUserLibrary(
 								name,
+								version,
 								containerSuggestion.getBuildpathEntries(),
 								containerSuggestion.getKind() == IBuildpathContainer.K_SYSTEM,
 								toolkit);

@@ -231,13 +231,26 @@ public class UserLibraryManager {
 	public synchronized void setUserLibrary(String libName,
 			IBuildpathEntry[] entries, boolean isSystemLibrary,
 			IDLTKLanguageToolkit toolkit) {
+		setUserLibrary(libName, null, entries, isSystemLibrary, toolkit);
+	}
+
+	public synchronized void setUserLibrary(String libName, String libVersion,
+			IBuildpathEntry[] entries, boolean isSystemLibrary,
+			IDLTKLanguageToolkit toolkit) {
+		setUserLibrary(libName, libVersion, false, entries, isSystemLibrary,
+				toolkit);
+	}
+
+	public synchronized void setUserLibrary(String libName, String libVersion,
+			boolean builtIn, IBuildpathEntry[] entries,
+			boolean isSystemLibrary, IDLTKLanguageToolkit toolkit) {
 		IEclipsePreferences instancePreferences = ModelManager
 				.getModelManager().getInstancePreferences();
 		String propertyName = BP_USERLIBRARY_PREFERENCES_PREFIX
 				+ makeLibraryName(libName, toolkit);
 		try {
 			String propertyValue = UserLibrary.serialize(entries,
-					isSystemLibrary);
+					isSystemLibrary, libVersion, builtIn);
 			instancePreferences.put(propertyName, propertyValue); // sends out
 			// a
 			// PreferenceChangeEvent
