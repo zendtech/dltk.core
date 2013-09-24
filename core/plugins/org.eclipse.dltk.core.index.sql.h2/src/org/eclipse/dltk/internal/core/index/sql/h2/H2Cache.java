@@ -50,10 +50,6 @@ public class H2Cache {
 	private static final ILock fileLock = Job.getJobManager().newLock();
 	private static final Map<Integer, Map<Integer, File>> filesByContainer = new HashMap<Integer, Map<Integer, File>>();
 
-	private static final ILock filesByContainerAndPathLock = Job
-			.getJobManager().newLock();
-	private static final Map<Integer, Map<String, File>> filesByContainerAndPath = new HashMap<Integer, Map<String, File>>();
-
 	private static final ILock elementLock = Job.getJobManager().newLock();
 	private static final Map<Integer, Map<Integer, List<Element>>> elementsMap = new HashMap<Integer, Map<Integer, List<Element>>>();
 
@@ -93,10 +89,9 @@ public class H2Cache {
 	}
 
 	public static void addFile(File file) {
-		int containerId = file.getContainerId();
-
 		fileLock.acquire();
 		try {
+			int containerId = file.getContainerId();
 			Map<Integer, File> files = filesByContainer.get(containerId);
 			if (files == null) {
 				files = new HashMap<Integer, File>();
@@ -105,18 +100,6 @@ public class H2Cache {
 			files.put(file.getId(), file);
 		} finally {
 			fileLock.release();
-		}
-
-		filesByContainerAndPathLock.acquire();
-		try {
-			Map<String, File> files = filesByContainerAndPath.get(containerId);
-			if (files == null) {
-				files = new HashMap<String, File>();
-				filesByContainerAndPath.put(containerId, files);
-			}
-			files.put(file.getPath(), file);
-		} finally {
-			filesByContainerAndPathLock.release();
 		}
 	}
 
@@ -244,13 +227,22 @@ public class H2Cache {
 
 	public static File selectFileByContainerIdAndPath(int containerId,
 			String path) {
-		filesByContainerAndPathLock.acquire();
+		fileLock.acquire();
 		try {
-			Map<String, File> files = filesByContainerAndPath.get(containerId);
-			return (files == null) ? null : files.get(path);
+			Map<Integer, File> files = filesByContainer.get(containerId);
+			if (files != null) {
+				Iterator<File> i = files.values().iterator();
+				while (i.hasNext()) {
+					File file = i.next();
+					if (file.getPath().equals(path)) {
+						return file;
+					}
+				}
+			}
 		} finally {
-			filesByContainerAndPathLock.release();
+			fileLock.release();
 		}
+		return null;
 	}
 
 	public static File selectFileById(int id) {
