@@ -15,6 +15,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Plugin;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.dltk.internal.core.index.sql.h2.H2Cache;
 import org.osgi.framework.BundleContext;
 
 /**
@@ -33,6 +34,8 @@ public class H2Index extends Plugin {
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 		plugin = this;
+
+		H2Cache.load();
 	}
 
 	@Override
@@ -52,8 +55,9 @@ public class H2Index extends Plugin {
 
 	public static void error(String message) {
 		plugin.getLog()
-				.log(new Status(IStatus.ERROR, PLUGIN_ID, IStatus.OK, message,
-						null));
+				.log(
+						new Status(IStatus.ERROR, PLUGIN_ID, IStatus.OK,
+								message, null));
 	}
 
 	public static void error(String message, Throwable t) {

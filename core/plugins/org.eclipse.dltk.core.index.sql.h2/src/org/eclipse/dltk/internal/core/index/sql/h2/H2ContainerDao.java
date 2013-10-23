@@ -53,6 +53,7 @@ public class H2ContainerDao implements IContainerDao {
 			try {
 				result.next();
 				container = new Container(result.getInt(1), path);
+				H2Cache.addContainer(container);
 			} finally {
 				result.close();
 			}
@@ -65,6 +66,11 @@ public class H2ContainerDao implements IContainerDao {
 	public Container selectByPath(Connection connection, String path)
 			throws SQLException {
 
+		Container container = H2Cache.selectContainerByPath(path);
+		if (container != null) {
+			return container;
+		}
+
 		PreparedStatement statement = connection.prepareStatement(
 				Q_SELECT_BY_PATH, Statement.RETURN_GENERATED_KEYS);
 		try {
@@ -73,7 +79,10 @@ public class H2ContainerDao implements IContainerDao {
 			ResultSet result = statement.executeQuery();
 			try {
 				if (result.next()) {
-					return new Container(result.getInt(1), result.getString(2));
+					container = new Container(result.getInt(1), result
+							.getString(2));
+
+					H2Cache.addContainer(container);
 				}
 			} finally {
 				result.close();
@@ -81,11 +90,16 @@ public class H2ContainerDao implements IContainerDao {
 		} finally {
 			statement.close();
 		}
-		return null;
+		return container;
 	}
 
 	public Container selectById(Connection connection, int id)
 			throws SQLException {
+
+		Container container = H2Cache.selectContainerById(id);
+		if (container != null) {
+			return container;
+		}
 
 		PreparedStatement statement = connection.prepareStatement(
 				Q_SELECT_BY_ID, Statement.RETURN_GENERATED_KEYS);
@@ -95,7 +109,10 @@ public class H2ContainerDao implements IContainerDao {
 			ResultSet result = statement.executeQuery();
 			try {
 				if (result.next()) {
-					return new Container(result.getInt(1), result.getString(2));
+					container = new Container(result.getInt(1), result
+							.getString(2));
+
+					H2Cache.addContainer(container);
 				}
 			} finally {
 				result.close();
@@ -103,8 +120,7 @@ public class H2ContainerDao implements IContainerDao {
 		} finally {
 			statement.close();
 		}
-
-		return null;
+		return container;
 	}
 
 	public void deleteById(Connection connection, int id) throws SQLException {
@@ -117,6 +133,8 @@ public class H2ContainerDao implements IContainerDao {
 		} finally {
 			statement.close();
 		}
+
+		H2Cache.deleteContainerById(id);
 	}
 
 	public void deleteByPath(Connection connection, String path)
@@ -130,5 +148,7 @@ public class H2ContainerDao implements IContainerDao {
 		} finally {
 			statement.close();
 		}
+
+		H2Cache.deleteContainerByPath(path);
 	}
 }

@@ -16,6 +16,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Pattern;
@@ -121,6 +122,12 @@ public class H2ElementDao implements IElementDao {
 
 		statement.setInt(++param, fileId);
 		statement.addBatch();
+
+		if (!isReference) {
+			H2Cache.addElement(new Element(type, flags, offset, length,
+					nameOffset, nameLength, name, camelCaseName, metadata, doc,
+					qualifier, parent, fileId, isReference));
+		}
 	}
 
 	public void insert(Connection connection, int type, int flags, int offset,
@@ -188,6 +195,18 @@ public class H2ElementDao implements IElementDao {
 		long timeStamp = System.currentTimeMillis();
 		int count = 0;
 
+		if (!isReference && H2Cache.isLoaded()) {
+			Collection<Element> elements = H2Cache.searchElements(pattern,
+					matchRule, elementType, trueFlags, falseFlags, qualifier,
+					parent, filesId, containersId, natureId, limit);
+			if (elements != null && elements.size() > 0) {
+				for (Element element : elements) {
+					handler.handle(element);
+				}
+			}
+			return;
+		}
+
 		String tableName = getTableName(connection, elementType, natureId,
 				isReference);
 
@@ -212,13 +231,13 @@ public class H2ElementDao implements IElementDao {
 				}
 				// Prefix
 				else if (matchRule == MatchRule.PREFIX) {
-					query.append(" AND NAME LIKE '")
-							.append(escapeBackslash(pattern)).append("%'");
+					query.append(" AND NAME LIKE '").append(
+							escapeBackslash(pattern)).append("%'");
 				}
 				// Camel-case
 				else if (matchRule == MatchRule.CAMEL_CASE) {
-					query.append(" AND CC_NAME LIKE '")
-							.append(escapeBackslash(pattern)).append("%'");
+					query.append(" AND CC_NAME LIKE '").append(
+							escapeBackslash(pattern)).append("%'");
 				}
 				// Set of names
 				else if (matchRule == MatchRule.SET) {
@@ -234,20 +253,20 @@ public class H2ElementDao implements IElementDao {
 				}
 				// POSIX pattern
 				else if (matchRule == MatchRule.PATTERN) {
-					query.append(" AND NAME LIKE '")
-							.append(escapeBackslash(pattern).replace('*', '%')
-									.replace('?', '_')).append("'");
+					query.append(" AND NAME LIKE '").append(
+							escapeBackslash(pattern).replace('*', '%').replace(
+									'?', '_')).append("'");
 				}
 			}
 
 			// Flags
 			if (trueFlags != 0) {
-				query.append(" AND BITAND(FLAGS,").append(trueFlags)
-						.append(") <> 0");
+				query.append(" AND BITAND(FLAGS,").append(trueFlags).append(
+						") <> 0");
 			}
 			if (falseFlags != 0) {
-				query.append(" AND BITAND(FLAGS,").append(falseFlags)
-						.append(") = 0");
+				query.append(" AND BITAND(FLAGS,").append(falseFlags).append(
+						") = 0");
 			}
 
 			// Qualifier
@@ -337,9 +356,12 @@ public class H2ElementDao implements IElementDao {
 					int fileId = result.getInt(++columnIndex);
 
 					Element element = new Element(elementType, f, offset,
-							length, nameOffset, nameLength,
-							modelManager.intern(name), camelCaseName, metadata,
+							length, nameOffset, nameLength, modelManager
+									.intern(name), camelCaseName, metadata,
 							doc, qualifier, parent, fileId, isReference);
+					if (!isReference) {
+						H2Cache.addElement(element);
+					}
 
 					handler.handle(element);
 				}
