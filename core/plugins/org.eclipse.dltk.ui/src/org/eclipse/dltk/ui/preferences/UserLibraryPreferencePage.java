@@ -62,7 +62,6 @@ import org.eclipse.dltk.internal.core.UserLibraryBuildpathContainerInitializer;
 import org.eclipse.dltk.internal.core.UserLibraryManager;
 import org.eclipse.dltk.internal.corext.util.Messages;
 import org.eclipse.dltk.internal.ui.IUIConstants;
-import org.eclipse.dltk.ui.dialogs.StatusInfo;
 import org.eclipse.dltk.internal.ui.wizards.BuildpathAttributeConfiguration;
 import org.eclipse.dltk.internal.ui.wizards.buildpath.AccessRulesDialog;
 import org.eclipse.dltk.internal.ui.wizards.buildpath.BPListElement;
@@ -84,6 +83,7 @@ import org.eclipse.dltk.internal.ui.wizards.dialogfields.StringButtonDialogField
 import org.eclipse.dltk.internal.ui.wizards.dialogfields.StringDialogField;
 import org.eclipse.dltk.internal.ui.wizards.dialogfields.TreeListDialogField;
 import org.eclipse.dltk.ui.DLTKUIPlugin;
+import org.eclipse.dltk.ui.dialogs.StatusInfo;
 import org.eclipse.dltk.ui.util.ExceptionHandler;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogSettings;
@@ -949,14 +949,25 @@ public abstract class UserLibraryPreferencePage extends PreferencePage
 		ArrayList elements = new ArrayList();
 
 		for (int i = 0; i < names.length; i++) {
-			IPath path = new Path(DLTKCore.USER_LIBRARY_CONTAINER_ID)
-					.append(UserLibraryManager.makeLibraryName(names[i],
-							getLanguageToolkit()));
+			boolean builtIn = DLTKCore.isBuiltInUserLibrary(names[i],
+					getLanguageToolkit());
+			IPath path = null;
+			if (builtIn) {
+				path = new Path(DLTKCore.USER_LIBRARY_CONTAINER_ID)
+						.append(names[i]);
+			} else {
+				path = new Path(DLTKCore.USER_LIBRARY_CONTAINER_ID)
+						.append(UserLibraryManager.makeLibraryName(names[i],
+								getLanguageToolkit()));
+			}
+			String version = DLTKCore.getUserLibraryVersion(names[i],
+					getLanguageToolkit());
+
 			try {
 				IBuildpathContainer container = DLTKCore.getBuildpathContainer(
 						path, fDummyProject);
 				elements.add(new BPUserLibraryElement(names[i], container,
-						fDummyProject));
+						fDummyProject, version, builtIn));
 			} catch (ModelException e) {
 				DLTKUIPlugin.log(e);
 				// ignore
