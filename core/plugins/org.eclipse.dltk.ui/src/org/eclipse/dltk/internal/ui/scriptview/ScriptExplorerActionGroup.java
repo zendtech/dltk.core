@@ -26,7 +26,6 @@ import org.eclipse.dltk.internal.ui.actions.NewWizardsActionGroup;
 import org.eclipse.dltk.internal.ui.actions.OpenProjectAction;
 import org.eclipse.dltk.internal.ui.actions.ProjectActionGroup;
 import org.eclipse.dltk.internal.ui.actions.refactoring.RefactorActionGroup;
-import org.eclipse.dltk.internal.ui.wizards.buildpath.newsourcepage.GenerateBuildPathActionGroup;
 import org.eclipse.dltk.internal.ui.workingsets.ViewActionGroup;
 import org.eclipse.dltk.internal.ui.workingsets.WorkingSetActionGroup;
 import org.eclipse.dltk.ui.DLTKUIPlugin;
@@ -110,7 +109,7 @@ public class ScriptExplorerActionGroup extends CompositeActionGroup {
 			new NewWizardsActionGroup(site),
 			fNavigateActionGroup= new NavigateActionGroup(fPart), 
 			new CCPActionGroup(fPart),
-            new GenerateBuildPathActionGroup(fPart),
+				// new GenerateBuildPathActionGroup(fPart),
 			new GenerateActionGroup(fPart, IContextMenuConstants.GROUP_SHOW), 
 			fRefactorActionGroup= new RefactorActionGroup(fPart),
 			new ImportActionGroup(fPart),
