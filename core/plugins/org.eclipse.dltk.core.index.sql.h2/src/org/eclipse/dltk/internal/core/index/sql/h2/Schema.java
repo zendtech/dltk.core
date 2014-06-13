@@ -150,7 +150,7 @@ public class Schema {
 	}
 
 	private void storeSchemaVersion(String newVersion) {
-		IEclipsePreferences node = new InstanceScope()
+		IEclipsePreferences node = InstanceScope.INSTANCE
 				.getNode(H2Index.PLUGIN_ID);
 		node.put(H2IndexPreferences.SCHEMA_VERSION, newVersion);
 		try {

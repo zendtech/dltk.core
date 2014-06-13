@@ -14,7 +14,6 @@ package org.eclipse.dltk.core.index.sql.h2;
 import org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer;
 import org.eclipse.core.runtime.preferences.DefaultScope;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
-import org.eclipse.core.runtime.preferences.IScopeContext;
 
 public class H2IndexPreferences extends AbstractPreferenceInitializer {
 
@@ -46,7 +45,7 @@ public class H2IndexPreferences extends AbstractPreferenceInitializer {
 
 	@Override
 	public void initializeDefaultPreferences() {
-		IEclipsePreferences p = ((IScopeContext) new DefaultScope())
+		IEclipsePreferences p = DefaultScope.INSTANCE
 				.getNode(H2Index.PLUGIN_ID);
 
 		p.putInt(DB_CACHE_SIZE, 32000); // 32Mb

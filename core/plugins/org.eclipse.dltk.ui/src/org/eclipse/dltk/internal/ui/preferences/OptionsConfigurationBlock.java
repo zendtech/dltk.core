@@ -144,14 +144,14 @@ public abstract class OptionsConfigurationBlock {
 
 	private int getRebuildCount() {
 		return fManager.getWorkingCopy(
-				new DefaultScope().getNode(DLTKUIPlugin.PLUGIN_ID)).getInt(
+				DefaultScope.INSTANCE.getNode(DLTKUIPlugin.PLUGIN_ID)).getInt(
 				REBUILD_COUNT_KEY, 0);
 	}
 
 	private void incrementRebuildCount() {
 		fRebuildCount++;
 		fManager.getWorkingCopy(
-				new DefaultScope().getNode(DLTKUIPlugin.PLUGIN_ID)).putInt(
+				DefaultScope.INSTANCE.getNode(DLTKUIPlugin.PLUGIN_ID)).putInt(
 				REBUILD_COUNT_KEY, fRebuildCount);
 	}
 
