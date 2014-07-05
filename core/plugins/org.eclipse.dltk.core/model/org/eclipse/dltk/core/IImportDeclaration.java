@@ -32,4 +32,26 @@ public interface IImportDeclaration extends IModelElement, ISourceReference {
 
 	String getVersion();
 
+	/**
+	 * Alternate import name
+	 * 
+	 * @since 5.2
+	 */
+	String getAlias();
+
+	/**
+	 * Element type
+	 * 
+	 * @see {IModelElement}
+	 * @since 5.2
+	 */
+	int getType();
+
+	/**
+	 * Import modifiers, if any
+	 * 
+	 * @since 5.2
+	 */
+	int getFlags();
+
 }

@@ -34,6 +34,18 @@ public interface IImportContainer extends IModelElement, IParent,
 	IImportDeclaration getImport(String name, String version);
 
 	/**
+	 * @see {@link #getImport(String, String)}
+	 * @param alias
+	 *            the given alias
+	 * @param {@link IModelElement}
+	 * @param user
+	 *            mmodifiers
+	 * @since 5.2
+	 */
+	IImportDeclaration getImport(String name, String version, String alias,
+			int type, int flags);
+
+	/**
 	 * @since 3.0
 	 */
 	IImportDeclaration[] getImports() throws ModelException;
