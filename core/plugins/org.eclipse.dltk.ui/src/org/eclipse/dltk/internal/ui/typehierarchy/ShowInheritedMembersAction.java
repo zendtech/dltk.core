@@ -29,7 +29,7 @@ public class ShowInheritedMembersAction extends Action {
 		setDescription(TypeHierarchyMessages.ShowInheritedMembersAction_description); 
 		setToolTipText(TypeHierarchyMessages.ShowInheritedMembersAction_tooltip); 
 		
-		DLTKPluginImages.setLocalImageDescriptors(this, "inher_co.gif"); //$NON-NLS-1$
+		DLTKPluginImages.setLocalImageDescriptors(this, "inher_co.png"); //$NON-NLS-1$
 
 		fMethodsViewer= viewer;
 		

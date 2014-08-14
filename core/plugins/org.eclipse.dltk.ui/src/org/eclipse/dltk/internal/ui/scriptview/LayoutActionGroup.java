@@ -12,7 +12,11 @@ package org.eclipse.dltk.internal.ui.scriptview;
 import org.eclipse.dltk.core.DLTKCore;
 import org.eclipse.dltk.internal.ui.actions.MultiActionGroup;
 import org.eclipse.dltk.ui.DLTKPluginImages;
-import org.eclipse.jface.action.*;
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.action.Separator;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IWorkbenchActionConstants;
 
@@ -67,12 +71,12 @@ public class LayoutActionGroup extends MultiActionGroup {
 		flatLayoutAction
 				.setText(ScriptMessages.LayoutActionGroup_flatLayoutAction_label);
 		DLTKPluginImages.setLocalImageDescriptors(flatLayoutAction,
-				"flatLayout.gif"); //$NON-NLS-1$
+				"flatLayout.png"); //$NON-NLS-1$
 		IAction hierarchicalLayout = new LayoutAction(packageExplorer, false);
 		hierarchicalLayout
 				.setText(ScriptMessages.LayoutActionGroup_hierarchicalLayoutAction_label);
 		DLTKPluginImages.setLocalImageDescriptors(hierarchicalLayout,
-				"hierarchicalLayout.gif"); //$NON-NLS-1$
+				"hierarchicalLayout.png"); //$NON-NLS-1$
 
 		return new IAction[] { flatLayoutAction, hierarchicalLayout };
 	}

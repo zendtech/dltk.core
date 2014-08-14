@@ -25,7 +25,7 @@ public class ShowQualifiedTypeNamesAction extends Action {
 		setDescription(TypeHierarchyMessages.ShowQualifiedTypeNamesAction_description); 
 		setToolTipText(TypeHierarchyMessages.ShowQualifiedTypeNamesAction_tooltip); 
 		
-		DLTKPluginImages.setLocalImageDescriptors(this, "th_showqualified.gif"); //$NON-NLS-1$
+		DLTKPluginImages.setLocalImageDescriptors(this, "th_showqualified.png"); //$NON-NLS-1$
 		
 		fView= v;
 		setChecked(initValue);

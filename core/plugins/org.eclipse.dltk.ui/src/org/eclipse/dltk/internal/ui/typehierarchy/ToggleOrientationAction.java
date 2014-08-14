@@ -27,22 +27,22 @@ public class ToggleOrientationAction extends Action {
 			setText(TypeHierarchyMessages.ToggleOrientationAction_horizontal_label); 
 			setDescription(TypeHierarchyMessages.ToggleOrientationAction_horizontal_description); 
 			setToolTipText(TypeHierarchyMessages.ToggleOrientationAction_horizontal_tooltip); 
-			DLTKPluginImages.setLocalImageDescriptors(this, "th_horizontal.gif"); //$NON-NLS-1$
+			DLTKPluginImages.setLocalImageDescriptors(this, "th_horizontal.png"); //$NON-NLS-1$
 		} else if (orientation == TypeHierarchyViewPart.VIEW_ORIENTATION_VERTICAL) {
 			setText(TypeHierarchyMessages.ToggleOrientationAction_vertical_label); 
 			setDescription(TypeHierarchyMessages.ToggleOrientationAction_vertical_description); 
 			setToolTipText(TypeHierarchyMessages.ToggleOrientationAction_vertical_tooltip); 
-			DLTKPluginImages.setLocalImageDescriptors(this, "th_vertical.gif"); //$NON-NLS-1$
+			DLTKPluginImages.setLocalImageDescriptors(this, "th_vertical.png"); //$NON-NLS-1$
 		} else if (orientation == TypeHierarchyViewPart.VIEW_ORIENTATION_AUTOMATIC) {
 			setText(TypeHierarchyMessages.ToggleOrientationAction_automatic_label); 
 			setDescription(TypeHierarchyMessages.ToggleOrientationAction_automatic_description); 
 			setToolTipText(TypeHierarchyMessages.ToggleOrientationAction_automatic_tooltip); 
-			DLTKPluginImages.setLocalImageDescriptors(this, "th_automatic.gif"); //$NON-NLS-1$
+			DLTKPluginImages.setLocalImageDescriptors(this, "th_automatic.png"); //$NON-NLS-1$
 		} else if (orientation == TypeHierarchyViewPart.VIEW_ORIENTATION_SINGLE) {
 			setText(TypeHierarchyMessages.ToggleOrientationAction_single_label); 
 			setDescription(TypeHierarchyMessages.ToggleOrientationAction_single_description); 
 			setToolTipText(TypeHierarchyMessages.ToggleOrientationAction_single_tooltip); 
-			DLTKPluginImages.setLocalImageDescriptors(this, "th_single.gif"); //$NON-NLS-1$
+			DLTKPluginImages.setLocalImageDescriptors(this, "th_single.png"); //$NON-NLS-1$
 		} else {
 			Assert.isTrue(false);
 		}

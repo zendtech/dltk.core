@@ -70,7 +70,7 @@ public class RefreshAction extends SelectionDispatchAction {
 		super(site);
 		setText(ActionMessages.RefreshAction_label);
 		setToolTipText(ActionMessages.RefreshAction_toolTip);
-		DLTKPluginImages.setLocalImageDescriptors(this, "refresh_nav.gif");//$NON-NLS-1$
+		DLTKPluginImages.setLocalImageDescriptors(this, "refresh_nav.png");//$NON-NLS-1$
 		if (DLTKCore.DEBUG) {
 			System.err.println("Add help support here..."); //$NON-NLS-1$
 		}

@@ -25,7 +25,7 @@ public class RemoveAllValidatorConsolesAction extends Action {
 		setText(Messages.RemoveAllValidatorConsolesAction_text);
 		setToolTipText(Messages.RemoveAllValidatorConsolesAction_toolTipText);
 		setImageDescriptor(ValidatorsUI.getDefault().getImageDescriptor(
-				"icons/full/elcl16/rem_all_co.gif")); //$NON-NLS-1$
+				"icons/full/elcl16/rem_all_co.png")); //$NON-NLS-1$
 	}
 
 	public void run() {

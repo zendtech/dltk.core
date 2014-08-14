@@ -30,7 +30,7 @@ public abstract class AbstractToggleLinkingAction extends Action {
 		super(ActionMessages.ToggleLinkingAction_label); 
 		setDescription(ActionMessages.ToggleLinkingAction_description); 
 		setToolTipText(ActionMessages.ToggleLinkingAction_tooltip); 
-		DLTKPluginImages.setLocalImageDescriptors(this, "synced.gif"); //$NON-NLS-1$
+		DLTKPluginImages.setLocalImageDescriptors(this, "synced.png"); //$NON-NLS-1$
 		//TODO: help! i need some body help! just not anybody help!
 		//PlatformUI.getWorkbench().getHelpSystem().setHelp(this, IDLTKHelpContextIds.LINK_EDITOR_ACTION);
 	}
