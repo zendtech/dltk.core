@@ -227,12 +227,12 @@ public class H2ElementDao implements IElementDao {
 			}
 			// Prefix
 			else if (matchRule == MatchRule.PREFIX) {
-				query.append(" AND NAME LIKE ?");
+				query.append(" AND NAME LIKE ? ESCAPE ''");
 				parameters.add(pattern + "%");
 			}
 			// Camel-case
 			else if (matchRule == MatchRule.CAMEL_CASE) {
-				query.append(" AND CC_NAME LIKE ?");
+				query.append(" AND CC_NAME LIKE ? ESCAPE ''");
 				parameters.add(pattern + "%");
 			}
 			// Set of names
@@ -250,7 +250,7 @@ public class H2ElementDao implements IElementDao {
 			}
 			// POSIX pattern
 			else if (matchRule == MatchRule.PATTERN) {
-				query.append(" AND NAME LIKE ?");
+				query.append(" AND NAME LIKE ? ESCAPE ''");
 				parameters.add(pattern.replace('*', '%').replace('?', '_'));
 			}
 		}
