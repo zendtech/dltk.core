@@ -4,14 +4,12 @@
 	xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
-		<artifactId>core</artifactId>
+		<artifactId>core.tests</artifactId>
 		<groupId>org.eclipse.dltk.core</groupId>
-		<version>1.0.0-SNAPSHOT</version>
-		<relativePath>../..</relativePath>
+		<version>5.1.0-SNAPSHOT</version>
+		<relativePath>../</relativePath>
 	</parent>
-	<groupId>org.eclipse.dltk.core</groupId>
 	<artifactId>org.eclipse.dltk.validators.core.tests</artifactId>
-	<version>5.1.0-SNAPSHOT</version>
 	<packaging>eclipse-test-plugin</packaging>
 	<build>
 		<plugins>

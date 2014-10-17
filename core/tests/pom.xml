@@ -6,11 +6,10 @@
 	<parent>
 		<artifactId>core</artifactId>
 		<groupId>org.eclipse.dltk.core</groupId>
-		<version>1.0.0-SNAPSHOT</version>
+		<version>5.1.0-SNAPSHOT</version>
+		<relativePath>../pom.xml</relativePath>
 	</parent>
-	<groupId>org.eclipse.dltk.core</groupId>
 	<artifactId>core.tests</artifactId>
-	<version>1.0.0-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<modules>
 		<module>org.eclipse.dltk.core.tests</module>

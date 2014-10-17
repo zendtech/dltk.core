@@ -6,11 +6,9 @@
 	<parent>
 		<artifactId>mylyn</artifactId>
 		<groupId>org.eclipse.dltk.mylyn</groupId>
-		<version>1.0.0-SNAPSHOT</version>
+		<version>5.1.0-SNAPSHOT</version>
 	</parent>
-	<groupId>org.eclipse.dltk.mylyn</groupId>
 	<artifactId>org.eclipse.dltk.mylyn-updatesite</artifactId>
-	<version>1.0.0-SNAPSHOT</version>
 	<packaging>eclipse-update-site</packaging>
 	<build>
 		<plugins>
