@@ -60,6 +60,7 @@ import org.eclipse.dltk.ui.viewsupport.IViewPartInputProvider;
 import org.eclipse.dltk.ui.viewsupport.ProblemTableViewer;
 import org.eclipse.dltk.ui.viewsupport.ScriptUILabelProvider;
 import org.eclipse.dltk.ui.viewsupport.StatusBarUpdater;
+import org.eclipse.dltk.ui.viewsupport.StyledDecoratingModelLabelProvider;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
@@ -335,7 +336,7 @@ public abstract class ScriptBrowsingPart extends ViewPart implements
 		initDragAndDrop();
 
 		fLabelProvider = createLabelProvider();
-		fViewer.setLabelProvider(createDecoratingLabelProvider(fLabelProvider));
+		fViewer.setLabelProvider(createDelegatingLabelProvider(fLabelProvider));
 
 		fViewer.setComparator(createModelElementComparator());
 		fViewer.setUseHashlookup(true);
@@ -418,13 +419,28 @@ public abstract class ScriptBrowsingPart extends ViewPart implements
 		};
 	}
 
+	/**
+	 * @since 5.2
+	 */
+	protected ILabelProvider createDelegatingLabelProvider(
+			ScriptUILabelProvider provider) {
+		DecoratingModelLabelProvider labelprovider = createDecoratingLabelProvider(provider);
+		if (labelprovider != null)
+			return labelprovider;
+		return new StyledDecoratingModelLabelProvider(provider);
+	}
+
+	/**
+	 * @deprecated override
+	 *              org.eclipse.dltk.ui.browsing.ScriptBrowsingPart.createDelegatingLabelProvider (ScriptUILabelProvider) instead
+	 */
 	protected DecoratingModelLabelProvider createDecoratingLabelProvider(
 			ScriptUILabelProvider provider) {
 		// XXX: Work in progress for problem decorator being a workbench
 		// decorator//
 		// return new ExcludingDecoratingLabelProvider(provider, decorationMgr,
 		// "org.eclipse.jdt.ui.problem.decorator"); //$NON-NLS-1$
-		return new DecoratingModelLabelProvider(provider);
+		return null;
 	}
 
 	protected ModelElementSorter createModelElementComparator() {

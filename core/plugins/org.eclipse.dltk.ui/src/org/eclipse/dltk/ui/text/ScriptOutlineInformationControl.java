@@ -38,6 +38,7 @@ import org.eclipse.dltk.ui.ProblemsLabelDecorator;
 import org.eclipse.dltk.ui.ScriptElementLabels;
 import org.eclipse.dltk.ui.viewsupport.AppearanceAwareLabelProvider;
 import org.eclipse.dltk.ui.viewsupport.MemberFilter;
+import org.eclipse.dltk.ui.viewsupport.StyledDecoratingModelLabelProvider;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuManager;
@@ -533,7 +534,8 @@ public class ScriptOutlineInformationControl extends AbstractInformationControl 
 		 * OverrideIndicatorLabelDecorator(null));
 		 */
 
-		treeViewer.setLabelProvider(fInnerLabelProvider);
+		treeViewer.setLabelProvider(new StyledDecoratingModelLabelProvider(
+				fInnerLabelProvider));
 
 		fLexicalSortingAction = new LexicalSortingAction(treeViewer);
 		fSortByDefiningTypeAction = new SortByDefiningTypeAction(treeViewer);

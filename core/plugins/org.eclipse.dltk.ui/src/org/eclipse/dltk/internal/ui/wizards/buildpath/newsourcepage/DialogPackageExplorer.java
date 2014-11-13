@@ -42,7 +42,7 @@ import org.eclipse.dltk.ui.ModelElementSorter;
 import org.eclipse.dltk.ui.ScriptElementImageProvider;
 import org.eclipse.dltk.ui.ScriptElementLabels;
 import org.eclipse.dltk.ui.viewsupport.AppearanceAwareLabelProvider;
-import org.eclipse.dltk.ui.viewsupport.DecoratingModelLabelProvider;
+import org.eclipse.dltk.ui.viewsupport.StyledDecoratingModelLabelProvider;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
@@ -392,7 +392,7 @@ public abstract class DialogPackageExplorer implements IMenuListener,
 						| ScriptElementImageProvider.SMALL_ICONS,
 				getPreferenceStore());
 		fPackageViewer.setContentProvider(contentProvider);
-		fPackageViewer.setLabelProvider(new DecoratingModelLabelProvider(
+		fPackageViewer.setLabelProvider(new StyledDecoratingModelLabelProvider(
 				labelProvider, false));
 	}
 

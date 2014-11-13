@@ -1,33 +1,34 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- 
  *******************************************************************************/
 package org.eclipse.dltk.ui.viewsupport;
 
 import org.eclipse.dltk.ui.ProblemsLabelDecorator;
-import org.eclipse.jface.viewers.DecoratingLabelProvider;
+import org.eclipse.jface.viewers.DecoratingStyledCellLabelProvider;
 import org.eclipse.jface.viewers.DecorationContext;
-import org.eclipse.jface.viewers.IColorProvider;
-import org.eclipse.swt.graphics.Color;
+import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.ui.PlatformUI;
 
 /**
- * @deprecated use StyledDecoratingModelLabelProvider instead
+ * a DecoratingModelLabelProvider which support StyledText
+ * 
+ * replace org.eclipse.dltk.ui.viewsupport.DecoratingModelLabelProvider
+ * 
+ * @since 5.2
  */
-public class DecoratingModelLabelProvider extends DecoratingLabelProvider
-		implements IColorProvider {
+public class StyledDecoratingModelLabelProvider extends DecoratingStyledCellLabelProvider implements ILabelProvider {
 
 	/**
 	 * Decorating label provider for DLTK. Combines a ScriptUILabelProvider with
 	 * problem and override indicuator with the workbench decorator (label
 	 * decorator extension point).
 	 */
-	public DecoratingModelLabelProvider(ScriptUILabelProvider labelProvider) {
+	public StyledDecoratingModelLabelProvider(ScriptUILabelProvider labelProvider) {
 		this(labelProvider, true);
 	}
 
@@ -36,7 +37,7 @@ public class DecoratingModelLabelProvider extends DecoratingLabelProvider
 	 * enabled with problem indicator) with the workbench decorator (label
 	 * decorator extension point).
 	 */
-	public DecoratingModelLabelProvider(ScriptUILabelProvider labelProvider,
+	public StyledDecoratingModelLabelProvider(ScriptUILabelProvider labelProvider,
 			boolean errorTick) {
 		this(labelProvider, errorTick, true);
 	}
@@ -46,10 +47,10 @@ public class DecoratingModelLabelProvider extends DecoratingLabelProvider
 	 * enabled with problem indicator) with the workbench decorator (label
 	 * decorator extension point).
 	 */
-	public DecoratingModelLabelProvider(ScriptUILabelProvider labelProvider,
+	public StyledDecoratingModelLabelProvider(ScriptUILabelProvider labelProvider,
 			boolean errorTick, boolean flatPackageMode) {
 		super(labelProvider, PlatformUI.getWorkbench().getDecoratorManager()
-				.getLabelDecorator());
+				.getLabelDecorator(),null);
 
 		if (errorTick) {
 			labelProvider.addLabelDecorator(new ProblemsLabelDecorator(null));
@@ -73,16 +74,7 @@ public class DecoratingModelLabelProvider extends DecoratingLabelProvider
 		}
 	}
 
-	@Override
-	public Color getForeground(Object element) {
-		// label provider is a ScriptUILabelProvider
-		return ((IColorProvider) getLabelProvider()).getForeground(element);
+	public String getText(Object element) {
+		return getStyledText(element).toString();
 	}
-
-	@Override
-	public Color getBackground(Object element) {
-		// label provider is a ScriptUILabelProvider
-		return ((IColorProvider) getLabelProvider()).getBackground(element);
-	}
-
 }

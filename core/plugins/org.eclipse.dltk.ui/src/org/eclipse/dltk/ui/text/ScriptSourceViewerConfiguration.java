@@ -507,6 +507,8 @@ public abstract class ScriptSourceViewerConfiguration extends
 
 			getContentAssistPreference().configure(assistant, fPreferenceStore);
 
+			assistant.enableColoredLabels(true);
+
 			return assistant;
 		}
 

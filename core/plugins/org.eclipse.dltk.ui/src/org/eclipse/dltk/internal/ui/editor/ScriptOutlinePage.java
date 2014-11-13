@@ -49,9 +49,9 @@ import org.eclipse.dltk.ui.actions.MemberFilterActionGroup;
 import org.eclipse.dltk.ui.actions.OpenViewActionGroup;
 import org.eclipse.dltk.ui.actions.SearchActionGroup;
 import org.eclipse.dltk.ui.viewsupport.AppearanceAwareLabelProvider;
-import org.eclipse.dltk.ui.viewsupport.DecoratingModelLabelProvider;
 import org.eclipse.dltk.ui.viewsupport.SourcePositionSorter;
 import org.eclipse.dltk.ui.viewsupport.StatusBarUpdater;
+import org.eclipse.dltk.ui.viewsupport.StyledDecoratingModelLabelProvider;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.GroupMarker;
 import org.eclipse.jface.action.IAction;
@@ -673,7 +673,7 @@ public class ScriptOutlinePage extends Page implements IContentOutlinePage,
 		fOutlineViewer = new ScriptOutlineViewer(tree);
 		initDragAndDrop();
 		fOutlineViewer.setContentProvider(new ChildrenProvider());
-		fOutlineViewer.setLabelProvider(new DecoratingModelLabelProvider(
+		fOutlineViewer.setLabelProvider(new StyledDecoratingModelLabelProvider(
 				lprovider));
 
 		Object[] listeners = fSelectionChangedListeners.getListeners();

@@ -13,8 +13,8 @@ import org.eclipse.core.runtime.Assert;
 import org.eclipse.dltk.core.IMember;
 import org.eclipse.dltk.core.IType;
 import org.eclipse.dltk.ui.ScriptElementLabels;
-import org.eclipse.dltk.ui.viewsupport.DecoratingModelLabelProvider;
 import org.eclipse.dltk.ui.viewsupport.ProblemTreeViewer;
+import org.eclipse.dltk.ui.viewsupport.StyledDecoratingModelLabelProvider;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
@@ -42,7 +42,8 @@ public abstract class TypeHierarchyViewer extends ProblemTreeViewer {
 
 		fLabelProvider = new HierarchyLabelProvider(lifeCycle, store);
 
-		setLabelProvider(new DecoratingModelLabelProvider(fLabelProvider, true));
+		setLabelProvider(new StyledDecoratingModelLabelProvider(fLabelProvider,
+				true));
 		setUseHashlookup(true);
 
 		setContentProvider(contentProvider);

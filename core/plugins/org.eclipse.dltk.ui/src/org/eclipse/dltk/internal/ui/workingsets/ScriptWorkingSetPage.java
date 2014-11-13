@@ -19,11 +19,11 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.dltk.core.DLTKCore;
-import org.eclipse.dltk.core.IScriptProject;
 import org.eclipse.dltk.core.IModelElement;
 import org.eclipse.dltk.core.IProjectFragment;
 import org.eclipse.dltk.core.IScriptFolder;
 import org.eclipse.dltk.core.IScriptModel;
+import org.eclipse.dltk.core.IScriptProject;
 import org.eclipse.dltk.core.ModelException;
 import org.eclipse.dltk.internal.ui.actions.SelectionConverter;
 import org.eclipse.dltk.internal.ui.util.SWTUtil;
@@ -33,7 +33,7 @@ import org.eclipse.dltk.ui.ModelElementSorter;
 import org.eclipse.dltk.ui.ScriptElementImageProvider;
 import org.eclipse.dltk.ui.ScriptElementLabels;
 import org.eclipse.dltk.ui.viewsupport.AppearanceAwareLabelProvider;
-import org.eclipse.dltk.ui.viewsupport.DecoratingModelLabelProvider;
+import org.eclipse.dltk.ui.viewsupport.StyledDecoratingModelLabelProvider;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTreeViewer;
@@ -140,7 +140,8 @@ public class ScriptWorkingSetPage extends WizardPage implements IWorkingSetPage 
 				DLTKUIPlugin.getDefault().getPreferenceStore()
 			);
 		
-		fTree.setLabelProvider(new DecoratingModelLabelProvider(fScriptElementLabelProvider));
+		fTree.setLabelProvider(new StyledDecoratingModelLabelProvider(
+				fScriptElementLabelProvider));
 		fTree.setSorter(new ModelElementSorter());
 		if (DLTKCore.DEBUG) {
 			System.err.println("Add empty inner package filter support here..."); //$NON-NLS-1$

@@ -17,6 +17,7 @@ import org.eclipse.dltk.core.CompletionProposal;
 import org.eclipse.dltk.ui.DLTKUIPlugin;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.contentassist.IContextInformation;
+import org.eclipse.jface.viewers.StyledString;
 import org.eclipse.swt.graphics.Image;
 
 public abstract class LazyScriptCompletionProposal extends
@@ -48,6 +49,7 @@ public abstract class LazyScriptCompletionProposal extends
 	 * The invocation context of this completion proposal.
 	 */
 	protected final ScriptContentAssistInvocationContext fInvocationContext;
+	private boolean fDisplayStyledStringComputed;
 
 	public LazyScriptCompletionProposal(CompletionProposal proposal,
 			ScriptContentAssistInvocationContext context) {
@@ -196,6 +198,33 @@ public abstract class LazyScriptCompletionProposal extends
 
 	protected String computeDisplayString() {
 		return fInvocationContext.getLabelProvider().createLabel(fProposal);
+	}
+
+	@Override
+	public final StyledString getStyledDisplayString() {
+		if (!fDisplayStyledStringComputed) {
+			setStyledDisplayString(computeStyledDisplayString());
+		}
+		return super.getStyledDisplayString();
+	}
+
+	@Override
+	public final void setStyledDisplayString(StyledString string) {
+		fDisplayStyledStringComputed = true;
+		super.setStyledDisplayString(string);
+	}
+
+	/**
+	 * @since 5.2
+	 */
+	protected StyledString computeStyledDisplayString() {
+		CompletionProposalLabelProvider labelProvider = fInvocationContext
+				.getLabelProvider();
+		if (labelProvider instanceof ICompletionProposalLabelProviderExtension)
+			return ((ICompletionProposalLabelProviderExtension) labelProvider)
+					.createStyledLabel(fProposal);
+		else
+			return new StyledString(labelProvider.createLabel(fProposal));
 	}
 
 	@Override

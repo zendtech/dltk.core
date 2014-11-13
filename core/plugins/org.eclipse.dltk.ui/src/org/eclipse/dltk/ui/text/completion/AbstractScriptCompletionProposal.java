@@ -48,6 +48,7 @@ import org.eclipse.jface.text.contentassist.ICompletionProposalExtension;
 import org.eclipse.jface.text.contentassist.ICompletionProposalExtension2;
 import org.eclipse.jface.text.contentassist.ICompletionProposalExtension3;
 import org.eclipse.jface.text.contentassist.ICompletionProposalExtension5;
+import org.eclipse.jface.text.contentassist.ICompletionProposalExtension6;
 import org.eclipse.jface.text.contentassist.IContextInformation;
 import org.eclipse.jface.text.link.ILinkedModeListener;
 import org.eclipse.jface.text.link.LinkedModeModel;
@@ -56,6 +57,7 @@ import org.eclipse.jface.text.link.LinkedModeUI.ExitFlags;
 import org.eclipse.jface.text.link.LinkedModeUI.IExitPolicy;
 import org.eclipse.jface.text.link.LinkedPosition;
 import org.eclipse.jface.text.link.LinkedPositionGroup;
+import org.eclipse.jface.viewers.StyledString;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.custom.StyledText;
@@ -76,7 +78,7 @@ import org.osgi.framework.Bundle;
 public abstract class AbstractScriptCompletionProposal implements
 		IScriptCompletionProposal, ICompletionProposalExtension,
 		ICompletionProposalExtension2, ICompletionProposalExtension3,
-		ICompletionProposalExtension5 {
+		ICompletionProposalExtension5, ICompletionProposalExtension6 {
 
 	/**
 	 * A class to simplify tracking a reference position in a document.
@@ -178,7 +180,7 @@ public abstract class AbstractScriptCompletionProposal implements
 
 	}
 
-	private String fDisplayString;
+	private StyledString fDisplayString;
 	private String fReplacementString;
 	private int fReplacementOffset;
 	private int fReplacementLength;
@@ -451,7 +453,23 @@ public abstract class AbstractScriptCompletionProposal implements
 	 * @see ICompletionProposal#getDisplayString()
 	 */
 	public String getDisplayString() {
+		if (fDisplayString != null)
+			return fDisplayString.toString();
+		return null;
+	}
+
+	/**
+	 * @since 5.2
+	 */
+	public StyledString getStyledDisplayString() {
 		return fDisplayString;
+	}
+
+	/**
+	 * @since 5.2
+	 */
+	public void setStyledDisplayString(StyledString text) {
+		fDisplayString = text;
 	}
 
 	/*
@@ -973,7 +991,7 @@ public abstract class AbstractScriptCompletionProposal implements
 	}
 
 	protected void setDisplayString(String string) {
-		fDisplayString = string;
+		fDisplayString = new StyledString(string);
 	}
 
 	@Override

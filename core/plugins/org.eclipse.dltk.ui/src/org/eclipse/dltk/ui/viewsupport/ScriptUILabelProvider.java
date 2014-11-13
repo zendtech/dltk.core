@@ -24,17 +24,20 @@ import org.eclipse.dltk.ui.ScriptElementImageProvider;
 import org.eclipse.dltk.ui.ScriptElementLabels;
 import org.eclipse.jface.resource.CompositeImageDescriptor;
 import org.eclipse.jface.util.SafeRunnable;
+import org.eclipse.jface.viewers.DelegatingStyledCellLabelProvider.IStyledLabelProvider;
 import org.eclipse.jface.viewers.IColorProvider;
 import org.eclipse.jface.viewers.ILabelDecorator;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.LabelProviderChangedEvent;
+import org.eclipse.jface.viewers.StyledCellLabelProvider;
+import org.eclipse.jface.viewers.StyledString;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.graphics.Point;
 
-public class ScriptUILabelProvider implements ILabelProvider, IColorProvider {
+public class ScriptUILabelProvider implements ILabelProvider, IColorProvider,  IStyledLabelProvider {
 
 	protected ListenerList fListeners = new ListenerList(1);
 
@@ -200,27 +203,10 @@ public class ScriptUILabelProvider implements ILabelProvider, IColorProvider {
 	}
 
 	public String getText(Object element) {
-		ILabelProvider[] providers = getProviders(element);
-		String result = null;
-		if (providers != null) {
-			for (int i = 0; i < providers.length; i++) {
-				String text = providers[i].getText(element);
-				if (text != null) {
-					result = text;
-					break;
-				}
-			}
-		}
-		if (result == null) {
-			result = ScriptElementLabels.getDefault().getTextLabel(element,
-					evaluateTextFlags(element));
-		}
-
-		if (result.length() == 0 && (element instanceof IStorage)) {
-			result = fStorageLabelProvider.getText(element);
-		}
-
-		return decorateText(result, element);
+		StyledString styledText = getStyledText(element);
+		if (styledText != null)
+			return styledText.toString();
+		return null;
 	}
 
 	private ILabelProvider[] getProviders(Object element) {
@@ -336,5 +322,43 @@ public class ScriptUILabelProvider implements ILabelProvider, IColorProvider {
 			}
 		}
 		return text;
+	}
+	
+	/**
+	 * @since 5.2
+	 */
+	public StyledString getStyledText(Object element) {
+		ILabelProvider[] providers = getProviders(element);
+		StyledString result = null;
+		if (providers != null) {
+			for (int i = 0; i < providers.length; i++) {
+				if (providers[i] instanceof IStyledLabelProvider) {
+					StyledString string = ((IStyledLabelProvider) providers[i]).getStyledText(element);
+					if (string != null) {
+						result = string;
+						break;
+					}
+				} else {
+					String text = providers[i].getText(element);
+					if (text != null) {
+						result = new StyledString(text);
+						break;
+					}
+				}
+			}
+		}
+		if (result == null) {
+			result = new StyledString(ScriptElementLabels.getDefault().getTextLabel(element, evaluateTextFlags(element)));
+		}
+
+		if (result.length() == 0 && (element instanceof IStorage)) {
+			result = new StyledString(fStorageLabelProvider.getText(element));
+		}
+
+		String decorated = decorateText(result.getString(), element);
+		if (decorated != null) {
+			return StyledCellLabelProvider.styleDecoratedString(decorated, StyledString.DECORATIONS_STYLER, result);
+		}
+		return result;
 	}
 }
