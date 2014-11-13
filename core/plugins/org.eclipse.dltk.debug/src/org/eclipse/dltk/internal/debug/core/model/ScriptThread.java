@@ -290,7 +290,7 @@ public class ScriptThread extends ScriptDebugElement implements IScriptThread,
 
 	public void initialStepInto() {
 		stateManager.setSuspended(false, DebugEvent.CLIENT_REQUEST);
-		stateManager.getEngine().stepInto();
+		stateManager.getEngine().initialStepInto();
 	}
 
 	// IStep

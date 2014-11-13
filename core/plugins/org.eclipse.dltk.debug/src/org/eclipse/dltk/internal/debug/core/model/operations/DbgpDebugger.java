@@ -21,6 +21,8 @@ import org.eclipse.dltk.debug.core.model.IScriptThread;
 
 public class DbgpDebugger {
 	// Operations
+	private final DbgpStepIntoOperation initialStepIntoOperation;
+
 	private final DbgpStepIntoOperation stepIntoOperation;
 
 	private final DbgpStepOverOperation stepOverOperation;
@@ -38,6 +40,13 @@ public class DbgpDebugger {
 	public DbgpDebugger(IScriptThread thread, final IDbgpDebuggerFeedback end) {
 
 		this.session = thread.getDbgpSession();
+
+		initialStepIntoOperation = new DbgpStepIntoOperation(thread,
+				new DbgpOperation.IResultHandler() {
+					public void finish(IDbgpStatus status, DbgpException e) {
+						end.endInitialStepInto(e, status);
+					}
+				});
 
 		/*
 		 * FIXME should use single command queue here to guarantee we handle
@@ -84,6 +93,10 @@ public class DbgpDebugger {
 						end.endTerminate(e, status);
 					}
 				});
+	}
+	
+	public void initialStepInto() {
+		initialStepIntoOperation.schedule();
 	}
 
 	public void stepInto() {
