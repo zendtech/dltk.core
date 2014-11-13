@@ -23,6 +23,8 @@ import org.eclipse.dltk.ui.ScriptElementLabels;
 import org.eclipse.dltk.ui.viewsupport.AppearanceAwareLabelProvider;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.viewers.StyledCellLabelProvider;
+import org.eclipse.jface.viewers.StyledString;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.IWorkingSet;
 
@@ -77,6 +79,19 @@ public class ScriptExplorerLabelProvider extends AppearanceAwareLabelProvider {
 			return decorateText(text, element);
 		}
 		return super.getText(element);
+	}
+
+	public StyledString getStyledText(Object element) {
+		String text = getSpecificText(element);
+		if (text != null) {
+			String decorated = decorateText(text, element);
+			if (decorated != null) {
+				return StyledCellLabelProvider.styleDecoratedString(decorated,
+								StyledString.DECORATIONS_STYLER,
+								new StyledString(text));
+			}
+		}
+		return super.getStyledText(element);
 	}
 
 	private String getNameDelta(IScriptFolder parent, IScriptFolder fragment) {

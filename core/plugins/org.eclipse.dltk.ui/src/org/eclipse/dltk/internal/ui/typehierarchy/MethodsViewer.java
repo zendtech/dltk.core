@@ -19,8 +19,8 @@ import org.eclipse.dltk.ui.DLTKUIPlugin;
 import org.eclipse.dltk.ui.ScriptElementLabels;
 import org.eclipse.dltk.ui.actions.MemberFilterActionGroup;
 import org.eclipse.dltk.ui.actions.OpenAction;
-import org.eclipse.dltk.ui.viewsupport.DecoratingModelLabelProvider;
 import org.eclipse.dltk.ui.viewsupport.ProblemTableViewer;
+import org.eclipse.dltk.ui.viewsupport.StyledDecoratingModelLabelProvider;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
@@ -66,7 +66,8 @@ public class MethodsViewer extends ProblemTableViewer {
 		
 		fLabelProvider= new MethodsLabelProvider(lifeCycle, this, store);
 	
-		setLabelProvider(new DecoratingModelLabelProvider(fLabelProvider, true));
+		setLabelProvider(new StyledDecoratingModelLabelProvider(fLabelProvider,
+				true));
 		setContentProvider(new MethodsContentProvider(lifeCycle));
 		
 		HierarchyViewerSorter sorter= new HierarchyViewerSorter(lifeCycle);

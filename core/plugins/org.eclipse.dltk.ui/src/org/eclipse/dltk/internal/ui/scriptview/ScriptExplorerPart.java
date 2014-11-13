@@ -59,11 +59,11 @@ import org.eclipse.dltk.ui.PreferenceConstants;
 import org.eclipse.dltk.ui.ScriptElementLabels;
 import org.eclipse.dltk.ui.actions.CustomFiltersActionGroup;
 import org.eclipse.dltk.ui.viewsupport.AppearanceAwareLabelProvider;
-import org.eclipse.dltk.ui.viewsupport.DecoratingModelLabelProvider;
 import org.eclipse.dltk.ui.viewsupport.FilterUpdater;
 import org.eclipse.dltk.ui.viewsupport.IViewPartInputProvider;
 import org.eclipse.dltk.ui.viewsupport.ProblemTreeViewer;
 import org.eclipse.dltk.ui.viewsupport.StatusBarUpdater;
+import org.eclipse.dltk.ui.viewsupport.StyledDecoratingModelLabelProvider;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IStatusLineManager;
@@ -174,7 +174,7 @@ public class ScriptExplorerPart extends ViewPart implements
 	private WorkingSetModel fWorkingSetModel;
 
 	private ScriptExplorerLabelProvider fLabelProvider;
-	private DecoratingModelLabelProvider fDecoratingLabelProvider;
+	private StyledDecoratingModelLabelProvider fDecoratingLabelProvider;
 	private ScriptExplorerContentProvider fContentProvider;
 	private FilterUpdater fFilterUpdater;
 
@@ -746,7 +746,7 @@ public class ScriptExplorerPart extends ViewPart implements
 
 		fLabelProvider = createLabelProvider();
 		fLabelProvider.setIsFlatLayout(fIsCurrentLayoutFlat);
-		fDecoratingLabelProvider = new DecoratingModelLabelProvider(
+		fDecoratingLabelProvider = new StyledDecoratingModelLabelProvider(
 				fLabelProvider, false, fIsCurrentLayoutFlat);
 		fViewer.setLabelProvider(fDecoratingLabelProvider);
 		// problem decoration provided by PackageLabelProvider

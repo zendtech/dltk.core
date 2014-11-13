@@ -37,6 +37,7 @@ import org.eclipse.dltk.ui.DLTKUIPlugin;
 import org.eclipse.dltk.ui.viewsupport.ImageDescriptorRegistry;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.text.contentassist.IContextInformation;
+import org.eclipse.jface.viewers.StyledString;
 import org.eclipse.swt.graphics.Image;
 
 /**
@@ -655,9 +656,20 @@ public abstract class ScriptCompletionProposalCollector extends
 				image, displayString, relevance, false);
 	}
 
+	@Deprecated
 	protected ScriptCompletionProposal createScriptCompletionProposal(
 			String completion, int replaceStart, int length, Image image,
 			String displayString, int relevance, boolean isInDoc) {
+		return new ScriptCompletionProposal(completion, replaceStart, length,
+				image, displayString, relevance, isInDoc);
+	}
+
+	/**
+	 * @since 5.2
+	 */
+	protected ScriptCompletionProposal createScriptCompletionProposal(
+			String completion, int replaceStart, int length, Image image,
+			StyledString displayString, int relevance, boolean isInDoc) {
 		return new ScriptCompletionProposal(completion, replaceStart, length,
 				image, displayString, relevance, isInDoc);
 	}
@@ -675,17 +687,27 @@ public abstract class ScriptCompletionProposalCollector extends
 		String completion = String.valueOf(proposal.getCompletion());
 		int start = proposal.getReplaceStart();
 		int length = getLength(proposal);
-		String label = getLabelProvider().createFieldProposalLabel(proposal);
+		int relevance = computeRelevance(proposal);
+
+		ScriptCompletionProposal scriptProposal;
+
+		CompletionProposalLabelProvider labelProvider = getLabelProvider();
 		Image image = getImage(getLabelProvider().createFieldImageDescriptor(
 				proposal));
-		int relevance = computeRelevance(proposal);
-		// CompletionContext context = getContext();
-		ScriptCompletionProposal scriptProposal = createScriptCompletionProposal(
-				completion, start, length, image, label, relevance, /*
-																	 * context
-																	 * .isInDoc
-																	 * ()
-																	 */false);
+
+		if (labelProvider instanceof ICompletionProposalLabelProviderExtension) {
+
+			StyledString label = ((ICompletionProposalLabelProviderExtension) getLabelProvider())
+					.createStyledFieldProposalLabel(proposal);
+			scriptProposal = createScriptCompletionProposal(completion, start,
+					length, image, label, relevance, false);
+		} else {
+			String label = getLabelProvider()
+					.createFieldProposalLabel(proposal);
+			scriptProposal = createScriptCompletionProposal(completion, start,
+					length, image, label, relevance, false);
+		}
+
 		if (fScriptProject != null)
 			scriptProposal.setProposalInfo(new FieldProposalInfo(
 					fScriptProject, proposal));
@@ -698,11 +720,25 @@ public abstract class ScriptCompletionProposalCollector extends
 		String completion = String.valueOf(proposal.getCompletion());
 		int start = proposal.getReplaceStart();
 		int length = getLength(proposal);
-		String label = getLabelProvider().createKeywordLabel(proposal);
-		Image img = getImage(getLabelProvider().createImageDescriptor(proposal));
 		int relevance = computeRelevance(proposal);
-		ScriptCompletionProposal scriptProposal = createScriptCompletionProposal(
-				completion, start, length, img, label, relevance);
+
+		ScriptCompletionProposal scriptProposal;
+
+		CompletionProposalLabelProvider labelProvider = getLabelProvider();
+		Image image = getImage(getLabelProvider().createImageDescriptor(
+				proposal));
+
+		if (labelProvider instanceof ICompletionProposalLabelProviderExtension) {
+
+			StyledString label = ((ICompletionProposalLabelProviderExtension) getLabelProvider())
+					.createStyledKeywordLabel(proposal);
+			scriptProposal = createScriptCompletionProposal(completion, start,
+					length, image, label, relevance, false);
+		} else {
+			String label = getLabelProvider().createKeywordLabel(proposal);
+			scriptProposal = createScriptCompletionProposal(completion, start,
+					length, image, label, relevance, false);
+		}
 
 		if (fScriptProject != null) {
 			scriptProposal.setProposalInfo(new ProposalInfo(fScriptProject,
@@ -717,11 +753,27 @@ public abstract class ScriptCompletionProposalCollector extends
 		String completion = String.valueOf(proposal.getCompletion());
 		int start = proposal.getReplaceStart();
 		int length = getLength(proposal);
-		String label = getLabelProvider().createSimpleLabel(proposal);
 		int relevance = computeRelevance(proposal);
-		return createScriptCompletionProposal(completion, start, length,
-				getImage(getLabelProvider().createImageDescriptor(proposal)),
-				label, relevance);
+
+		ScriptCompletionProposal scriptProposal;
+		
+		CompletionProposalLabelProvider labelProvider = getLabelProvider();
+		Image image = getImage(getLabelProvider().createImageDescriptor(
+				proposal));
+
+		if (labelProvider instanceof ICompletionProposalLabelProviderExtension) {
+
+			StyledString label = ((ICompletionProposalLabelProviderExtension) getLabelProvider())
+					.createStyledSimpleLabel(proposal);
+			scriptProposal = createScriptCompletionProposal(completion, start,
+					length, image, label, relevance, false);
+		} else {
+			String label = getLabelProvider().createSimpleLabel(proposal);
+			scriptProposal = createScriptCompletionProposal(completion, start,
+					length, image, label, relevance, false);
+		}
+		
+		return scriptProposal;
 	}
 
 	private IScriptCompletionProposal createLabelProposal(
@@ -729,11 +781,24 @@ public abstract class ScriptCompletionProposalCollector extends
 		String completion = String.valueOf(proposal.getCompletion());
 		int start = proposal.getReplaceStart();
 		int length = getLength(proposal);
-		String label = getLabelProvider().createSimpleLabel(proposal);
 		int relevance = computeRelevance(proposal);
-		return createScriptCompletionProposal(completion, start, length, null,
-				label, relevance);
-		// return null;
+		
+		ScriptCompletionProposal scriptProposal;
+		
+		CompletionProposalLabelProvider labelProvider = getLabelProvider();
+
+		if (labelProvider instanceof ICompletionProposalLabelProviderExtension) {
+
+			StyledString label = ((ICompletionProposalLabelProviderExtension) getLabelProvider())
+					.createStyledSimpleLabel(proposal);
+			scriptProposal = createScriptCompletionProposal(completion, start,
+					length, null, label, relevance, false);
+		} else {
+			String label = getLabelProvider().createSimpleLabel(proposal);
+			scriptProposal = createScriptCompletionProposal(completion, start,
+					length, null, label, relevance, false);
+		}
+		return scriptProposal;
 	}
 
 	private IScriptCompletionProposal createLocalVariableProposal(
@@ -741,14 +806,29 @@ public abstract class ScriptCompletionProposalCollector extends
 		String completion = String.valueOf(proposal.getCompletion());
 		int start = proposal.getReplaceStart();
 		int length = getLength(proposal);
+		int relevance = computeRelevance(proposal);
+
+		ScriptCompletionProposal scriptProposal;
+
+		CompletionProposalLabelProvider labelProvider = getLabelProvider();
 		Image image = getImage(getLabelProvider().createLocalImageDescriptor(
 				proposal));
-		String label = getLabelProvider().createSimpleLabelWithType(proposal);
-		int relevance = computeRelevance(proposal);
-		final ScriptCompletionProposal javaProposal = createScriptCompletionProposal(
-				completion, start, length, image, label, relevance);
-		javaProposal.setTriggerCharacters(getVarTrigger());
-		return javaProposal;
+
+		if (labelProvider instanceof ICompletionProposalLabelProviderExtension) {
+
+			StyledString label = ((ICompletionProposalLabelProviderExtension) getLabelProvider())
+					.createStyledSimpleLabelWithType(proposal);
+			scriptProposal = createScriptCompletionProposal(completion, start,
+					length, image, label, relevance, false);
+		} else {
+			String label = getLabelProvider().createSimpleLabelWithType(
+					proposal);
+			scriptProposal = createScriptCompletionProposal(completion, start,
+					length, image, label, relevance, false);
+		}
+
+		scriptProposal.setTriggerCharacters(getVarTrigger());
+		return scriptProposal;
 	}
 
 	/**
@@ -815,24 +895,33 @@ public abstract class ScriptCompletionProposalCollector extends
 	}
 
 	protected IScriptCompletionProposal createTypeProposal(
-			CompletionProposal typeProposal) {
+			CompletionProposal proposal) {
 
-		String completion = typeProposal.getCompletion();
-		int replaceStart = typeProposal.getReplaceStart();
-		int length = typeProposal.getReplaceEnd()
-				- typeProposal.getReplaceStart();
+		String completion = proposal.getCompletion();
+		int start = proposal.getReplaceStart();
+		int length = proposal.getReplaceEnd() - proposal.getReplaceStart();
+		int relevance = computeRelevance(proposal);
+
+		ScriptCompletionProposal scriptProposal;
+
+		CompletionProposalLabelProvider labelProvider = getLabelProvider();
 		Image image = getImage(getLabelProvider().createTypeImageDescriptor(
-				typeProposal));
+				proposal));
 
-		String displayString = getLabelProvider().createTypeProposalLabel(
-				typeProposal);
+		if (labelProvider instanceof ICompletionProposalLabelProviderExtension) {
 
-		ScriptCompletionProposal scriptProposal = createScriptCompletionProposal(
-				completion, replaceStart, length, image, displayString, 0);
-
-		scriptProposal.setRelevance(computeRelevance(typeProposal));
+			StyledString label = ((ICompletionProposalLabelProviderExtension) getLabelProvider())
+					.createStyledTypeProposalLabel(proposal);
+			scriptProposal = createScriptCompletionProposal(completion, start,
+					length, image, label, relevance, false);
+		} else {
+			String label = getLabelProvider().createTypeProposalLabel(proposal);
+			scriptProposal = createScriptCompletionProposal(completion, start,
+					length, image, label, relevance, false);
+		}
 		scriptProposal.setProposalInfo(new TypeProposalInfo(fScriptProject,
-				typeProposal));
+				proposal));
+
 		return scriptProposal;
 	}
 
