@@ -11,6 +11,7 @@
  *******************************************************************************/
 package org.eclipse.dltk.internal.core.index.sql.h2;
 
+import java.io.File;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -98,7 +99,18 @@ public class H2DbFactory extends DbFactory {
 
 				// remove corrupted DB
 				try {
-					DeleteDbFiles.execute(dbPath.toOSString(), DB_NAME, true);
+					if (tries == 1) { // try force delete
+						File folder = new File(dbPath.toOSString());
+						for (File f : folder.listFiles()) {
+							if (f.getName().startsWith(DB_NAME + ".")) { //$NON-NLS-1$
+								f.delete();
+							}
+						}
+						initializeSchema = true;
+					} else {
+						DeleteDbFiles.execute(dbPath.toOSString(), DB_NAME,
+								true);
+					}
 
 				} catch (Exception e1) {
 					SqlIndex.error(
@@ -107,7 +119,7 @@ public class H2DbFactory extends DbFactory {
 					throw e1;
 				}
 			}
-		} while (connection == null && --tries > 0);
+		} while (connection == null && --tries >= 0);
 	}
 
 	/**
