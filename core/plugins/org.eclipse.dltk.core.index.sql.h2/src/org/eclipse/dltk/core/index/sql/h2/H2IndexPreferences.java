@@ -39,6 +39,24 @@ public class H2IndexPreferences extends AbstractPreferenceInitializer {
 	public static final String DB_LOCK_MODE = "lockMode"; //$NON-NLS-1$
 
 	/**
+	 * H2 Database query cache size
+	 * 
+	 * @see http://www.h2database.com/javadoc/org/h2/constant/DbSettings.html#
+	 *      DB_QUERY_CACHE_SIZE
+	 * @since 5.1.1
+	 */
+	public static final String DB_QUERY_CACHE_SIZE = "queryCacheSize"; //$NON-NLS-1$
+
+	/**
+	 * H2 Database large result buffer size
+	 * 
+	 * @see http://www.h2database.com/javadoc/org/h2/constant/DbSettings.html#
+	 *      DB_LARGE_RESULT_BUFFER_SIZE
+	 * @since 5.1.1
+	 */
+	public static final String DB_LARGE_RESULT_BUFFER_SIZE = "largeResultBufferSize"; //$NON-NLS-1$
+
+	/**
 	 * Schema version
 	 */
 	public static final String SCHEMA_VERSION = "schemaVersion"; //$NON-NLS-1$
@@ -51,5 +69,7 @@ public class H2IndexPreferences extends AbstractPreferenceInitializer {
 		p.putInt(DB_CACHE_SIZE, 32000); // 32Mb
 		p.put(DB_CACHE_TYPE, "LRU");
 		p.putInt(DB_LOCK_MODE, 0); // no transaction isolation
+		p.putInt(DB_QUERY_CACHE_SIZE, 32); // last 32 statements
+		p.putInt(DB_LARGE_RESULT_BUFFER_SIZE, 16384); // x4 default value
 	}
 }
