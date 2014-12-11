@@ -16,7 +16,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -79,21 +78,16 @@ public class H2ElementDao implements IElementDao {
 			throws SQLException {
 
 		int param = 0;
-
 		if (!isReference) {
 			statement.setInt(++param, flags);
 		}
-
 		statement.setInt(++param, offset);
 		statement.setInt(++param, length);
-
 		if (!isReference) {
 			statement.setInt(++param, nameOffset);
 			statement.setInt(++param, nameLength);
 		}
-
 		statement.setString(++param, name);
-
 		String camelCaseName = null;
 		if (!isReference) {
 			StringBuilder camelCaseNameBuf = new StringBuilder();
@@ -110,25 +104,16 @@ public class H2ElementDao implements IElementDao {
 					.toString() : null;
 			statement.setString(++param, camelCaseName);
 		}
-
 		statement.setString(++param, metadata);
 		if (!isReference) {
 			statement.setString(++param, doc);
 		}
 		statement.setString(++param, qualifier);
-
 		if (!isReference) {
 			statement.setString(++param, parent);
 		}
-
 		statement.setInt(++param, fileId);
 		statement.addBatch();
-
-		if (!isReference) {
-			H2Cache.addElement(new Element(type, flags, offset, length,
-					nameOffset, nameLength, name, camelCaseName, metadata, doc,
-					qualifier, parent, fileId, isReference));
-		}
 	}
 
 	public void insert(Connection connection, int type, int flags, int offset,
@@ -153,7 +138,6 @@ public class H2ElementDao implements IElementDao {
 				D_INSERT_QUERY_CACHE.put(tableName, query);
 			}
 		}
-
 		synchronized (batchStatements) {
 			PreparedStatement statement = batchStatements.get(query);
 			if (statement == null) {
@@ -192,26 +176,28 @@ public class H2ElementDao implements IElementDao {
 		long timeStamp = System.currentTimeMillis();
 		int count = 0;
 
-		if (!isReference && H2Cache.isLoaded()) {
-			Collection<Element> elements = H2Cache.searchElements(pattern,
-					matchRule, elementType, trueFlags, falseFlags, qualifier,
-					parent, filesId, containersId, natureId, limit);
-			if (elements != null && elements.size() > 0) {
-				for (Element element : elements) {
-					handler.handle(element);
-				}
-			}
-			return;
-		}
-
 		String tableName = getTableName(connection, elementType, natureId,
 				isReference);
 
-		final StringBuilder query = new StringBuilder("SELECT * FROM ")
+		final StringBuilder begin = new StringBuilder("SELECT T.* FROM ")
 				.append(tableName);
-		final List<String> parameters = new ArrayList<String>();
-		// Dummy pattern
-		query.append(" WHERE 1=1");
+
+		StringBuilder query = new StringBuilder();
+		final List<Object> parameters = new ArrayList<Object>();
+
+		if (filesId == null && containersId != null && containersId.length > 0) {
+			begin.append(" AS T INNER JOIN FILES AS F ON (T.FILE_ID = F.ID AND F.CONTAINER_ID IN(");
+			for (int i = 0; i < containersId.length; ++i) {
+				if (i > 0) {
+					begin.append(",");
+				}
+				begin.append("?");
+				parameters.add(containersId[i]);
+			}
+			begin.append(") )");
+		} else {
+			begin.append(" AS T");
+		}
 
 		// Name patterns
 		if (pattern != null && pattern.length() > 0) {
@@ -257,12 +243,12 @@ public class H2ElementDao implements IElementDao {
 
 		// Flags
 		if (trueFlags != 0) {
-			query.append(" AND BITAND(FLAGS,").append(trueFlags)
-					.append(") <> 0");
+			query.append(" AND BITAND(FLAGS, ?) <> 0");
+			parameters.add(trueFlags);
 		}
 		if (falseFlags != 0) {
-			query.append(" AND BITAND(FLAGS,").append(falseFlags)
-					.append(") = 0");
+			query.append(" AND BITAND(FLAGS,?) = 0");
+			parameters.add(falseFlags);
 		}
 
 		// Qualifier
@@ -283,19 +269,17 @@ public class H2ElementDao implements IElementDao {
 				if (i > 0) {
 					query.append(",");
 				}
-				query.append(filesId[i]);
+				query.append("?");
+				parameters.add(filesId[i]);
 			}
 			query.append(")");
+		}
 
-		} else if (containersId != null) {
-			query.append(" AND FILE_ID IN(SELECT ID FROM FILES WHERE CONTAINER_ID IN(");
-			for (int i = 0; i < containersId.length; ++i) {
-				if (i > 0) {
-					query.append(",");
-				}
-				query.append(containersId[i]);
-			}
-			query.append("))");
+		if (query.length() > 0) {
+			begin.append(" WHERE ").append(query.substring(4));
+			query = begin;
+		} else {
+			query = begin;
 		}
 
 		// Records limit
@@ -312,7 +296,12 @@ public class H2ElementDao implements IElementDao {
 				.toString());
 		try {
 			for (int i = 0; i < parameters.size(); ++i) {
-				statement.setString(i + 1, parameters.get(i));
+				final Object param = parameters.get(i);
+				if (param instanceof Integer) {
+					statement.setInt(i + 1, (Integer) param);
+				} else {
+					statement.setString(i + 1, (String) param);
+				}
 			}
 
 			final ResultSet result = statement.executeQuery();
@@ -324,7 +313,7 @@ public class H2ElementDao implements IElementDao {
 					}
 
 					int columnIndex = 0;
-					int id = result.getInt(++columnIndex);
+					result.getInt(++columnIndex);
 
 					int f = 0;
 					if (!isReference) {
@@ -364,9 +353,6 @@ public class H2ElementDao implements IElementDao {
 							length, nameOffset, nameLength,
 							modelManager.intern(name), camelCaseName, metadata,
 							doc, qualifier, parent, fileId, isReference);
-					if (!isReference) {
-						H2Cache.addElement(element);
-					}
 
 					handler.handle(element);
 				}
