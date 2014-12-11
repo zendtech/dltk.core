@@ -150,6 +150,17 @@ public class H2DbFactory extends DbFactory {
 				preferencesService.getInt(H2Index.PLUGIN_ID,
 						H2IndexPreferences.DB_CACHE_SIZE, 0, null));
 
+		buf.append(";QUERY_CACHE_SIZE=").append(
+				preferencesService.getInt(H2Index.PLUGIN_ID,
+						H2IndexPreferences.DB_QUERY_CACHE_SIZE, 0, null));
+
+		buf.append(";LARGE_RESULT_BUFFER_SIZE=").append(
+				preferencesService
+						.getInt(H2Index.PLUGIN_ID,
+								H2IndexPreferences.DB_LARGE_RESULT_BUFFER_SIZE,
+								0, null));
+		buf.append(";FILE_LOCK=NO");
+
 		return buf.toString();
 	}
 
