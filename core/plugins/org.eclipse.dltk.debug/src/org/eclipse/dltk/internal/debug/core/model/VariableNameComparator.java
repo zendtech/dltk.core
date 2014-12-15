@@ -5,12 +5,10 @@ import java.util.Comparator;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IVariable;
 
-public class VariableNameComparator implements Comparator {
+public class VariableNameComparator implements Comparator<IVariable> {
 
-	public int compare(Object o1, Object o2) {
+	public int compare(IVariable v1, IVariable v2) {
 		int result = 0;
-		IVariable v1 = (IVariable) o1;
-		IVariable v2 = (IVariable) o2;
 		try {
 			String v1Str = (v1 != null) ? v1.getName() : ""; //$NON-NLS-1$
 			v1Str = v1Str.replaceAll("\\[", "").replaceAll("\\]", ""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
@@ -35,7 +33,9 @@ public class VariableNameComparator implements Comparator {
 				v2IsInt = false;
 			}
 
-			if ((v1IsInt == true) && (v2IsInt == true)) {
+			if (v1IsInt != v2IsInt) {
+				return v1IsInt ? -1 : +1;
+			} else if (v1IsInt) {
 				if (v1Int > v2Int) {
 					result = 1;
 				} else if (v1Int < v2Int) {
@@ -45,14 +45,6 @@ public class VariableNameComparator implements Comparator {
 				}
 			} else {
 				result = v1Str.compareTo(v2Str);
-
-				if (result > 0) {
-					result = 1;
-				} else if (result < 0) {
-					result = -1;
-				} else {
-					result = 0;
-				}
 			}
 		} catch (DebugException e) {
 		}
