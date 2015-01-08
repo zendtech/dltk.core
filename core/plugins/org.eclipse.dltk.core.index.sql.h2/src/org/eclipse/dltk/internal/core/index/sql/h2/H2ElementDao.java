@@ -213,13 +213,13 @@ public class H2ElementDao implements IElementDao {
 			}
 			// Prefix
 			else if (matchRule == MatchRule.PREFIX) {
-				query.append(" AND NAME LIKE ? ESCAPE ''");
-				parameters.add(pattern + "%");
+				query.append(" AND NAME LIKE ?");
+				parameters.add(escapeLikePattern(pattern) + "%");
 			}
 			// Camel-case
 			else if (matchRule == MatchRule.CAMEL_CASE) {
-				query.append(" AND CC_NAME LIKE ? ESCAPE ''");
-				parameters.add(pattern + "%");
+				query.append(" AND CC_NAME LIKE ?");
+				parameters.add(escapeLikePattern(pattern) + "%");
 			}
 			// Set of names
 			else if (matchRule == MatchRule.SET) {
@@ -236,8 +236,9 @@ public class H2ElementDao implements IElementDao {
 			}
 			// POSIX pattern
 			else if (matchRule == MatchRule.PATTERN) {
-				query.append(" AND NAME LIKE ? ESCAPE ''");
-				parameters.add(pattern.replace('*', '%').replace('?', '_'));
+				query.append(" AND NAME LIKE ?");
+				parameters.add(escapeLikePattern(pattern).replace('*', '%')
+						.replace('?', '_'));
 			}
 		}
 
@@ -367,5 +368,14 @@ public class H2ElementDao implements IElementDao {
 			System.out.println("Results = " + count + " ; Time taken = "
 					+ (System.currentTimeMillis() - timeStamp) + " ms.");
 		}
+	}
+
+	/**
+	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=446159
+	 * @param pattern
+	 * @return
+	 */
+	private String escapeLikePattern(String pattern) {
+		return pattern.replaceAll("[\\\\%_]", "\\\\$0"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 }
