@@ -5,6 +5,8 @@
       version="5.1.1.qualifier"
       provider-name="%providerName"
       plugin="org.eclipse.dltk.core.index"
+      license-feature="org.eclipse.license"
+      license-feature-version="0.0.0"
       image="eclipse_update_120.jpg">
 
    <description url="http://www.eclipse.org/dltk">

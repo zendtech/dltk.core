@@ -5,7 +5,7 @@
       version="5.1.1.qualifier"
       provider-name="%providerName"
       license-feature="org.eclipse.license"
-      license-feature-version="1.0.1.qualifier"
+      license-feature-version="0.0.0"
       image="eclipse_update_120.jpg">
 
    <description>
