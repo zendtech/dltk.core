@@ -186,15 +186,16 @@ public class H2ElementDao implements IElementDao {
 		final List<Object> parameters = new ArrayList<Object>();
 
 		if (filesId == null && containersId != null && containersId.length > 0) {
-			begin.append(" AS T INNER JOIN FILES AS F ON (T.FILE_ID = F.ID AND F.CONTAINER_ID IN(");
+			begin.append("_TO_CONTAINER AS T");
+			query.append(" AND T.CONTAINER_ID IN(");
 			for (int i = 0; i < containersId.length; ++i) {
 				if (i > 0) {
-					begin.append(",");
+					query.append(",");
 				}
-				begin.append("?");
+				query.append("?");
 				parameters.add(containersId[i]);
 			}
-			begin.append(") )");
+			query.append(")");
 		} else {
 			begin.append(" AS T");
 		}
