@@ -63,6 +63,7 @@ public class SetContainerEventsTest extends Assert {
 	final List<IModelElementDelta> removed = new ArrayList<IModelElementDelta>();
 
 	final IElementChangedListener listener = new IElementChangedListener() {
+		@Override
 		public void elementChanged(ElementChangedEvent event) {
 			if (VERBOSE) {
 				System.out.println(testname.getMethodName() + " " + event);
@@ -96,7 +97,8 @@ public class SetContainerEventsTest extends Assert {
 		}
 	};
 
-	@Test
+	// @Test
+	// Disabled due to http://eclip.se/458130
 	public void setContainer() throws ModelException,IOException {
 		final File folder1 = temp.newFolder("folder1");
 		DLTKCore.addElementChangedListener(listener,
