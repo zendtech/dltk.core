@@ -15,9 +15,9 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.Collection;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
@@ -78,21 +78,16 @@ public class H2ElementDao implements IElementDao {
 			throws SQLException {
 
 		int param = 0;
-
 		if (!isReference) {
 			statement.setInt(++param, flags);
 		}
-
 		statement.setInt(++param, offset);
 		statement.setInt(++param, length);
-
 		if (!isReference) {
 			statement.setInt(++param, nameOffset);
 			statement.setInt(++param, nameLength);
 		}
-
 		statement.setString(++param, name);
-
 		String camelCaseName = null;
 		if (!isReference) {
 			StringBuilder camelCaseNameBuf = new StringBuilder();
@@ -109,25 +104,16 @@ public class H2ElementDao implements IElementDao {
 					.toString() : null;
 			statement.setString(++param, camelCaseName);
 		}
-
 		statement.setString(++param, metadata);
 		if (!isReference) {
 			statement.setString(++param, doc);
 		}
 		statement.setString(++param, qualifier);
-
 		if (!isReference) {
 			statement.setString(++param, parent);
 		}
-
 		statement.setInt(++param, fileId);
 		statement.addBatch();
-
-		if (!isReference) {
-			H2Cache.addElement(new Element(type, flags, offset, length,
-					nameOffset, nameLength, name, camelCaseName, metadata, doc,
-					qualifier, parent, fileId, isReference));
-		}
 	}
 
 	public void insert(Connection connection, int type, int flags, int offset,
@@ -152,7 +138,6 @@ public class H2ElementDao implements IElementDao {
 				D_INSERT_QUERY_CACHE.put(tableName, query);
 			}
 		}
-
 		synchronized (batchStatements) {
 			PreparedStatement statement = batchStatements.get(query);
 			if (statement == null) {
@@ -181,10 +166,6 @@ public class H2ElementDao implements IElementDao {
 		}
 	}
 
-	private String escapeBackslash(String pattern) {
-		return pattern.replaceAll("\\\\", "\\\\\\\\");
-	}
-
 	public void search(Connection connection, String pattern,
 			MatchRule matchRule, int elementType, int trueFlags,
 			int falseFlags, String qualifier, String parent, int[] filesId,
@@ -195,122 +176,137 @@ public class H2ElementDao implements IElementDao {
 		long timeStamp = System.currentTimeMillis();
 		int count = 0;
 
-		if (!isReference && H2Cache.isLoaded()) {
-			Collection<Element> elements = H2Cache.searchElements(pattern,
-					matchRule, elementType, trueFlags, falseFlags, qualifier,
-					parent, filesId, containersId, natureId, limit);
-			if (elements != null && elements.size() > 0) {
-				for (Element element : elements) {
-					handler.handle(element);
-				}
-			}
-			return;
-		}
-
 		String tableName = getTableName(connection, elementType, natureId,
 				isReference);
 
-		Statement statement = connection.createStatement();
+		final StringBuilder begin = new StringBuilder("SELECT T.* FROM ")
+				.append(tableName);
+
+		StringBuilder query = new StringBuilder();
+		final List<Object> parameters = new ArrayList<Object>();
+
+		if (filesId == null && containersId != null && containersId.length > 0) {
+			begin.append("_TO_CONTAINER AS T");
+			query.append(" AND T.CONTAINER_ID IN(");
+			for (int i = 0; i < containersId.length; ++i) {
+				if (i > 0) {
+					query.append(",");
+				}
+				query.append("?");
+				parameters.add(containersId[i]);
+			}
+			query.append(")");
+		} else {
+			begin.append(" AS T");
+		}
+
+		// Name patterns
+		if (pattern != null && pattern.length() > 0) {
+			if (isReference && matchRule == MatchRule.CAMEL_CASE) {
+				H2Index.warn("MatchRule.CAMEL_CASE is not supported by element references search."); //$NON-NLS-1$
+				matchRule = MatchRule.EXACT;
+			}
+
+			// Exact pattern
+			if (matchRule == MatchRule.EXACT) {
+				query.append(" AND NAME=?");
+				parameters.add(pattern);
+			}
+			// Prefix
+			else if (matchRule == MatchRule.PREFIX) {
+				query.append(" AND NAME LIKE ?");
+				parameters.add(escapeLikePattern(pattern) + "%");
+			}
+			// Camel-case
+			else if (matchRule == MatchRule.CAMEL_CASE) {
+				query.append(" AND CC_NAME LIKE ?");
+				parameters.add(escapeLikePattern(pattern) + "%");
+			}
+			// Set of names
+			else if (matchRule == MatchRule.SET) {
+				String[] patternSet = SEPARATOR_PATTERN.split(pattern);
+				query.append(" AND NAME IN (");
+				for (int i = 0; i < patternSet.length; ++i) {
+					if (i > 0) {
+						query.append(',');
+					}
+					query.append('?');
+					parameters.add(patternSet[i]);
+				}
+				query.append(')');
+			}
+			// POSIX pattern
+			else if (matchRule == MatchRule.PATTERN) {
+				query.append(" AND NAME LIKE ?");
+				parameters.add(escapeLikePattern(pattern).replace('*', '%')
+						.replace('?', '_'));
+			}
+		}
+
+		// Flags
+		if (trueFlags != 0) {
+			query.append(" AND BITAND(FLAGS, ?) <> 0");
+			parameters.add(trueFlags);
+		}
+		if (falseFlags != 0) {
+			query.append(" AND BITAND(FLAGS,?) = 0");
+			parameters.add(falseFlags);
+		}
+
+		// Qualifier
+		if (qualifier != null && qualifier.length() > 0) {
+			query.append(" AND QUALIFIER=?");
+			parameters.add(qualifier);
+		}
+		// Parent
+		if (parent != null && parent.length() > 0) {
+			query.append(" AND PARENT=?");
+			parameters.add(parent);
+		}
+
+		// Files or container paths
+		if (filesId != null) {
+			query.append(" AND FILE_ID IN(");
+			for (int i = 0; i < filesId.length; ++i) {
+				if (i > 0) {
+					query.append(",");
+				}
+				query.append("?");
+				parameters.add(filesId[i]);
+			}
+			query.append(")");
+		}
+
+		if (query.length() > 0) {
+			begin.append(" WHERE ").append(query.substring(4));
+			query = begin;
+		} else {
+			query = begin;
+		}
+
+		// Records limit
+		if (limit > 0) {
+			query.append(" LIMIT ").append(limit);
+		}
+		query.append(";");
+
+		if (H2Index.DEBUG) {
+			System.out.println("Query: " + query.toString());
+		}
+
+		final PreparedStatement statement = connection.prepareStatement(query
+				.toString());
 		try {
-			StringBuilder query = new StringBuilder("SELECT * FROM ")
-					.append(tableName);
-
-			// Dummy pattern
-			query.append(" WHERE 1=1");
-
-			// Name patterns
-			if (pattern != null && pattern.length() > 0) {
-				if (isReference && matchRule == MatchRule.CAMEL_CASE) {
-					H2Index.warn("MatchRule.CAMEL_CASE is not supported by element references search."); //$NON-NLS-1$
-					matchRule = MatchRule.EXACT;
-				}
-
-				// Exact pattern
-				if (matchRule == MatchRule.EXACT) {
-					query.append(" AND NAME='").append(pattern).append('\'');
-				}
-				// Prefix
-				else if (matchRule == MatchRule.PREFIX) {
-					query.append(" AND NAME LIKE '").append(
-							escapeBackslash(pattern)).append("%'");
-				}
-				// Camel-case
-				else if (matchRule == MatchRule.CAMEL_CASE) {
-					query.append(" AND CC_NAME LIKE '").append(
-							escapeBackslash(pattern)).append("%'");
-				}
-				// Set of names
-				else if (matchRule == MatchRule.SET) {
-					String[] patternSet = SEPARATOR_PATTERN.split(pattern);
-					query.append(" AND NAME IN (");
-					for (int i = 0; i < patternSet.length; ++i) {
-						if (i > 0) {
-							query.append(',');
-						}
-						query.append('\'').append(patternSet[i]).append('\'');
-					}
-					query.append(')');
-				}
-				// POSIX pattern
-				else if (matchRule == MatchRule.PATTERN) {
-					query.append(" AND NAME LIKE '").append(
-							escapeBackslash(pattern).replace('*', '%').replace(
-									'?', '_')).append("'");
+			for (int i = 0; i < parameters.size(); ++i) {
+				final Object param = parameters.get(i);
+				if (param instanceof Integer) {
+					statement.setInt(i + 1, (Integer) param);
+				} else {
+					statement.setString(i + 1, (String) param);
 				}
 			}
 
-			// Flags
-			if (trueFlags != 0) {
-				query.append(" AND BITAND(FLAGS,").append(trueFlags).append(
-						") <> 0");
-			}
-			if (falseFlags != 0) {
-				query.append(" AND BITAND(FLAGS,").append(falseFlags).append(
-						") = 0");
-			}
-
-			// Qualifier
-			if (qualifier != null && qualifier.length() > 0) {
-				query.append(" AND QUALIFIER='").append(qualifier).append('\'');
-			}
-			// Parent
-			if (parent != null && parent.length() > 0) {
-				query.append(" AND PARENT='").append(parent).append('\'');
-			}
-
-			// Files or container paths
-			if (filesId != null) {
-				query.append(" AND FILE_ID IN(");
-				for (int i = 0; i < filesId.length; ++i) {
-					if (i > 0) {
-						query.append(",");
-					}
-					query.append(filesId[i]);
-				}
-				query.append(")");
-
-			} else if (containersId != null) {
-				query.append(" AND FILE_ID IN(SELECT ID FROM FILES WHERE CONTAINER_ID IN(");
-				for (int i = 0; i < containersId.length; ++i) {
-					if (i > 0) {
-						query.append(",");
-					}
-					query.append(containersId[i]);
-				}
-				query.append("))");
-			}
-
-			// Records limit
-			if (limit > 0) {
-				query.append(" LIMIT ").append(limit);
-			}
-			query.append(";");
-
-			if (H2Index.DEBUG) {
-				System.out.println("Query: " + query.toString());
-			}
-
-			ResultSet result = statement.executeQuery(query.toString());
+			final ResultSet result = statement.executeQuery();
 			try {
 				while (result.next()) {
 					++count;
@@ -319,7 +315,7 @@ public class H2ElementDao implements IElementDao {
 					}
 
 					int columnIndex = 0;
-					int id = result.getInt(++columnIndex);
+					result.getInt(++columnIndex);
 
 					int f = 0;
 					if (!isReference) {
@@ -356,12 +352,9 @@ public class H2ElementDao implements IElementDao {
 					int fileId = result.getInt(++columnIndex);
 
 					Element element = new Element(elementType, f, offset,
-							length, nameOffset, nameLength, modelManager
-									.intern(name), camelCaseName, metadata,
+							length, nameOffset, nameLength,
+							modelManager.intern(name), camelCaseName, metadata,
 							doc, qualifier, parent, fileId, isReference);
-					if (!isReference) {
-						H2Cache.addElement(element);
-					}
 
 					handler.handle(element);
 				}
@@ -376,5 +369,14 @@ public class H2ElementDao implements IElementDao {
 			System.out.println("Results = " + count + " ; Time taken = "
 					+ (System.currentTimeMillis() - timeStamp) + " ms.");
 		}
+	}
+
+	/**
+	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=446159
+	 * @param pattern
+	 * @return
+	 */
+	private String escapeLikePattern(String pattern) {
+		return pattern.replaceAll("[\\\\%_]", "\\\\$0"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 }

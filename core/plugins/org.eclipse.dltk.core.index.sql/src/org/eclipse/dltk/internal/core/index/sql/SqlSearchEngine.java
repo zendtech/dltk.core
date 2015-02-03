@@ -35,7 +35,7 @@ import org.eclipse.dltk.core.index.sql.Element;
 import org.eclipse.dltk.core.index.sql.File;
 import org.eclipse.dltk.core.index.sql.IElementHandler;
 import org.eclipse.dltk.core.index.sql.SqlIndex;
-import org.eclipse.dltk.core.index2.search.ISearchEngine;
+import org.eclipse.dltk.core.index2.search.ISearchEngineExtension;
 import org.eclipse.dltk.core.index2.search.ISearchRequestor;
 import org.eclipse.dltk.core.search.IDLTKSearchScope;
 import org.eclipse.dltk.internal.core.ArchiveFolder;
@@ -51,11 +51,20 @@ import org.eclipse.dltk.internal.core.search.DLTKWorkspaceScope;
  * @author michael
  * @since 2.0
  */
-public class SqlSearchEngine implements ISearchEngine {
+public class SqlSearchEngine implements ISearchEngineExtension {
 
 	public void search(int elementType, String qualifier, String elementName,
 			int trueFlags, int falseFlags, int limit, SearchFor searchFor,
 			MatchRule matchRule, IDLTKSearchScope scope,
+			ISearchRequestor requestor, IProgressMonitor monitor) {
+		search(elementType, qualifier, elementName, null, trueFlags,
+				falseFlags, limit, searchFor, matchRule, scope, requestor,
+				monitor);
+	}
+
+	public void search(int elementType, String qualifier, String elementName,
+			String parent, int trueFlags, int falseFlags, int limit,
+			SearchFor searchFor, MatchRule matchRule, IDLTKSearchScope scope,
 			final ISearchRequestor requestor, IProgressMonitor monitor) {
 
 		try {
@@ -145,13 +154,13 @@ public class SqlSearchEngine implements ISearchEngine {
 				if (searchForDecls) {
 					dbFactory.getElementDao().search(connection, elementName,
 							matchRule, elementType, trueFlags, falseFlags,
-							qualifier, null, filesId, containersId, natureId,
+							qualifier, parent, filesId, containersId, natureId,
 							limit, false, elementHandler, monitor);
 				}
 				if (searchForRefs) {
 					dbFactory.getElementDao().search(connection, elementName,
 							matchRule, elementType, trueFlags, falseFlags,
-							qualifier, null, filesId, containersId, natureId,
+							qualifier, parent, filesId, containersId, natureId,
 							limit, true, elementHandler, monitor);
 				}
 			} finally {

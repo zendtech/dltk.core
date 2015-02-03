@@ -60,7 +60,6 @@ import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences.IPreferenceChangeListener;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences.PreferenceChangeEvent;
 import org.eclipse.core.runtime.preferences.IPreferencesService;
-import org.eclipse.core.runtime.preferences.IScopeContext;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.dltk.compiler.problem.IProblem;
 import org.eclipse.dltk.compiler.util.HashtableOfObjectToInt;
@@ -1559,7 +1558,7 @@ public class ModelManager implements ISaveParticipant {
 
 			public void removed(IEclipsePreferences.NodeChangeEvent event) {
 				if (event.getChild() == preferencesLookup[PREF_DEFAULT]) {
-					preferencesLookup[PREF_DEFAULT] = ((IScopeContext) new DefaultScope())
+					preferencesLookup[PREF_DEFAULT] = DefaultScope.INSTANCE
 							.getNode(DLTKCore.PLUGIN_ID);
 				}
 			}

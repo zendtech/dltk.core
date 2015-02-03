@@ -2,8 +2,10 @@
 <feature
       id="org.eclipse.dltk.core.sdk"
       label="%featureName"
-      version="5.0.0.qualifier"
+      version="5.1.1.qualifier"
       provider-name="%providerName"
+      license-feature="org.eclipse.license"
+      license-feature-version="0.0.0"
       image="eclipse_update_120.jpg">
 
    <description>
@@ -15,7 +17,7 @@
    </license>
 
    <requires>
-      <import feature="org.eclipse.dltk.core" version="5.0.0" match="greaterOrEqual"/>
+      <import feature="org.eclipse.dltk.core" version="5.1.0" match="greaterOrEqual"/>
    </requires>
 
    <plugin

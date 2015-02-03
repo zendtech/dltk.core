@@ -11,6 +11,7 @@
  *******************************************************************************/
 package org.eclipse.dltk.internal.core.index.sql.h2;
 
+import java.io.File;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -98,7 +99,18 @@ public class H2DbFactory extends DbFactory {
 
 				// remove corrupted DB
 				try {
-					DeleteDbFiles.execute(dbPath.toOSString(), DB_NAME, true);
+					if (tries == 1) { // try force delete
+						File folder = new File(dbPath.toOSString());
+						for (File f : folder.listFiles()) {
+							if (f.getName().startsWith(DB_NAME + ".")) { //$NON-NLS-1$
+								f.delete();
+							}
+						}
+						initializeSchema = true;
+					} else {
+						DeleteDbFiles.execute(dbPath.toOSString(), DB_NAME,
+								true);
+					}
 
 				} catch (Exception e1) {
 					SqlIndex.error(
@@ -107,7 +119,7 @@ public class H2DbFactory extends DbFactory {
 					throw e1;
 				}
 			}
-		} while (connection == null && --tries > 0);
+		} while (connection == null && --tries >= 0);
 	}
 
 	/**
@@ -137,6 +149,17 @@ public class H2DbFactory extends DbFactory {
 		buf.append(";CACHE_SIZE=").append(
 				preferencesService.getInt(H2Index.PLUGIN_ID,
 						H2IndexPreferences.DB_CACHE_SIZE, 0, null));
+
+		buf.append(";QUERY_CACHE_SIZE=").append(
+				preferencesService.getInt(H2Index.PLUGIN_ID,
+						H2IndexPreferences.DB_QUERY_CACHE_SIZE, 0, null));
+
+		buf.append(";LARGE_RESULT_BUFFER_SIZE=").append(
+				preferencesService
+						.getInt(H2Index.PLUGIN_ID,
+								H2IndexPreferences.DB_LARGE_RESULT_BUFFER_SIZE,
+								0, null));
+		buf.append(";FILE_LOCK=NO");
 
 		return buf.toString();
 	}

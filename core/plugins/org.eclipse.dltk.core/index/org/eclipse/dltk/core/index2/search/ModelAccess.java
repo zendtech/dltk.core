@@ -263,11 +263,18 @@ public class ModelAccess {
 		return findElements(elementType, qualifier, name, matchRule, trueFlags,
 				falseFlags, scope, result, monitor);
 	}
-
 	protected <T extends IModelElement> boolean findElements(int elementType,
 			String qualifier, String name, MatchRule matchRule, int trueFlags,
 			int falseFlags, IDLTKSearchScope scope, final Collection<T> result,
 			IProgressMonitor monitor) {
+		return findElements(elementType, qualifier, name, null, matchRule,
+				trueFlags, falseFlags, scope, result, monitor);
+	}
+
+	protected <T extends IModelElement> boolean findElements(int elementType,
+			String qualifier, String name, String parent, MatchRule matchRule,
+			int trueFlags, int falseFlags, IDLTKSearchScope scope,
+			final Collection<T> result, IProgressMonitor monitor) {
 
 		IDLTKLanguageToolkit toolkit = scope.getLanguageToolkit();
 		if (toolkit == null) {
@@ -281,28 +288,34 @@ public class ModelAccess {
 		if (searchEngine == null) {
 			return false;
 		}
+		ISearchRequestor requestor = new ISearchRequestor() {
 
-		searchEngine.search(elementType, qualifier, name, trueFlags,
-				falseFlags, 0, SearchFor.DECLARATIONS, matchRule, scope,
-				new ISearchRequestor() {
+			@SuppressWarnings("unchecked")
+			public void match(int elementType, int flags, int offset,
+					int length, int nameOffset, int nameLength,
+					String elementName, String metadata, String doc,
+					String qualifier, String parent,
+					ISourceModule sourceModule, boolean isReference) {
 
-					@SuppressWarnings("unchecked")
-					public void match(int elementType, int flags, int offset,
-							int length, int nameOffset, int nameLength,
-							String elementName, String metadata, String doc,
-							String qualifier, String parent,
-							ISourceModule sourceModule, boolean isReference) {
-
-						IModelElement element = elementResolver.resolve(
-								elementType, flags, offset, length, nameOffset,
-								nameLength, elementName, metadata, doc,
-								qualifier,
-								parent, sourceModule);
-						if (element != null) {
-							result.add((T) element);
-						}
-					}
-				}, monitor);
+				IModelElement element = elementResolver.resolve(elementType,
+						flags, offset, length, nameOffset, nameLength,
+						elementName, metadata, doc, qualifier, parent,
+						sourceModule);
+				if (element != null) {
+					result.add((T) element);
+				}
+			}
+		};
+		if (searchEngine instanceof ISearchEngineExtension) {
+			((ISearchEngineExtension) searchEngine).search(elementType,
+					qualifier, name, parent, trueFlags, falseFlags, 0,
+					SearchFor.DECLARATIONS, matchRule, scope, requestor,
+					monitor);
+		} else {
+			searchEngine.search(elementType, qualifier, name, trueFlags,
+					falseFlags, 0, SearchFor.DECLARATIONS, matchRule, scope,
+					requestor, monitor);
+		}
 
 		return true;
 	}

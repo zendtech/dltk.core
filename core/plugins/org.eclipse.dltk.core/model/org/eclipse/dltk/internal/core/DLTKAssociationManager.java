@@ -15,7 +15,6 @@ import java.util.Set;
 
 import org.eclipse.core.runtime.preferences.DefaultScope;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
-import org.eclipse.core.runtime.preferences.IScopeContext;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.dltk.compiler.CharOperation;
 import org.eclipse.dltk.core.DLTKCore;
@@ -39,8 +38,9 @@ public class DLTKAssociationManager implements IDLTKAssociationManager {
 		synchronized (this) {
 			if (cachedPatterns == null) {
 				final IEclipsePreferences prefs = getEclipsePreferences();
-				initPatterns(prefs.get(DLTKCore.LANGUAGE_FILENAME_ASSOCIATIONS,
-						new DefaultScope().getNode(qualifier).get(
+				initPatterns(prefs.get(
+						DLTKCore.LANGUAGE_FILENAME_ASSOCIATIONS,
+						DefaultScope.INSTANCE.getNode(qualifier).get(
 								DLTKCore.LANGUAGE_FILENAME_ASSOCIATIONS, null)));
 			}
 			patterns = cachedPatterns;

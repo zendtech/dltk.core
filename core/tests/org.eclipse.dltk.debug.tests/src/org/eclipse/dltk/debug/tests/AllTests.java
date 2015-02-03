@@ -27,6 +27,7 @@ import org.eclipse.dltk.debug.dbgp.tests.DbgpStreamCommandsTests;
 import org.eclipse.dltk.debug.dbgp.tests.service.DbgpServiceDispatcherTests;
 import org.eclipse.dltk.debug.dbgp.tests.service.DbgpServiceTests;
 import org.eclipse.dltk.debug.tests.breakpoints.BreakpointTests;
+import org.eclipse.dltk.internal.debug.tests.VariableNameComparatorTest;
 
 public class AllTests {
 
@@ -58,6 +59,12 @@ public class AllTests {
 
 		// Breakpoints
 		suite.addTest(BreakpointTests.suite());
+
+		// Internal debug tests
+		final TestSuite internalSuite = new TestSuite("Internal debug tests");
+		internalSuite.addTestSuite(VariableNameComparatorTest.class);
+		suite.addTest(internalSuite);
+
 		// // $JUnit-END$
 		return suite;
 	}

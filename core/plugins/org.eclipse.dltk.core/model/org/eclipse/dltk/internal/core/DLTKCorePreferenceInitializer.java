@@ -56,7 +56,7 @@ public class DLTKCorePreferenceInitializer extends
 		optionNames.add(DLTKCore.PROJECT_SOURCE_PARSER_ID);
 
 		// Store default values to default preferences
-		IEclipsePreferences defaultPreferences = new DefaultScope()
+		IEclipsePreferences defaultPreferences = DefaultScope.INSTANCE
 				.getNode(DLTKCore.PLUGIN_ID);
 		for (Map.Entry<String, String> entry : defaultOptionsMap.entrySet()) {
 			String optionName = entry.getKey();

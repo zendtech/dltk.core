@@ -2,11 +2,12 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eclipse.dltk.core.tests;singleton:=true
-Bundle-Version: 5.0.0.qualifier
+Bundle-Version: 5.1.1.qualifier
 Bundle-Activator: org.eclipse.dltk.core.tests.model.ModelTestsPlugin
 Bundle-Vendor: %pluginProvider
 Bundle-Localization: plugin
 Require-Bundle: org.junit;bundle-version="4.8",
+ org.hamcrest.core,
  org.eclipse.dltk.annotations,
  org.eclipse.core.runtime,
  org.eclipse.core.resources,
@@ -22,5 +23,5 @@ Export-Package: org.eclipse.dltk.core.tests,
  org.eclipse.dltk.core.tests.model,
  org.eclipse.dltk.core.tests.util,
  org.eclipse.dltk.core.tests.xml
-Bundle-RequiredExecutionEnvironment: J2SE-1.5
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
