@@ -111,8 +111,6 @@ public class H2Cache {
 					filesById.remove(file.getId());
 				}
 			}
-
-			deleteElementsByFileId(file.getId());
 		} finally {
 			fileLock.release();
 		}
@@ -136,8 +134,6 @@ public class H2Cache {
 					filesByPath.remove(file.getPath());
 				}
 			}
-
-			deleteElementsByFileId(id);
 		} finally {
 			fileLock.release();
 		}
@@ -146,13 +142,7 @@ public class H2Cache {
 	public static void deleteFilesByContainerId(int id) {
 		fileLock.acquire();
 		try {
-			Map<Integer, File> filesById = filesByContainer.remove(id);
-			if (filesById != null) {
-				Iterator<Integer> i = filesById.keySet().iterator();
-				while (i.hasNext()) {
-					deleteElementsByFileId(i.next());
-				}
-			}
+			filesByContainer.remove(id);
 			filesByContainerAndPath.remove(id);
 		} finally {
 			fileLock.release();
