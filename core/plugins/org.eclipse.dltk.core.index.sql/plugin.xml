@@ -14,12 +14,12 @@
 <plugin>
    <extension-point id="dbFactory" name="Database Factory" schema="schema/dbFactory.exsd"/>
 
-   <extension
+ <!-- <extension
          point="org.eclipse.dltk.core.indexer">
       <indexer
             class="org.eclipse.dltk.internal.core.index.sql.SqlIndexer"
             id="org.eclipse.dltk.core.index.sql.indexer">
       </indexer>
-   </extension>
+   </extension>-->
    
 </plugin>

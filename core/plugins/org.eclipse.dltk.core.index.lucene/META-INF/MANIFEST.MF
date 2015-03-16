@@ -1,0 +1,16 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Indexer
+Bundle-SymbolicName: org.eclipse.dltk.core.index.lucene;singleton:=true
+Bundle-Version: 1.0.0.qualifier
+Bundle-Activator: org.eclipse.dltk.core.index.lucene.LuceneIndexerPlugin
+Require-Bundle: org.eclipse.core.runtime,
+ org.eclipse.core.resources,
+ org.eclipse.dltk.core
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-ActivationPolicy: lazy
+Bundle-ClassPath: .,
+ lib/lucene-analyzers-common-5.0.0.jar,
+ lib/lucene-core-5.0.0.jar,
+ lib/lucene-misc-5.0.0.jar,
+ lib/lucene-queries-5.0.0.jar
