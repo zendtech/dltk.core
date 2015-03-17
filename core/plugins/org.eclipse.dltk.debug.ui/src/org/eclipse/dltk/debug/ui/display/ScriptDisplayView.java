@@ -123,7 +123,6 @@ public class ScriptDisplayView extends PageBookView implements IConsoleView,
 		return false;
 	}
 
-	@Override
 	public void setWordWrap(boolean wordWrap) {
 	}
 
