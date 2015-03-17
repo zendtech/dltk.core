@@ -119,6 +119,14 @@ public class ScriptDisplayView extends PageBookView implements IConsoleView,
 		return getPageBook() != null && !getPageBook().isDisposed();
 	}
 
+	public boolean getWordWrap() {
+		return false;
+	}
+
+	@Override
+	public void setWordWrap(boolean wordWrap) {
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
