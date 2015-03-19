@@ -53,12 +53,9 @@ public abstract class RemoteDebuggingEngineRunner extends DebuggingEngineRunner 
 	public void run(InterpreterConfig config, ILaunch launch,
 			IProgressMonitor monitor) throws CoreException {
 		try {
-			initializeLaunch(launch, config,
-					createPreferencesLookupDelegate(launch));
-			final ScriptDebugTarget target = (ScriptDebugTarget) launch
-					.getDebugTarget();
-			waitDebuggerConnected(launch, new DebugSessionAcceptor(target,
-					monitor));
+			initializeLaunch(launch, config, createPreferencesLookupDelegate(launch));
+			final ScriptDebugTarget target = (ScriptDebugTarget) launch.getDebugTarget();
+			waitDebuggerConnected(launch, new DebugSessionAcceptor(target, monitor));
 		} catch (CoreException e) {
 			launch.terminate();
 			throw e;

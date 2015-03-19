@@ -55,6 +55,7 @@ public class DbgpXmlEntityParser extends DbgpXmlParser {
 	private static final String ATTR_CMDBEGIN = "cmdbegin"; //$NON-NLS-1$
 	private static final String ATTR_CMDEND = "cmdend"; //$NON-NLS-1$
 	private static final String ATTR_LINENO = "lineno"; //$NON-NLS-1$
+	private static final String ATTR_METHOD = "method"; //$NON-NLS-1$
 	private static final String ATTR_FILENAME = "filename"; //$NON-NLS-1$
 	private static final String ATTR_WHERE = "where"; //$NON-NLS-1$
 
@@ -92,6 +93,7 @@ public class DbgpXmlEntityParser extends DbgpXmlParser {
 		}
 
 		int lineNumber = Integer.parseInt(element.getAttribute(ATTR_LINENO));
+		String methodName = element.getAttribute(ATTR_METHOD);
 
 		/**
 		 * TODO Check ATTR_TYPE who knows when.
@@ -104,8 +106,9 @@ public class DbgpXmlEntityParser extends DbgpXmlParser {
 
 		final String where = element.getAttribute(ATTR_WHERE);
 
-		return new DbgpStackLevel(fileUri, where, level, lineNumber, beginLine,
-				beginColumn, endLine, endColumn);
+		return new DbgpStackLevel(fileUri, where, level, lineNumber,
+				lineNumber, methodName, beginLine, beginColumn, endLine,
+				endColumn);
 	}
 
 	private static final String FILE_SCHEME_PREFIX = DLTKDebugConstants.FILE_SCHEME

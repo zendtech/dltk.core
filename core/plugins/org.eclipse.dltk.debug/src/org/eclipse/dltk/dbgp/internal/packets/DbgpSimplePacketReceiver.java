@@ -9,43 +9,35 @@
  *******************************************************************************/
 package org.eclipse.dltk.dbgp.internal.packets;
 
-import java.io.InputStream;
-
+import org.eclipse.dltk.dbgp.exceptions.DbgpException;
 import org.eclipse.dltk.dbgp.internal.DbgpRawPacket;
-import org.eclipse.dltk.dbgp.internal.DbgpWorkingThread;
+import org.eclipse.dltk.debug.core.DLTKDebugPlugin;
 import org.w3c.dom.Document;
 
-public class DbgpPacketReceiver extends DbgpWorkingThread {
+public class DbgpSimplePacketReceiver {
 	private final DbgpResponcePacketWaiter responseWaiter;
 	private final DbgpPacketWaiter notifyWaiter;
 	private final DbgpPacketWaiter streamWaiter;
-	private final DbgpPackageProcessor packatProcessor;
+	private final DbgpPackageProcessor processor;
 
-	private final InputStream input;
 	private IDbgpRawLogger logger;
 
-	protected void workingCycle() throws Exception {
-		try {
-			while (!Thread.interrupted()) {
-				DbgpRawPacket packet = DbgpRawPacket.readPacket(input);
+	public DbgpSimplePacketReceiver() {
+		this.notifyWaiter = new DbgpPacketWaiter();
+		this.streamWaiter = new DbgpPacketWaiter();
+		this.responseWaiter = new DbgpResponcePacketWaiter();
+		this.processor = new DbgpPackageProcessor();
+	}
 
-				if (logger != null) {
-					logger.log(packet);
-				}
-
-				addDocument(packet.getParsedXml());
-			}
-		} finally {
-			responseWaiter.terminate();
-			notifyWaiter.terminate();
-			streamWaiter.terminate();
-		}
+	public void close() {
+		responseWaiter.terminate();
+		notifyWaiter.terminate();
+		streamWaiter.terminate();
 	}
 
 	protected void addDocument(Document doc) {
-
-		packatProcessor.processPacket(doc, notifyWaiter, responseWaiter,
-				streamWaiter);
+		processor
+				.processPacket(doc, notifyWaiter, responseWaiter, streamWaiter);
 	}
 
 	public DbgpNotifyPacket getNotifyPacket() throws InterruptedException {
@@ -61,21 +53,19 @@ public class DbgpPacketReceiver extends DbgpWorkingThread {
 		return responseWaiter.waitPacket(transactionId, timeout);
 	}
 
-	public DbgpPacketReceiver(InputStream input) {
-		super("DBGP - Packet receiver"); //$NON-NLS-1$
-
-		if (input == null) {
-			throw new IllegalArgumentException();
-		}
-
-		this.input = input;
-		this.notifyWaiter = new DbgpPacketWaiter();
-		this.streamWaiter = new DbgpPacketWaiter();
-		this.responseWaiter = new DbgpResponcePacketWaiter();
-		this.packatProcessor = new DbgpPackageProcessor();
-	}
-
 	public void setLogger(IDbgpRawLogger logger) {
 		this.logger = logger;
+	}
+
+	public void process(DbgpRawPacket packet) {
+		if (logger != null) {
+			logger.log(packet);
+		}
+
+		try {
+			addDocument(packet.getParsedXml());
+		} catch (DbgpException e) {
+			DLTKDebugPlugin.logError(e.getMessage(), e);
+		}
 	}
 }

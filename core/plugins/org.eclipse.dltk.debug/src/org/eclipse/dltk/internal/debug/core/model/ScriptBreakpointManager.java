@@ -36,6 +36,7 @@ import org.eclipse.dltk.debug.core.DebugOption;
 import org.eclipse.dltk.debug.core.IDLTKDebugToolkit;
 import org.eclipse.dltk.debug.core.ScriptDebugManager;
 import org.eclipse.dltk.debug.core.model.IScriptBreakpoint;
+import org.eclipse.dltk.debug.core.model.IScriptBreakpointLineMapper;
 import org.eclipse.dltk.debug.core.model.IScriptBreakpointPathMapper;
 import org.eclipse.dltk.debug.core.model.IScriptDebugTarget;
 import org.eclipse.dltk.debug.core.model.IScriptExceptionBreakpoint;
@@ -49,6 +50,7 @@ public class ScriptBreakpointManager implements IBreakpointListener,
 		IBreakpointManagerListener {
 
 	final IScriptBreakpointPathMapper bpPathMapper;
+	final IScriptBreakpointLineMapper bpLineMapper;
 
 	private static final IDbgpSession[] NO_SESSIONS = new IDbgpSession[0];
 
@@ -140,12 +142,19 @@ public class ScriptBreakpointManager implements IBreakpointListener,
 		} else if (breakpoint instanceof IScriptLineBreakpoint) {
 			IScriptLineBreakpoint lineBreakpoint = (IScriptLineBreakpoint) breakpoint;
 
+			config.setLineNo(lineBreakpoint.getLineNumber());
+
+			if (bpLineMapper != null) {
+				bpLineMapper.toDebuggerBreakpoint(bpUri,
+						lineBreakpoint.getLineNumber(), config);
+			}
+
 			if (ScriptBreakpointUtils.isConditional(lineBreakpoint)) {
 				id = commands.setConditionalBreakpoint(bpUri,
-						lineBreakpoint.getLineNumber(), config);
+						config.getLineNo(), config);
 			} else {
-				id = commands.setLineBreakpoint(bpUri,
-						lineBreakpoint.getLineNumber(), config);
+				id = commands.setLineBreakpoint(bpUri, config.getLineNo(),
+						config);
 			}
 		} else if (breakpoint instanceof IScriptExceptionBreakpoint) {
 			IScriptExceptionBreakpoint lineBreakpoint = (IScriptExceptionBreakpoint) breakpoint;
@@ -376,9 +385,11 @@ public class ScriptBreakpointManager implements IBreakpointListener,
 	}
 
 	public ScriptBreakpointManager(IScriptDebugTarget target,
-			IScriptBreakpointPathMapper pathMapper) {
+			IScriptBreakpointPathMapper pathMapper,
+			IScriptBreakpointLineMapper lineMapper) {
 		this.target = target;
 		this.bpPathMapper = pathMapper;
+		this.bpLineMapper = lineMapper;
 		this.sessions = NO_SESSIONS;
 	}
 

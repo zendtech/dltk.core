@@ -235,7 +235,6 @@ public class ScriptStackFrame extends ScriptDebugElement implements
 	}
 
 	public ScriptStackFrame(IScriptStack stack, IDbgpStackLevel stackLevel) {
-
 		this.stack = stack;
 		this.thread = stack.getThread();
 		this.level = stackLevel;
@@ -267,8 +266,8 @@ public class ScriptStackFrame extends ScriptDebugElement implements
 				final ISourceOffsetLookup offsetLookup = DLTKDebugPlugin
 						.getSourceOffsetLookup();
 				if (offsetLookup != null) {
-					return offsetLookup.calculateOffset(this, beginLine, level
-							.getBeginColumn(), false);
+					return offsetLookup.calculateOffset(this, beginLine,
+							level.getBeginColumn(), false);
 				}
 			}
 		}
@@ -304,6 +303,14 @@ public class ScriptStackFrame extends ScriptDebugElement implements
 
 	public int getLineNumber() throws DebugException {
 		return level.getLineNumber();
+	}
+
+	public int getMethodOffset() throws DebugException {
+		return level.getMethodOffset();
+	}
+
+	public String getMethodName() throws DebugException {
+		return getMethodName();
 	}
 
 	public int getBeginLine() {
@@ -502,8 +509,8 @@ public class ScriptStackFrame extends ScriptDebugElement implements
 	}
 
 	public String toString() {
-		return NLS.bind(Messages.ScriptStackFrame_stackFrame, new Integer(level
-				.getLevel()));
+		return NLS.bind(Messages.ScriptStackFrame_stackFrame,
+				new Integer(level.getLevel()));
 	}
 
 	public String getSourceLine() {

@@ -84,8 +84,12 @@ public class DbgpBreakpointCommands extends DbgpBaseCommands implements
 			request.addOption("-n", lineNumber.toString()); //$NON-NLS-1$
 		}
 
-		if (function != null) {
-			request.addOption("-m", function); //$NON-NLS-1$
+		if (function != null || info.getMethodName() != null) {
+			if (function != null) {
+				request.addOption("-m", function); //$NON-NLS-1$
+			} else {
+				request.addOption("-m", info.getMethodName()); //$NON-NLS-1$
+			}
 		}
 
 		if (exception != null) {

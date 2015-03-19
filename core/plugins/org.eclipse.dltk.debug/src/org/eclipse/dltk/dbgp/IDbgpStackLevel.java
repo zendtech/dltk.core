@@ -16,6 +16,10 @@ public interface IDbgpStackLevel {
 
 	int getLineNumber();
 
+	int getMethodOffset();
+
+	String getMethodName();
+
 	int getBeginLine();
 
 	int getBeginColumn();

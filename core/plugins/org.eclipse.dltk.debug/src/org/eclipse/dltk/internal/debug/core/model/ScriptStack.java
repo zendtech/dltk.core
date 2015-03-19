@@ -35,6 +35,8 @@ public class ScriptStack implements IScriptStack {
 
 	protected void readFrames() throws DbgpException {
 		final IDbgpStackLevel[] levels = requrestStackLevels();
+		((ScriptDebugTarget) thread.getScriptDebugTarget())
+				.updateStackLevels(levels);
 		synchronized (framesLock) {
 			final int newSize = levels.length;
 			final int oldSize = frames.length;
@@ -50,6 +52,7 @@ public class ScriptStack implements IScriptStack {
 			for (int i = 0; i < newCount; ++i) {
 				newFrames[i] = new ScriptStackFrame(this, levels[i]);
 			}
+
 			frames = newFrames;
 		}
 	}
