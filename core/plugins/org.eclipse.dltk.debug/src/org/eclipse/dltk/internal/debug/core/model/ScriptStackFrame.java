@@ -301,16 +301,16 @@ public class ScriptStackFrame extends ScriptDebugElement implements
 		return -1;
 	}
 
-	public int getLineNumber() throws DebugException {
+	public int getLineNumber() {
 		return level.getLineNumber();
 	}
 
-	public int getMethodOffset() throws DebugException {
+	public int getMethodOffset() {
 		return level.getMethodOffset();
 	}
 
-	public String getMethodName() throws DebugException {
-		return getMethodName();
+	public String getMethodName() {
+		return level.getMethodName();
 	}
 
 	public int getBeginLine() {
