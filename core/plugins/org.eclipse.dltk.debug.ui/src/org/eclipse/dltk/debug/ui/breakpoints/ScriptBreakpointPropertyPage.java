@@ -9,13 +9,22 @@
  *******************************************************************************/
 package org.eclipse.dltk.debug.ui.breakpoints;
 
+import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.dltk.core.DLTKCore;
+import org.eclipse.dltk.core.IDLTKLanguageToolkit;
+import org.eclipse.dltk.core.IScriptProject;
 import org.eclipse.dltk.debug.core.model.IScriptBreakpoint;
+import org.eclipse.dltk.debug.ui.DLTKDebugUILanguageManager;
 import org.eclipse.dltk.debug.ui.DLTKDebugUIPlugin;
+import org.eclipse.dltk.debug.ui.IDLTKDebugUILanguageToolkit;
+import org.eclipse.dltk.debug.ui.IDLTKDebugUILanguageToolkit2;
+import org.eclipse.dltk.debug.ui.breakpoints.IScriptBreakpointPropertyPageExtension.IScriptBreakpointPropertyPageExtensionEditor;
 import org.eclipse.dltk.internal.ui.editor.ScriptSourceViewer;
 import org.eclipse.dltk.ui.IDLTKUILanguageToolkit;
 import org.eclipse.dltk.ui.text.ScriptSourceViewerConfiguration;
@@ -53,6 +62,8 @@ public class ScriptBreakpointPropertyPage extends PropertyPage {
 	private Combo hitConditionCombo;
 	private Text hitValueText;
 
+	private IScriptBreakpointPropertyPageExtensionEditor extraEditor;
+
 	// Expression
 	private ScriptSourceViewer expressionViewer;
 	private Button enableExpressionButton;
@@ -72,12 +83,17 @@ public class ScriptBreakpointPropertyPage extends PropertyPage {
 
 	// Hit value & condition
 	protected void setHitCondition(int condition) {
-		hitConditionCombo.select(condition);
+		if (!hasOnlyGreaterOrEqualsHitCount()) {
+			hitConditionCombo.select(condition);
+		}
 	}
 
 	protected int getHitCondition() {
-		return getEnabledHitChecking() ? hitConditionCombo.getSelectionIndex()
-				: -1;
+		if (!hasOnlyGreaterOrEqualsHitCount()) {
+			return getEnabledHitChecking() ? hitConditionCombo
+					.getSelectionIndex() : -1;
+		}
+		return IScriptBreakpoint.HIT_CONDITION_GREATER_OR_EQUAL;
 	}
 
 	protected void setHitValue(int value) {
@@ -110,8 +126,8 @@ public class ScriptBreakpointPropertyPage extends PropertyPage {
 	protected void createLabels(Composite parent) throws CoreException {
 		IScriptBreakpoint breakpoint = getBreakpoint();
 
-		Composite labelComposite = SWTFactory.createComposite(parent, parent
-				.getFont(), 2, 1, GridData.FILL_HORIZONTAL);
+		Composite labelComposite = SWTFactory.createComposite(parent,
+				parent.getFont(), 2, 1, GridData.FILL_HORIZONTAL);
 
 		// Script language
 		SWTFactory.createLabel(labelComposite,
@@ -181,8 +197,8 @@ public class ScriptBreakpointPropertyPage extends PropertyPage {
 
 	// Breakpoint information
 	protected void createButtons(Composite parent) throws CoreException {
-		Composite buttonsComposite = SWTFactory.createComposite(parent, parent
-				.getFont(), 1, 1, GridData.FILL_HORIZONTAL);
+		Composite buttonsComposite = SWTFactory.createComposite(parent,
+				parent.getFont(), 1, 1, GridData.FILL_HORIZONTAL);
 
 		enabledBreakpointButton = SWTFactory.createCheckButton(
 				buttonsComposite, BreakpointMessages.EnabledLabel, null, false,
@@ -196,8 +212,8 @@ public class ScriptBreakpointPropertyPage extends PropertyPage {
 	}
 
 	protected void createHitCountEditor(Composite parent) {
-		Composite hitCountComposite = SWTFactory.createComposite(parent, parent
-				.getFont(), 4, 1, GridData.FILL_HORIZONTAL);
+		Composite hitCountComposite = SWTFactory.createComposite(parent,
+				parent.getFont(), 4, 1, GridData.FILL_HORIZONTAL);
 
 		// Hit count checking
 		hitCountCheckingButton = SWTFactory.createCheckButton(
@@ -210,28 +226,31 @@ public class ScriptBreakpointPropertyPage extends PropertyPage {
 			}
 		});
 
-		hitConditionCombo = new Combo(hitCountComposite, SWT.READ_ONLY);
+		if (!hasOnlyGreaterOrEqualsHitCount()) {
+			hitConditionCombo = new Combo(hitCountComposite, SWT.READ_ONLY);
 
-		// Hit condition
-		hitConditionCombo.add(BreakpointMessages.HitConditionGreaterOrEqual,
-				IScriptBreakpoint.HIT_CONDITION_GREATER_OR_EQUAL);
+			// Hit condition
+			hitConditionCombo.add(
+					BreakpointMessages.HitConditionGreaterOrEqual,
+					IScriptBreakpoint.HIT_CONDITION_GREATER_OR_EQUAL);
 
-		hitConditionCombo.add(BreakpointMessages.HitConditionEqual,
-				IScriptBreakpoint.HIT_CONDITION_EQUAL);
+			hitConditionCombo.add(BreakpointMessages.HitConditionEqual,
+					IScriptBreakpoint.HIT_CONDITION_EQUAL);
 
-		hitConditionCombo.add(BreakpointMessages.HitConditionMultiple,
-				IScriptBreakpoint.HIT_CONDITION_MULTIPLE);
+			hitConditionCombo.add(BreakpointMessages.HitConditionMultiple,
+					IScriptBreakpoint.HIT_CONDITION_MULTIPLE);
 
-		hitConditionCombo
-				.select(IScriptBreakpoint.HIT_CONDITION_GREATER_OR_EQUAL);
+			hitConditionCombo
+					.select(IScriptBreakpoint.HIT_CONDITION_GREATER_OR_EQUAL);
 
-		hitConditionCombo.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				updateControlsState(UPDATE_OTHER);
-			}
-		});
+			hitConditionCombo.addSelectionListener(new SelectionAdapter() {
+				public void widgetSelected(SelectionEvent e) {
+					updateControlsState(UPDATE_OTHER);
+				}
+			});
 
-		hitConditionCombo.setData(new GridData());
+			hitConditionCombo.setData(new GridData());
+		}
 
 		// Hit value
 		hitValueText = new Text(hitCountComposite, SWT.BORDER);
@@ -265,8 +284,8 @@ public class ScriptBreakpointPropertyPage extends PropertyPage {
 				.getUILanguageToolkit(getBreakpoint());
 
 		expressionViewer = new ScriptSourceViewer(group, null, null, false,
-				SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL, toolkit
-						.getPreferenceStore());
+				SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL,
+				toolkit.getPreferenceStore());
 
 		IDocument document = new Document();
 
@@ -290,8 +309,8 @@ public class ScriptBreakpointPropertyPage extends PropertyPage {
 
 	protected Control createContents(Composite parent) {
 		noDefaultAndApplyButton();
-		Composite composite = SWTFactory.createComposite(parent, parent
-				.getFont(), 1, 1, GridData.FILL_BOTH);
+		Composite composite = SWTFactory.createComposite(parent,
+				parent.getFont(), 1, 1, GridData.FILL_BOTH);
 
 		try {
 			createLabels(composite);
@@ -305,6 +324,12 @@ public class ScriptBreakpointPropertyPage extends PropertyPage {
 				createExpressionEditor(composite);
 			}
 
+			IScriptBreakpointPropertyPageExtension extension = getBreakpointPropertyPageExtension();
+			if (extension != null) {
+				extraEditor = extension
+						.createExtraPropertyEditor(getBreakpoint());
+			}
+
 			loadValues();
 			updateControlsState(UPDATE_INITIAL);
 		} catch (CoreException e) {
@@ -314,15 +339,53 @@ public class ScriptBreakpointPropertyPage extends PropertyPage {
 		return composite;
 	}
 
+	private IScriptBreakpointPropertyPageExtension getBreakpointPropertyPageExtension() {
+		IScriptBreakpoint breakpoint = getBreakpoint();
+		IMarker marker = breakpoint.getMarker();
+		if (marker != null) {
+			IProject project = marker.getResource().getProject();
+			IScriptProject scriptProject = DLTKCore.create(project);
+			IDLTKLanguageToolkit toolkit = scriptProject.getLanguageToolkit();
+			if (toolkit != null) {
+				IDLTKDebugUILanguageToolkit debugUILanguageToolkit = DLTKDebugUILanguageManager
+						.getLanguageToolkit(toolkit.getNatureId());
+				if (debugUILanguageToolkit != null
+						&& debugUILanguageToolkit instanceof IDLTKDebugUILanguageToolkit2) {
+					{
+						return ((IDLTKDebugUILanguageToolkit2) debugUILanguageToolkit)
+								.getBreakpointPropertyPageExtension();
+					}
+				}
+			}
+		}
+		return null;
+	}
+
 	protected boolean hasHitCountAttribute() {
 		return true;
 	}
 
 	protected boolean hasHitCountEditor() {
+		IScriptBreakpointPropertyPageExtension extension = getBreakpointPropertyPageExtension();
+		if (extension != null) {
+			return extension.hasHitCountEditor(getBreakpoint());
+		}
 		return true;
 	}
 
+	protected boolean hasOnlyGreaterOrEqualsHitCount() {
+		IScriptBreakpointPropertyPageExtension extension = getBreakpointPropertyPageExtension();
+		if (extension != null) {
+			return extension.hasOnlyGreaterOrEqualsHitCount(getBreakpoint());
+		}
+		return false;
+	}
+
 	protected boolean hasExpressionEditor() {
+		IScriptBreakpointPropertyPageExtension extension = getBreakpointPropertyPageExtension();
+		if (extension != null) {
+			return extension.hasExpressionEditor(getBreakpoint());
+		}
 		return true;
 	}
 
@@ -350,6 +413,9 @@ public class ScriptBreakpointPropertyPage extends PropertyPage {
 			setExpressionState(breakpoint.getExpressionState());
 			setExpression(breakpoint.getExpression());
 		}
+		if (extraEditor != null) {
+			extraEditor.loadContents(breakpoint);
+		}
 	}
 
 	protected void saveValues() throws CoreException {
@@ -366,13 +432,18 @@ public class ScriptBreakpointPropertyPage extends PropertyPage {
 			breakpoint.setExpression(getExpression());
 			breakpoint.setExpressionState(getExpressionState());
 		}
+		if (extraEditor != null) {
+			extraEditor.saveContents(breakpoint);
+		}
 	}
 
 	protected void updateControlsState(int mode) {
 		// Hit count
 		if (hasHitCountEditor()) {
 			boolean hitChecking = hitCountCheckingButton.getSelection();
-			hitConditionCombo.setEnabled(hitChecking);
+			if (!hasOnlyGreaterOrEqualsHitCount()) {
+				hitConditionCombo.setEnabled(hitChecking);
+			}
 			hitValueText.setEnabled(hitChecking);
 		}
 
