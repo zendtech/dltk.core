@@ -33,6 +33,18 @@ public interface IElementRequestor {
 		public String containerName;
 		public String name;
 		public String version;
+		/**
+		 * @since 5.2
+		 */
+		public String alias;
+		/**
+		 * @since 5.2
+		 */
+		public int type;
+		/**
+		 * @since 5.2
+		 */
+		public int modifiers;
 		public int sourceStart;
 		public int sourceEnd;
 	}

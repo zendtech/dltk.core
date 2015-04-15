@@ -462,7 +462,8 @@ public class SourceModuleStructureRequestor implements ISourceElementRequestor,
 		String elementName = ModelManager.getModelManager().intern(
 				importInfo.name);
 		ImportDeclaration handle = createImportDeclaration(importContainer,
-				elementName, importInfo.version);
+				elementName, importInfo.version, importInfo.alias,
+				importInfo.type, importInfo.modifiers);
 		resolveDuplicates(handle);
 
 		ImportDeclarationElementInfo info = new ImportDeclarationElementInfo();
@@ -481,6 +482,11 @@ public class SourceModuleStructureRequestor implements ISourceElementRequestor,
 	protected ImportDeclaration createImportDeclaration(ImportContainer parent,
 			String name, String version) {
 		return new ImportDeclaration(parent, name, version);
+	}
+
+	protected ImportDeclaration createImportDeclaration(ImportContainer parent,
+			String name, String version, String alias, int type, int flags) {
+		return new ImportDeclaration(parent, name, version, alias, type, flags);
 	}
 
 	public SourceElementRequestorMode getMode() {
