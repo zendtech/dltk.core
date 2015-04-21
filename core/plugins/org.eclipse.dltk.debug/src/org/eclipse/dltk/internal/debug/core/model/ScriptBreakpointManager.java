@@ -563,26 +563,27 @@ public class ScriptBreakpointManager implements IBreakpointListener,
 		if (!supportsBreakpoint(breakpoint)) {
 			return;
 		}
-		scheduleBackgroundOperation(target, new Runnable() {
-			@Override
-			public void run() {
-				try {
-					final IDbgpSession[] sessions = getSessions();
-					for (int i = 0; i < sessions.length; ++i) {
+		final IDbgpSession[] sessions = getSessions();
+		for (int i = 0; i < sessions.length; ++i) {
+			final IDbgpSession session = sessions[i];
+			scheduleBackgroundOperation(target, new Runnable() {
+				@Override
+				public void run() {
+					try {
 						if (breakpoint instanceof IScriptSpawnpoint) {
-							addSpawnpoint(sessions[i],
+							addSpawnpoint(session,
 									(IScriptSpawnpoint) breakpoint);
 						} else {
-							addBreakpoint(sessions[i],
+							addBreakpoint(session,
 									(IScriptBreakpoint) breakpoint);
 						}
+					} catch (Exception e) {
+						DLTKDebugPlugin.log(e);
 					}
-				} catch (Exception e) {
-					DLTKDebugPlugin.log(e);
 				}
+			});
+		}
 
-			}
-		});
 	}
 
 	/**
@@ -598,53 +599,59 @@ public class ScriptBreakpointManager implements IBreakpointListener,
 		if (!supportsBreakpoint(breakpoint)) {
 			return;
 		}
-		scheduleBackgroundOperation(target, new Runnable() {
-			@Override
-			public void run() {
-				try {
-					if (breakpoint instanceof IScriptSpawnpoint) {
-						final int changes = delta != null ? hasSpawnpointChanges(
-								delta, (IScriptSpawnpoint) breakpoint)
-								: MAJOR_CHANGE;
-						if (changes != NO_CHANGES) {
-							final IDbgpSession[] sessions = getSessions();
-							if (changes == MAJOR_CHANGE) {
-								for (int i = 0; i < sessions.length; ++i) {
-									removeSpawnpoint(sessions[i],
+		if (breakpoint instanceof IScriptSpawnpoint) {
+			final int changes = delta != null ? hasSpawnpointChanges(delta,
+					(IScriptSpawnpoint) breakpoint) : MAJOR_CHANGE;
+			if (changes != NO_CHANGES) {
+				final IDbgpSession[] sessions = getSessions();
+				for (int i = 0; i < sessions.length; ++i) {
+					final IDbgpSession session = sessions[i];
+					scheduleBackgroundOperation(target, new Runnable() {
+						@Override
+						public void run() {
+							try {
+								if (changes == MAJOR_CHANGE) {
+									removeSpawnpoint(session,
 											(IScriptSpawnpoint) breakpoint);
-									addSpawnpoint(sessions[i],
+									addSpawnpoint(session,
 											(IScriptSpawnpoint) breakpoint);
-								}
-							} else {
-								for (int i = 0; i < sessions.length; ++i) {
-									changeSpawnpoint(sessions[i],
+								} else {
+									changeSpawnpoint(session,
 											(IScriptSpawnpoint) breakpoint);
 								}
+							} catch (Exception e) {
+								DLTKDebugPlugin.logError(e.getMessage(), e);
 							}
 						}
-					} else {
-						final IScriptBreakpoint sbp = (IScriptBreakpoint) breakpoint;
-						final int changes = delta != null ? hasBreakpointChanges(
-								delta, sbp) : MAJOR_CHANGE;
-						if (changes != NO_CHANGES) {
-							final IDbgpSession[] sessions = getSessions();
-							if (changes == MAJOR_CHANGE) {
-								for (int i = 0; i < sessions.length; ++i) {
-									removeBreakpoint(sessions[i], sbp);
-									addBreakpoint(sessions[i], sbp);
-								}
-							} else {
-								for (int i = 0; i < sessions.length; ++i) {
-									changeBreakpoint(sessions[i], sbp);
-								}
-							}
-						}
-					}
-				} catch (Exception e) {
-					DLTKDebugPlugin.log(e);
+					});
 				}
 			}
-		});
+		} else {
+			final IScriptBreakpoint sbp = (IScriptBreakpoint) breakpoint;
+			final int changes = delta != null ? hasBreakpointChanges(delta, sbp)
+					: MAJOR_CHANGE;
+			if (changes != NO_CHANGES) {
+				final IDbgpSession[] sessions = getSessions();
+				for (int i = 0; i < sessions.length; ++i) {
+					final IDbgpSession session = sessions[i];
+					scheduleBackgroundOperation(target, new Runnable() {
+						@Override
+						public void run() {
+							try {
+								if (changes == MAJOR_CHANGE) {
+									removeBreakpoint(session, sbp);
+									addBreakpoint(session, sbp);
+								} else {
+									changeBreakpoint(session, sbp);
+								}
+							} catch (Exception e) {
+								DLTKDebugPlugin.logError(e.getMessage(), e);
+							}
+						}
+					});
+				}
+			}
+		}
 	}
 
 	public void breakpointRemoved(final IBreakpoint breakpoint,
@@ -652,57 +659,55 @@ public class ScriptBreakpointManager implements IBreakpointListener,
 		if (!supportsBreakpoint(breakpoint)) {
 			return;
 		}
-		scheduleBackgroundOperation(target, new Runnable() {
-			@Override
-			public void run() {
-				try {
-					final IDbgpSession[] sessions = getSessions();
-					if (breakpoint instanceof IScriptSpawnpoint) {
-						for (int i = 0; i < sessions.length; ++i) {
-							removeSpawnpoint(sessions[i],
-									(IScriptSpawnpoint) breakpoint);
-						}
-					} else {
-						for (int i = 0; i < sessions.length; ++i) {
-							removeBreakpoint(sessions[i],
-									(IScriptBreakpoint) breakpoint);
-						}
-					}
-				} catch (Exception e) {
-					DLTKDebugPlugin.log(e);
-				}
-			}
-		});
-	}
-
-	// IBreakpointManagerListener
-	public void breakpointManagerEnablementChanged(boolean enabled) {
-		scheduleBackgroundOperation(target, new Runnable() {
-			@Override
-			public void run() {
-				IBreakpoint[] breakpoints = getBreakpointManager()
-						.getBreakpoints(target.getModelIdentifier());
-				final IDbgpSession[] sessions = getSessions();
-				for (int i = 0; i < breakpoints.length; ++i) {
+		final IDbgpSession[] sessions = getSessions();
+		for (int i = 0; i < sessions.length; ++i) {
+			final IDbgpSession session = sessions[i];
+			scheduleBackgroundOperation(target, new Runnable() {
+				@Override
+				public void run() {
 					try {
-						final IBreakpoint breakpoint = breakpoints[i];
 						if (breakpoint instanceof IScriptSpawnpoint) {
-							for (int j = 0; j < sessions.length; ++j) {
-								changeSpawnpoint(sessions[j],
-										(IScriptSpawnpoint) breakpoint);
-							}
-						} else if (breakpoint instanceof IScriptBreakpoint) {
-							for (int j = 0; j < sessions.length; ++j) {
-								changeBreakpoint(sessions[j],
-										(IScriptBreakpoint) breakpoint);
-							}
+							removeSpawnpoint(session,
+									(IScriptSpawnpoint) breakpoint);
+						} else {
+							removeBreakpoint(session,
+									(IScriptBreakpoint) breakpoint);
 						}
 					} catch (Exception e) {
 						DLTKDebugPlugin.log(e);
 					}
 				}
+			});
+		}
+	}
+
+	// IBreakpointManagerListener
+	public void breakpointManagerEnablementChanged(boolean enabled) {
+		IBreakpoint[] breakpoints = getBreakpointManager().getBreakpoints(
+				target.getModelIdentifier());
+		final IDbgpSession[] sessions = getSessions();
+		for (int i = 0; i < breakpoints.length; ++i) {
+			final IBreakpoint breakpoint = breakpoints[i];
+			for (int j = 0; j < sessions.length; ++j) {
+				final IDbgpSession session = sessions[j];
+				scheduleBackgroundOperation(target, new Runnable() {
+					@Override
+					public void run() {
+						try {
+							if (breakpoint instanceof IScriptSpawnpoint) {
+								changeSpawnpoint(session,
+										(IScriptSpawnpoint) breakpoint);
+							} else {
+								changeBreakpoint(session,
+										(IScriptBreakpoint) breakpoint);
+							}
+						} catch (Exception e) {
+							DLTKDebugPlugin.log(e);
+						}
+					}
+				});
 			}
-		});
+		}
 	}
 
 	private void scheduleBackgroundOperation(final IScriptDebugTarget target,
@@ -719,11 +724,6 @@ public class ScriptBreakpointManager implements IBreakpointListener,
 					DLTKDebugPlugin.logError(r.getMessage(), r);
 				}
 				return Status.OK_STATUS;
-			}
-
-			@Override
-			public boolean belongsTo(Object family) {
-				return super.belongsTo(target);
 			}
 		};
 		breakpointBackgroundJob.setSystem(true);
