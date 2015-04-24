@@ -59,21 +59,17 @@ public class DebugConsoleManager implements ILaunchesListener2 {
 		if (launch == null) {
 			return false;
 		}
-		if (!Boolean
-				.parseBoolean(launch
-						.getAttribute(ScriptLaunchConfigurationConstants.ATTR_USE_CONSOLE_IN_RUN_MODE))) {
-			if (!Boolean
-					.parseBoolean(launch
-							.getAttribute(ScriptLaunchConfigurationConstants.ATTR_USE_CONSOLE_IN_RUN_MODE))
-					&& !ILaunchManager.DEBUG_MODE
-							.equals(launch.getLaunchMode())) {
+		if (!Boolean.parseBoolean(launch.getAttribute(
+				ScriptLaunchConfigurationConstants.ATTR_USE_CONSOLE_IN_RUN_MODE))) {
+			if (!ILaunchManager.DEBUG_MODE.equals(launch.getLaunchMode())) {
 				return false;
 			}
 		}
 		return launch.getProcesses().length != 0
 				&& DLTKDebugLaunchConstants.isDebugConsole(launch)
 				|| launch.getDebugTarget() instanceof IScriptDebugTarget
-				&& ((IScriptDebugTarget) launch.getDebugTarget()).isRemote();
+						&& ((IScriptDebugTarget) launch.getDebugTarget())
+								.isRemote();
 	}
 
 	/**
@@ -83,8 +79,10 @@ public class DebugConsoleManager implements ILaunchesListener2 {
 		final String encoding = selectEncoding(launch);
 		final IProcess[] processes = launch.getProcesses();
 		final IProcess process = processes.length != 0 ? processes[0] : null;
-		final IConsoleColorProvider colorProvider = getColorProvider(process != null ? process
-				.getAttribute(IProcess.ATTR_PROCESS_TYPE) : null);
+		final IConsoleColorProvider colorProvider = getColorProvider(
+				process != null
+						? process.getAttribute(IProcess.ATTR_PROCESS_TYPE)
+						: null);
 		final ScriptDebugConsole console = new ScriptDebugConsole(launch,
 				computeName(launch), null, encoding, colorProvider);
 		if (process != null) {
@@ -157,8 +155,8 @@ public class DebugConsoleManager implements ILaunchesListener2 {
 				consoleName = Util.EMPTY_STRING;
 			}
 		}
-		consoleName = Messages.DebugConsoleManager_debugConsole
-				+ " " + consoleName; //$NON-NLS-1$
+		consoleName = Messages.DebugConsoleManager_debugConsole + " " //$NON-NLS-1$
+				+ consoleName;
 		if (launch.isTerminated()) {
 			consoleName = NLS.bind(Messages.DebugConsoleManager_terminated,
 					consoleName);
@@ -169,7 +167,8 @@ public class DebugConsoleManager implements ILaunchesListener2 {
 	/**
 	 * @since 2.0
 	 */
-	protected String computeName(ILaunchConfiguration config, IProcess process) {
+	protected String computeName(ILaunchConfiguration config,
+			IProcess process) {
 		String type = null;
 		try {
 			type = config.getType().getName();
@@ -278,17 +277,15 @@ public class DebugConsoleManager implements ILaunchesListener2 {
 	private IConsoleColorProvider getColorProvider(String type) {
 		if (fColorProviders == null) {
 			fColorProviders = new HashMap<String, IConfigurationElement>();
-			IExtensionPoint extensionPoint = Platform
-					.getExtensionRegistry()
-					.getExtensionPoint(
-							IDebugUIConstants.PLUGIN_ID,
+			IExtensionPoint extensionPoint = Platform.getExtensionRegistry()
+					.getExtensionPoint(IDebugUIConstants.PLUGIN_ID,
 							IDebugUIConstants.EXTENSION_POINT_CONSOLE_COLOR_PROVIDERS);
 			IConfigurationElement[] elements = extensionPoint
 					.getConfigurationElements();
 			for (int i = 0; i < elements.length; i++) {
 				IConfigurationElement extension = elements[i];
-				fColorProviders.put(
-						extension.getAttribute("processType"), extension); //$NON-NLS-1$
+				fColorProviders.put(extension.getAttribute("processType"), //$NON-NLS-1$
+						extension);
 			}
 		}
 		IConfigurationElement extension = fColorProviders.get(type);
@@ -299,12 +296,10 @@ public class DebugConsoleManager implements ILaunchesListener2 {
 				if (colorProvider instanceof IConsoleColorProvider) {
 					return (IConsoleColorProvider) colorProvider;
 				}
-				DLTKDebugUIPlugin
-						.logErrorMessage(MessageFormat
-								.format("Extension {0} must specify an instanceof IConsoleColorProvider for class attribute.", //$NON-NLS-1$
-										new String[] { extension
-												.getDeclaringExtension()
-												.getUniqueIdentifier() }));
+				DLTKDebugUIPlugin.logErrorMessage(MessageFormat.format(
+						"Extension {0} must specify an instanceof IConsoleColorProvider for class attribute.", //$NON-NLS-1$
+						new String[] { extension.getDeclaringExtension()
+								.getUniqueIdentifier() }));
 			} catch (CoreException e) {
 				DLTKDebugUIPlugin.log(e);
 			}
