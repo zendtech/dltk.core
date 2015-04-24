@@ -31,6 +31,7 @@ import org.eclipse.debug.ui.console.IConsoleColorProvider;
 import org.eclipse.dltk.compiler.util.Util;
 import org.eclipse.dltk.debug.core.DLTKDebugLaunchConstants;
 import org.eclipse.dltk.debug.core.model.IScriptDebugTarget;
+import org.eclipse.dltk.launching.ScriptLaunchConfigurationConstants;
 import org.eclipse.dltk.launching.process.IScriptProcess;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.ui.console.ConsolePlugin;
@@ -58,8 +59,16 @@ public class DebugConsoleManager implements ILaunchesListener2 {
 		if (launch == null) {
 			return false;
 		}
-		if (!ILaunchManager.DEBUG_MODE.equals(launch.getLaunchMode())) {
-			return false;
+		if (!Boolean
+				.parseBoolean(launch
+						.getAttribute(ScriptLaunchConfigurationConstants.ATTR_USE_CONSOLE_IN_RUN_MODE))) {
+			if (!Boolean
+					.parseBoolean(launch
+							.getAttribute(ScriptLaunchConfigurationConstants.ATTR_USE_CONSOLE_IN_RUN_MODE))
+					&& !ILaunchManager.DEBUG_MODE
+							.equals(launch.getLaunchMode())) {
+				return false;
+			}
 		}
 		return launch.getProcesses().length != 0
 				&& DLTKDebugLaunchConstants.isDebugConsole(launch)
@@ -75,8 +84,7 @@ public class DebugConsoleManager implements ILaunchesListener2 {
 		final IProcess[] processes = launch.getProcesses();
 		final IProcess process = processes.length != 0 ? processes[0] : null;
 		final IConsoleColorProvider colorProvider = getColorProvider(process != null ? process
-				.getAttribute(IProcess.ATTR_PROCESS_TYPE)
-				: null);
+				.getAttribute(IProcess.ATTR_PROCESS_TYPE) : null);
 		final ScriptDebugConsole console = new ScriptDebugConsole(launch,
 				computeName(launch), null, encoding, colorProvider);
 		if (process != null) {
@@ -102,8 +110,8 @@ public class DebugConsoleManager implements ILaunchesListener2 {
 				.getLaunchConfiguration();
 		if (configuration != null) {
 			try {
-				return DebugPlugin.getDefault().getLaunchManager().getEncoding(
-						configuration);
+				return DebugPlugin.getDefault().getLaunchManager()
+						.getEncoding(configuration);
 			} catch (CoreException e) {
 				DLTKDebugUIPlugin.log(e);
 			}
@@ -293,8 +301,7 @@ public class DebugConsoleManager implements ILaunchesListener2 {
 				}
 				DLTKDebugUIPlugin
 						.logErrorMessage(MessageFormat
-								.format(
-										"Extension {0} must specify an instanceof IConsoleColorProvider for class attribute.", //$NON-NLS-1$
+								.format("Extension {0} must specify an instanceof IConsoleColorProvider for class attribute.", //$NON-NLS-1$
 										new String[] { extension
 												.getDeclaringExtension()
 												.getUniqueIdentifier() }));
