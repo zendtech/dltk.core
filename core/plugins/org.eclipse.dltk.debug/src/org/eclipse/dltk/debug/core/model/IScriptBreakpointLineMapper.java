@@ -10,7 +10,7 @@ import org.eclipse.dltk.dbgp.breakpoints.DbgpBreakpointConfig;
  * one to another.
  * 
  * @author Andrey Sobolev (haiodo@gmail.com)
- *
+ * @since 5.2
  */
 public interface IScriptBreakpointLineMapper {
 

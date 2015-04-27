@@ -124,6 +124,10 @@ public class ScriptBreakpointManager implements IBreakpointListener,
 			IScriptWatchpoint watchpoint = (IScriptWatchpoint) breakpoint;
 			config.setExpression(makeWatchpointExpression(watchpoint));
 
+			if (bpLineMapper != null) {
+				bpLineMapper.toDebuggerBreakpoint(bpUri,
+						watchpoint.getLineNumber(), config);
+			}
 			id = commands.setWatchBreakpoint(bpUri, watchpoint.getLineNumber(),
 					config);
 		} else if (breakpoint instanceof IScriptMethodEntryBreakpoint) {
@@ -237,9 +241,11 @@ public class ScriptBreakpointManager implements IBreakpointListener,
 			// All other breakpoints
 			final String id = breakpoint.getId(session);
 			if (id != null) {
-				final DbgpBreakpointConfig config = createBreakpointConfig(breakpoint);
+				final DbgpBreakpointConfig config = createBreakpointConfig(
+						breakpoint);
 				if (breakpoint instanceof IScriptWatchpoint) {
-					config.setExpression(makeWatchpointExpression((IScriptWatchpoint) breakpoint));
+					config.setExpression(makeWatchpointExpression(
+							(IScriptWatchpoint) breakpoint));
 				}
 				commands.updateBreakpoint(id, config);
 			}
@@ -286,7 +292,8 @@ public class ScriptBreakpointManager implements IBreakpointListener,
 
 				if (oldValue == null) {
 					if (newValue != null) {
-						return classifyBreakpointChange(delta, breakpoint, attr);
+						return classifyBreakpointChange(delta, breakpoint,
+								attr);
 					}
 					continue;
 				}
@@ -316,7 +323,8 @@ public class ScriptBreakpointManager implements IBreakpointListener,
 					final Object newValue = marker.getAttribute(attr);
 					if (oldValue == null) {
 						if (newValue != null) {
-							return IMarker.LINE_NUMBER.equals(attr) ? MAJOR_CHANGE
+							return IMarker.LINE_NUMBER.equals(attr)
+									? MAJOR_CHANGE
 									: MINOR_CHANGE;
 						}
 						continue;
@@ -348,7 +356,8 @@ public class ScriptBreakpointManager implements IBreakpointListener,
 				AbstractScriptBreakpoint.EXPRESSION_STATE, false);
 		final String oldExpr = delta.getAttribute(
 				AbstractScriptBreakpoint.EXPRESSION, null);
-		if (ScriptBreakpointUtils.isConditional(oldExprState, oldExpr) != conditional) {
+		if (ScriptBreakpointUtils.isConditional(oldExprState,
+				oldExpr) != conditional) {
 			return MAJOR_CHANGE;
 		}
 		if (IMarker.LINE_NUMBER.equals(attr)
@@ -446,7 +455,8 @@ public class ScriptBreakpointManager implements IBreakpointListener,
 				if (sessions.length == 1) {
 					sessions = NO_SESSIONS;
 				} else {
-					final IDbgpSession[] temp = new IDbgpSession[sessions.length - 1];
+					final IDbgpSession[] temp = new IDbgpSession[sessions.length
+							- 1];
 					if (i > 0) {
 						System.arraycopy(sessions, 0, temp, 0, i);
 					}
@@ -463,7 +473,8 @@ public class ScriptBreakpointManager implements IBreakpointListener,
 		return false;
 	}
 
-	public void initializeSession(IDbgpSession session, IProgressMonitor monitor) {
+	public void initializeSession(IDbgpSession session,
+			IProgressMonitor monitor) {
 		if (!addSession(session)) {
 			return;
 		}
@@ -482,7 +493,8 @@ public class ScriptBreakpointManager implements IBreakpointListener,
 			} catch (Exception e) {
 				DLTKDebugPlugin.logWarning(
 						NLS.bind(Messages.ErrorSetupDeferredBreakpoints,
-								e.getMessage()), e);
+								e.getMessage()),
+						e);
 				if (DLTKCore.DEBUG) {
 					e.printStackTrace();
 				}
