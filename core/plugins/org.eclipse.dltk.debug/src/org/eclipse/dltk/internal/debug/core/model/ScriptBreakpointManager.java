@@ -123,12 +123,12 @@ public class ScriptBreakpointManager implements IBreakpointListener,
 		if (breakpoint instanceof IScriptWatchpoint) {
 			IScriptWatchpoint watchpoint = (IScriptWatchpoint) breakpoint;
 			config.setExpression(makeWatchpointExpression(watchpoint));
-
+			config.setLineNo(watchpoint.getLineNumber());
 			if (bpLineMapper != null) {
 				bpLineMapper.toDebuggerBreakpoint(bpUri,
-						watchpoint.getLineNumber(), config);
+						config.getLineNo(), config);
 			}
-			id = commands.setWatchBreakpoint(bpUri, watchpoint.getLineNumber(),
+			id = commands.setWatchBreakpoint(bpUri, config.getLineNo(),
 					config);
 		} else if (breakpoint instanceof IScriptMethodEntryBreakpoint) {
 			IScriptMethodEntryBreakpoint entryBreakpoint = (IScriptMethodEntryBreakpoint) breakpoint;
@@ -153,7 +153,7 @@ public class ScriptBreakpointManager implements IBreakpointListener,
 
 			if (bpLineMapper != null) {
 				bpLineMapper.toDebuggerBreakpoint(bpUri,
-						lineBreakpoint.getLineNumber(), config);
+						config.getLineNo(), config);
 			}
 
 			if (ScriptBreakpointUtils.isConditional(lineBreakpoint)) {
