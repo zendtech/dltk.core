@@ -142,7 +142,8 @@ public class ScriptBreakpointPropertyPage extends PropertyPage {
 				BreakpointMessages.InternalIdLabel, 1);
 
 		String[] engineIds = breakpoint.getIdentifiers();
-		String engineIdText = (engineIds == null || engineIds.length == 0) ? BreakpointMessages.InternalIdNotAvailableMessage
+		String engineIdText = (engineIds == null || engineIds.length == 0)
+				? BreakpointMessages.InternalIdNotAvailableMessage
 				: TextUtils.join(engineIds, ',');
 		SWTFactory.createLabel(labelComposite, engineIdText, 1);
 
@@ -152,7 +153,8 @@ public class ScriptBreakpointPropertyPage extends PropertyPage {
 					BreakpointMessages.HitCountLabel, 1);
 
 			int hitCount = breakpoint.getHitCount();
-			String hitCountText = hitCount == -1 ? BreakpointMessages.HitCountNotAvailableMessage
+			String hitCountText = hitCount == -1
+					? BreakpointMessages.HitCountNotAvailableMessage
 					: Integer.toString(hitCount);
 			SWTFactory.createLabel(labelComposite, hitCountText, 1);
 		}
@@ -339,7 +341,7 @@ public class ScriptBreakpointPropertyPage extends PropertyPage {
 		return composite;
 	}
 
-	private IScriptBreakpointPropertyPageExtension getBreakpointPropertyPageExtension() {
+	protected IScriptBreakpointPropertyPageExtension getBreakpointPropertyPageExtension() {
 		IScriptBreakpoint breakpoint = getBreakpoint();
 		IMarker marker = breakpoint.getMarker();
 		if (marker != null) {

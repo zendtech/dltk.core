@@ -29,6 +29,10 @@ public class ScriptWatchpointPropertyPage extends ScriptBreakpointPropertyPage {
 	}
 
 	protected boolean hasExpressionEditor() {
+		IScriptBreakpointPropertyPageExtension extension = getBreakpointPropertyPageExtension();
+		if (extension != null) {
+			return extension.hasExpressionEditor(getBreakpoint());
+		}
 		return false;
 	}
 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) xored software, Inc.
+ * Copyright (c) 2015 xored software, Inc.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -7,10 +7,17 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     xored software, Inc. - initial API and Implementation
+ *     xored software, Inc. - initial API and Implementation (Andrey Sobolev)
  *******************************************************************************/
-package org.eclipse.dltk.debug.ui.breakpoints;
+package org.eclipse.dltk.debug.core;
 
-public interface IScriptBreakpointLineValidator {
-	boolean isValid(String line, int number);
+public interface IDLTKDebugToolkit2 extends IDLTKDebugToolkit {
+
+	/**
+	 * Construct a complex expression in format fieldName|expression.
+	 * 
+	 * @return
+	 */
+	boolean isWatchpointComplexSupported();
+
 }
