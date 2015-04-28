@@ -13,8 +13,6 @@ package org.eclipse.dltk.internal.ui;
 
 import org.eclipse.core.resources.IStorage;
 import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.core.runtime.IAdapterManager;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.dltk.core.DLTKCore;
 import org.eclipse.dltk.core.IExternalSourceModule;
 import org.eclipse.dltk.core.IModelElement;
@@ -53,12 +51,6 @@ public class ExternalSourceModuleEditorInputFactory implements IElementFactory {
 
 	public static IPersistableElement createPersistableElement(
 			final IExternalSourceModule module) {
-		IAdapterManager ADAPTERS = Platform.getAdapterManager();
-		final IPersistableElement element = (IPersistableElement) ADAPTERS
-				.getAdapter(module, IPersistableElement.class);
-		if (element != null)
-			return element;
-
 		return new IPersistableElement() {
 
 			public String getFactoryId() {
