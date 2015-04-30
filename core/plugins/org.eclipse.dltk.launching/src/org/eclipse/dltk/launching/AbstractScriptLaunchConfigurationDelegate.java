@@ -903,8 +903,8 @@ public abstract class AbstractScriptLaunchConfigurationDelegate extends
 		 */
 		launch.setAttribute(DebugPlugin.ATTR_CAPTURE_OUTPUT, null);
 		try {
-			IProject project = ScriptRuntime.getScriptProject(configuration)
-					.getProject();
+			IScriptProject scriptProject = ScriptRuntime.getScriptProject(configuration);
+			IProject project = scriptProject == null ? null : scriptProject.getProject();
 
 			if (monitor == null) {
 				monitor = new NullProgressMonitor();
