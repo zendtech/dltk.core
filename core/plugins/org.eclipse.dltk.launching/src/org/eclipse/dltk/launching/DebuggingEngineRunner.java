@@ -68,8 +68,9 @@ public abstract class DebuggingEngineRunner extends AbstractInterpreterRunner {
 		}
 		final IScriptDebugTarget target = createDebugTarget(launch, service);
 		launch.addDebugTarget(target);
-		IScriptDebugThreadConfigurator configurator = createThreadConfigurator(launch
-				.getLaunchConfiguration());
+		IScriptDebugThreadConfigurator configurator = createThreadConfigurator(
+				launch
+						.getLaunchConfiguration());
 		if (configurator != null) {
 			((ScriptDebugTarget) target)
 					.setScriptDebugThreadConfigurator(configurator);
@@ -128,7 +129,8 @@ public abstract class DebuggingEngineRunner extends AbstractInterpreterRunner {
 			return;
 		}
 		try {
-			PreferencesLookupDelegate delegate = createPreferencesLookupDelegate(launch);
+			PreferencesLookupDelegate delegate = createPreferencesLookupDelegate(
+					launch);
 
 			initializeLaunch(launch, config, delegate);
 			final ScriptDebugTarget target = (ScriptDebugTarget) launch
@@ -157,7 +159,7 @@ public abstract class DebuggingEngineRunner extends AbstractInterpreterRunner {
 
 	protected IProcess startProcess(InterpreterConfig config, ILaunch launch,
 			IProgressMonitor monitor, PreferencesLookupDelegate delegate)
-			throws CoreException {
+					throws CoreException {
 		InterpreterConfig newConfig = addEngineConfig(config, delegate, launch);
 
 		// Starting debugging engine
@@ -215,7 +217,8 @@ public abstract class DebuggingEngineRunner extends AbstractInterpreterRunner {
 	protected void waitDebuggerConnected(IProcess process, ILaunch launch,
 			IProgressMonitor monitor) throws CoreException {
 		ScriptDebugTarget target = (ScriptDebugTarget) launch.getDebugTarget();
-		waitDebuggerConnected(launch, new DebugSessionAcceptor(target, monitor));
+		waitDebuggerConnected(launch,
+				new DebugSessionAcceptor(target, monitor));
 	}
 
 	/**
@@ -275,7 +278,8 @@ public abstract class DebuggingEngineRunner extends AbstractInterpreterRunner {
 			ILaunch launch) throws CoreException {
 		IScriptProject sProject = ScriptRuntime.getScriptProject(launch
 				.getLaunchConfiguration());
-		return new PreferencesLookupDelegate(sProject.getProject());
+		return new PreferencesLookupDelegate(
+				sProject == null ? null : sProject.getProject());
 	}
 
 	/**
