@@ -14,7 +14,6 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -795,7 +794,7 @@ public class TypeInfoViewer {
 					fFilter.getNamePattern(), searchRule, 0,
 					Modifiers.AccNameSpace, fScope, monitor);
 			if (searchRule == MatchRule.CAMEL_CASE) {
-				LinkedList<IType> result = new LinkedList<IType>();
+				Set<IType> result = new HashSet<IType>();
 				if (types != null) {
 					result.addAll(Arrays.asList(types));
 				}
