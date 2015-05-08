@@ -33,6 +33,7 @@ import org.eclipse.dltk.core.ISourceReference;
 import org.eclipse.dltk.core.IType;
 import org.eclipse.dltk.core.ModelException;
 import org.eclipse.dltk.internal.core.ProjectFragment;
+import org.eclipse.dltk.internal.ui.StandardModelElementContentProvider;
 import org.eclipse.dltk.internal.ui.navigator.ProjectFragmentContainer;
 import org.eclipse.dltk.internal.ui.scriptview.BuildPathContainer;
 import org.eclipse.dltk.ui.util.ExceptionHandler;
@@ -49,6 +50,9 @@ import org.eclipse.ui.views.markers.internal.ConcreteMarker;
 public class DLTKStructureBridge extends AbstractContextStructureBridge {
 
 	public final static String CONTENT_TYPE = "DLTK"; //$NON-NLS-1$
+
+	private final StandardModelElementContentProvider modelContentProvider = new StandardModelElementContentProvider(
+			true);
 
 	@Override
 	public String getContentType() {
@@ -68,8 +72,8 @@ public class DLTKStructureBridge extends AbstractContextStructureBridge {
 	@Override
 	public String getParentHandle(String handle) {
 		IModelElement javaElement = (IModelElement) getObjectForHandle(handle);
-		if (javaElement != null && javaElement.getParent() != null) {
-			return getHandleIdentifier(javaElement.getParent());
+		if (javaElement != null && modelContentProvider.getParent(javaElement) != null) {
+			return getHandleIdentifier(modelContentProvider.getParent(javaElement));
 		} else {
 			return null;
 		}
@@ -82,11 +86,11 @@ public class DLTKStructureBridge extends AbstractContextStructureBridge {
 			IModelElement element = (IModelElement) object;
 			if (element instanceof IParent) {
 				IParent parent = (IParent) element;
-				IModelElement[] children;
+				Object[] children;
 				try {
-					children = parent.getChildren();
+					children = modelContentProvider.getExtendedChildren(element, parent.getChildren());
 					List<String> childHandles = new ArrayList<String>();
-					for (IModelElement element2 : children) {
+					for (Object element2 : children) {
 						String childHandle = getHandleIdentifier(element2);
 						if (childHandle != null) {
 							childHandles.add(childHandle);
@@ -336,7 +340,7 @@ public class DLTKStructureBridge extends AbstractContextStructureBridge {
 
 	/**
 	 * Some copying from:
-	 * 
+	 *
 	 * @see org.eclipse.jdt.ui.ProblemsLabelDecorator
 	 */
 	public boolean containsProblem(IInteractionElement node) {
