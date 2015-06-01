@@ -11,6 +11,7 @@ package org.eclipse.dltk.internal.ui.editor;
 
 import org.eclipse.core.resources.IStorage;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.dltk.core.IExternalSourceModule;
 import org.eclipse.dltk.core.IModelElement;
 import org.eclipse.dltk.internal.ui.ExternalSourceModuleEditorInputFactory;
@@ -46,6 +47,12 @@ public class ExternalStorageEditorInput implements IEditorInput,
 
 	public IPersistableElement getPersistable() {
 		if (fStorage instanceof IExternalSourceModule) {
+			final IPersistableElement element = (IPersistableElement) Platform
+					.getAdapterManager()
+					.getAdapter(fStorage, IPersistableElement.class);
+			if (element != null) {
+				return element;
+			}
 			return ExternalSourceModuleEditorInputFactory
 					.createPersistableElement((IExternalSourceModule) fStorage);
 		}
@@ -65,28 +72,14 @@ public class ExternalStorageEditorInput implements IEditorInput,
 			String label = labels.getTextLabel(fStorage,
 					ScriptElementLabels.PREPEND_ROOT_PATH);
 			return label;
-			// final IEnvironment environment = EnvironmentManager
-			// .getEnvironment(modelElement);
-			// if (environment != null) {
-			// return environment.convertPathToString(path);
-			// }
 		}
 
 		return path.toOSString();
 	}
 
 	public Object getAdapter(Class adapter) {
-		// if (!(fStorage instanceof BuiltinSourceModule)
-		// && (adapter == this.getClass() || adapter ==
-		// ILocationProvider.class)) {
-		// return this;
-		// }
-		// if (!(fStorage instanceof BuiltinSourceModule)
-		// && (adapter == this.getClass() || adapter ==
-		// ILocationProvider.class)) {
-		// return this;
-		// }
-		if (adapter == IModelElement.class && fStorage instanceof IModelElement) {
+		if (adapter == IModelElement.class
+				&& fStorage instanceof IModelElement) {
 			return fStorage;
 		}
 		return null;
@@ -107,9 +100,6 @@ public class ExternalStorageEditorInput implements IEditorInput,
 		return fStorage.equals(other.fStorage);
 	}
 
-	/*
-	 * (non-Javadoc) Method declared on Object.
-	 */
 	public int hashCode() {
 		return fStorage.hashCode();
 	}

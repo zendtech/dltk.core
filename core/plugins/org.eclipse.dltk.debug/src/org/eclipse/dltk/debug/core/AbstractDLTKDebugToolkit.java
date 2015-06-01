@@ -11,9 +11,13 @@
  *******************************************************************************/
 package org.eclipse.dltk.debug.core;
 
-public abstract class AbstractDLTKDebugToolkit implements IDLTKDebugToolkit {
+public abstract class AbstractDLTKDebugToolkit implements IDLTKDebugToolkit2 {
 
 	public boolean isAccessWatchpointSupported() {
+		return false;
+	}
+
+	public boolean isWatchpointComplexSupported() {
 		return false;
 	}
 

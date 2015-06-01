@@ -184,7 +184,7 @@ public class DocumentationHover extends AbstractScriptEditorTextHover implements
 		public OpenDeclarationAction(BrowserInformationControl infoControl) {
 			fInfoControl = infoControl;
 			setText(ScriptHoverMessages.ScriptdocHover_openDeclaration);
-			DLTKPluginImages.setLocalImageDescriptors(this, "goto_input.gif"); //$NON-NLS-1$ //TODO: better images
+			DLTKPluginImages.setLocalImageDescriptors(this, "goto_input.png"); //$NON-NLS-1$ //TODO: better images
 		}
 
 		/*

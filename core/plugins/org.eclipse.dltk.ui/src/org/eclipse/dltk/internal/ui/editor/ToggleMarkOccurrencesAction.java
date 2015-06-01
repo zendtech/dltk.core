@@ -39,7 +39,7 @@ public class ToggleMarkOccurrencesAction extends TextEditorAction implements
 	public ToggleMarkOccurrencesAction() {
 		super(ScriptEditorMessages.getBundleForConstructedKeys(),
 				"ToggleMarkOccurrencesAction.", null, IAction.AS_CHECK_BOX); //$NON-NLS-1$
-		DLTKPluginImages.setToolImageDescriptors(this, "mark_occurrences.gif"); //$NON-NLS-1$
+		DLTKPluginImages.setToolImageDescriptors(this, "mark_occurrences.png"); //$NON-NLS-1$
 		// PlatformUI.getWorkbench().getHelpSystem().setHelp(this,
 		// IJavaHelpContextIds.TOGGLE_MARK_OCCURRENCES_ACTION);
 		update();

@@ -4,6 +4,7 @@ import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IValue;
 import org.eclipse.debug.core.model.IVariable;
+import org.eclipse.dltk.debug.core.IScriptVariableContainer;
 import org.eclipse.dltk.debug.core.model.AtomicScriptType;
 import org.eclipse.dltk.debug.core.model.IScriptStackFrame;
 import org.eclipse.dltk.debug.core.model.IScriptType;
@@ -11,19 +12,26 @@ import org.eclipse.dltk.debug.core.model.IScriptValue;
 import org.eclipse.dltk.debug.core.model.IScriptVariable;
 
 public class ScriptVariableWrapper extends ScriptDebugElement implements
-		IScriptVariable {
+		IScriptVariable, IScriptVariableContainer {
 
 	final IDebugTarget target;
 	private final String name;
 	private IVariable[] children;
 
 	private IScriptValue value = null;
+	private ContainerKind kind;
 
 	public ScriptVariableWrapper(IDebugTarget target, String name,
-			IVariable[] children) {
+			IVariable[] children, IScriptVariableContainer.ContainerKind kind) {
 		this.target = target;
 		this.name = name;
 		this.children = children;
+		this.kind = kind;
+	}
+
+	@Override
+	public ContainerKind getVariablesContainerKind() {
+		return kind;
 	}
 
 	public IVariable[] getChildren() throws DebugException {

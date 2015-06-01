@@ -430,7 +430,7 @@ public class ScriptOutlinePage extends Page implements IContentOutlinePage,
 			// IJavaHelpContextIds.LEXICAL_SORTING_OUTLINE_ACTION);
 			setText(DLTKEditorMessages.ScriptOutlinePage_Sort_label);
 			DLTKPluginImages.setLocalImageDescriptors(this,
-					"alphab_sort_co.gif"); //$NON-NLS-1$
+					"alphab_sort_co.png"); //$NON-NLS-1$
 			setToolTipText(DLTKEditorMessages.ScriptOutlinePage_Sort_tooltip);
 			setDescription(DLTKEditorMessages.ScriptOutlinePage_Sort_description);
 

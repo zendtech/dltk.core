@@ -143,13 +143,13 @@ public class DLTKSearchResultPage extends AbstractTextSearchViewPage implements 
 
 	private void initGroupingActions() {
 		fGroupProjectAction= new GroupAction(SearchMessages.DLTKSearchResultPage_groupby_project, SearchMessages.DLTKSearchResultPage_groupby_project_tooltip, this, LevelTreeContentProvider.LEVEL_PROJECT); 
-		DLTKPluginImages.setLocalImageDescriptors(fGroupProjectAction, "prj_mode.gif"); //$NON-NLS-1$
+		DLTKPluginImages.setLocalImageDescriptors(fGroupProjectAction, "prj_mode.png"); //$NON-NLS-1$
 		fGroupPackageAction= new GroupAction(SearchMessages.DLTKSearchResultPage_groupby_package, SearchMessages.DLTKSearchResultPage_groupby_package_tooltip, this, LevelTreeContentProvider.LEVEL_PACKAGE); 
-		DLTKPluginImages.setLocalImageDescriptors(fGroupPackageAction, "package_mode.gif"); //$NON-NLS-1$
+		DLTKPluginImages.setLocalImageDescriptors(fGroupPackageAction, "package_mode.png"); //$NON-NLS-1$
 		fGroupFileAction= new GroupAction(SearchMessages.DLTKSearchResultPage_groupby_file, SearchMessages.DLTKSearchResultPage_groupby_file_tooltip, this, LevelTreeContentProvider.LEVEL_FILE); 
-		DLTKPluginImages.setLocalImageDescriptors(fGroupFileAction, "file_mode.gif"); //$NON-NLS-1$
+		DLTKPluginImages.setLocalImageDescriptors(fGroupFileAction, "file_mode.png"); //$NON-NLS-1$
 		fGroupTypeAction= new GroupAction(SearchMessages.DLTKSearchResultPage_groupby_type, SearchMessages.DLTKSearchResultPage_groupby_type_tooltip, this, LevelTreeContentProvider.LEVEL_TYPE); 
-		DLTKPluginImages.setLocalImageDescriptors(fGroupTypeAction, "type_mode.gif"); //$NON-NLS-1$
+		DLTKPluginImages.setLocalImageDescriptors(fGroupTypeAction, "type_mode.png"); //$NON-NLS-1$
 	}
 
 	public void setViewPart(ISearchResultViewPart part) {

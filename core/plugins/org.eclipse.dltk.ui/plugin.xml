@@ -211,21 +211,21 @@
 	
 	    <view
 	          name="%ScriptExplorerView.name"
-	          icon="$nl$/icons/full/eview16/package.gif"
+	          icon="$nl$/icons/full/eview16/package.png"
 	          category="org.eclipse.dltk.ui.main"
 	          class="org.eclipse.dltk.internal.ui.scriptview.ScriptExplorerPart"
 	          id="org.eclipse.dltk.ui.ScriptExplorer">
 	    </view>
 	    <view
 		  	name="%CallHierarchyView.name"
-		  	icon="$nl$/icons/full/eview16/call_hierarchy.gif"
+		  	icon="$nl$/icons/full/eview16/call_hierarchy.png"
 		  	category="org.eclipse.dltk.ui.main"
 		  	class="org.eclipse.dltk.internal.ui.callhierarchy.CallHierarchyViewPart"
 		  	id="org.eclipse.dltk.callhierarchy.view">
 	    </view>
 	    <view
 			name="%TypeHierarchy.name"
-			icon="$nl$/icons/full/eview16/class_hi.gif"
+			icon="$nl$/icons/full/eview16/class_hi.png"
 			category="org.eclipse.dltk.ui.main"
 			class="org.eclipse.dltk.internal.ui.typehierarchy.TypeHierarchyViewPart"
 			id="org.eclipse.dltk.ui.TypeHierarchy">
@@ -461,7 +461,7 @@
             name="%ScriptWorkingSetPage.name"
             pageClass="org.eclipse.dltk.internal.ui.workingsets.ScriptWorkingSetPage"
             updaterClass="org.eclipse.dltk.internal.ui.workingsets.ScriptWorkingSetUpdater"
-            icon="/icons/full/obj16/workingSet_obj.gif"
+            icon="/icons/full/obj16/workingSet_obj.png"
             id="org.eclipse.dltk.ui.ScriptWorkingSetPage">
       </workingSet>
    </extension>
@@ -471,7 +471,7 @@
    <extension point="org.eclipse.ui.workingSets">
       <workingSet
             name="%OthersWorkingSetWizardPage.name"
-            icon="/icons/full/obj16/workingSet_obj.gif"
+            icon="/icons/full/obj16/workingSet_obj.png"
             updaterClass="org.eclipse.dltk.internal.ui.workingsets.OthersWorkingSetUpdater"
             id="org.eclipse.dltk.internal.ui.OthersWorkingSet">
       </workingSet>
@@ -485,7 +485,7 @@
 		id="scriptNoTypeProposalCategory"
 		name="%ScriptProposalCategory">
 		<proposalCategory
-			icon="/icons/full/elcl16/scriptassist_co.gif"/>
+			icon="/icons/full/elcl16/scriptassist_co.png"/>
 	</extension>
  <extension
        point="org.eclipse.ui.commands">
@@ -849,8 +849,8 @@
                toolbarPath="org.eclipse.ui.edit.text.actionSet.presentation/Presentation"
                id="org.eclipse.dltk.ui.edit.text.script.toggleMarkOccurrences"
                definitionId="org.eclipse.dltk.ui.edit.text.script.toggleMarkOccurrences"
-               disabledIcon="$nl$/icons/full/dtool16/mark_occurrences.gif"
-               icon="$nl$/icons/full/etool16/mark_occurrences.gif"
+               disabledIcon="$nl$/icons/full/dtool16/mark_occurrences.png"
+               icon="$nl$/icons/full/etool16/mark_occurrences.png"
                helpContextId="org.eclipse.dltk.ui.toggle_mark_occurrences_action_context"
                label="%toggleMarkOccurrences.label"
                retarget="true"
@@ -1078,21 +1078,21 @@
 		id="scriptTypeProposalCategory"
 		name="%ScriptTypesCategory">
 		<proposalCategory
-			icon="/icons/full/elcl16/scripttypeassist_co.gif"/>
+			icon="/icons/full/elcl16/scripttypeassist_co.png"/>
 	</extension>
 	<extension
 		point="org.eclipse.dltk.ui.scriptCompletionProposalComputer"
 		id="templateProposalCategory"
 		name="%TemplateProposalCategory">
 		<proposalCategory
-			icon="$nl$/icons/full/elcl16/templateprop_co.gif"/>
+			icon="$nl$/icons/full/elcl16/templateprop_co.png"/>
 	</extension>
 	<extension
 		point="org.eclipse.dltk.ui.scriptCompletionProposalComputer"
 		id="textProposalCategory"
 		name="%TextProposalCategory">
 		<proposalCategory
-			icon="/icons/full/elcl16/wordassist_co.gif"/>
+			icon="/icons/full/elcl16/wordassist_co.png"/>
 	</extension>
    <extension
          point="org.eclipse.dltk.ui.dltkElementFilters">
@@ -1344,7 +1344,7 @@
 		id="templateProposalCategory"
 		name="%TemplateProposalCategory">
 		<proposalCategory
-			icon="/icons/full/elcl16/templateprop_co.gif"/>
+			icon="/icons/full/elcl16/templateprop_co.png"/>
 	</extension>
 
 <!-- =========================================================================== -->
@@ -1396,7 +1396,7 @@
 <!-- dialog group  -->
          <!--action
                label="%openScriptSearchPageAction.label"
-               icon="$nl$/icons/full/obj16/jsearch_obj.gif"
+               icon="$nl$/icons/full/obj16/jsearch_obj.png"
                helpContextId="java_search_action_context"
                class="org.eclipse.dltk.internal.ui.search.OpenScriptSearchPageAction"
                menubarPath="org.eclipse.search.menu/dialogGroup"
@@ -1710,7 +1710,7 @@
 	<specification
 		annotationType="org.eclipse.dltk.ui.occurrences"
 		label="%OccurrenceAnnotation.label"
-		icon="$nl$/icons/full/obj16/searchm_obj.gif"
+		icon="$nl$/icons/full/obj16/searchm_obj.png"
 		textPreferenceKey="occurrenceIndication"
 		textPreferenceValue="false"
 		highlightPreferenceKey="occurrenceHighlighting"

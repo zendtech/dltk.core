@@ -36,8 +36,8 @@ public class DbgpRawPacket implements IDbgpRawPacket {
 				size = size * 10 + (b - '0');
 			} else {
 				final String msg = NLS.bind(
-						Messages.DbgpRawPacket_invalidCharInPacketSize, Integer
-								.toString(b));
+						Messages.DbgpRawPacket_invalidCharInPacketSize,
+						Integer.toString(b));
 				DLTKDebugPlugin.logWarning(msg);
 				throw new IOException(msg);
 			}
@@ -81,7 +81,7 @@ public class DbgpRawPacket implements IDbgpRawPacket {
 
 	private final byte[] xml;
 
-	protected DbgpRawPacket(int size, byte[] xml) {
+	public DbgpRawPacket(int size, byte[] xml) {
 		this.size = size;
 		this.xml = xml;
 	}

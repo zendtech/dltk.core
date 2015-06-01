@@ -72,11 +72,14 @@ public class ImportContainer extends SourceRefElement implements
 			if (memento.hasMoreTokens()) {
 				String importName = memento.nextToken();
 				String version = memento.nextToken();
+				String alias = memento.nextToken();
+				int type = Integer.parseInt(memento.nextToken());
+				int flags = Integer.parseInt(memento.nextToken());
 				if (version.length() == 0) {
 					version = null;
 				}
 				ModelElement importDecl = (ModelElement) getImport(importName,
-						version);
+						version, alias, type, flags);
 				return importDecl.getHandleFromMemento(memento,
 						workingCopyOwner);
 			} else {
@@ -97,10 +100,23 @@ public class ImportContainer extends SourceRefElement implements
 	/**
 	 * @see IImportContainer
 	 */
+	@Override
 	public IImportDeclaration getImport(String importName, String version) {
 		return new ImportDeclaration(this, importName, version);
 	}
 
+	/**
+	 * @see IImportContainer
+	 * @since 5.2
+	 */
+	@Override
+	public IImportDeclaration getImport(String importName, String version,
+			String alias, int type, int flags) {
+		return new ImportDeclaration(this, importName, version, alias, type,
+				flags);
+	}
+
+	@Override
 	public IImportDeclaration[] getImports() throws ModelException {
 		List<IModelElement> list = getChildrenOfType(IMPORT_DECLARATION);
 		return list.toArray(new IImportDeclaration[list.size()]);

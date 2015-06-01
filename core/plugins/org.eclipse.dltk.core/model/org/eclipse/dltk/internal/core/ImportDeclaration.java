@@ -27,6 +27,9 @@ public class ImportDeclaration extends SourceRefElement implements
 		IImportDeclaration {
 
 	private final String name;
+	private final String alias;
+	private final int type;
+	private final int flags;
 	private final String version;
 
 	/**
@@ -35,9 +38,20 @@ public class ImportDeclaration extends SourceRefElement implements
 	 */
 	protected ImportDeclaration(ImportContainer parent, String name,
 			String version) {
+		this(parent, name, version, null, 0, 0);
+	}
+
+	/**
+	 * @since 5.2
+	 */
+	protected ImportDeclaration(ImportContainer parent, String name,
+			String version, String alias, int type, int flags) {
 		super(parent);
 		this.name = name;
 		this.version = version;
+		this.alias = alias;
+		this.type = type;
+		this.flags = flags;
 	}
 
 	@Override
@@ -80,6 +94,14 @@ public class ImportDeclaration extends SourceRefElement implements
 	public void getHandleMemento(StringBuffer buff) {
 		((ModelElement) getParent()).getHandleMemento(buff);
 		escapeMementoName(buff, getElementName());
+		buff.append(JEM_COUNT);
+		escapeMementoName(buff, version);
+		buff.append(JEM_COUNT);
+		escapeMementoName(buff, alias);
+		buff.append(JEM_COUNT);
+		buff.append(type);
+		buff.append(JEM_COUNT);
+		buff.append(flags);
 		if (this.occurrenceCount > 1) {
 			buff.append(JEM_COUNT);
 			buff.append(this.occurrenceCount);
@@ -108,7 +130,7 @@ public class ImportDeclaration extends SourceRefElement implements
 			return this;
 		return new ImportDeclaration(new ImportContainer(cu,
 				((ImportContainer) this.parent).getContainerName()), name,
-				version);
+				version, alias, type, flags);
 	}
 
 	/**
@@ -137,5 +159,20 @@ public class ImportDeclaration extends SourceRefElement implements
 
 	public ISourceRange getNameRange() throws ModelException {
 		return getSourceRange();
+	}
+
+	@Override
+	public String getAlias() {
+		return alias;
+	}
+
+	@Override
+	public int getType() {
+		return type;
+	}
+
+	@Override
+	public int getFlags() {
+		return flags;
 	}
 }

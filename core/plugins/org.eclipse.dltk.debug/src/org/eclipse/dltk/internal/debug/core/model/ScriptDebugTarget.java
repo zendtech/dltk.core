@@ -35,6 +35,7 @@ import org.eclipse.dltk.core.DLTKLanguageManager;
 import org.eclipse.dltk.core.IDLTKLanguageToolkit;
 import org.eclipse.dltk.core.IScriptProject;
 import org.eclipse.dltk.dbgp.IDbgpSession;
+import org.eclipse.dltk.dbgp.IDbgpStackLevel;
 import org.eclipse.dltk.dbgp.IDbgpStreamFilter;
 import org.eclipse.dltk.dbgp.IDbgpThreadAcceptor;
 import org.eclipse.dltk.debug.core.DLTKDebugLaunchConstants;
@@ -43,6 +44,7 @@ import org.eclipse.dltk.debug.core.ExtendedDebugEventDetails;
 import org.eclipse.dltk.debug.core.IDbgpService;
 import org.eclipse.dltk.debug.core.IDebugOptions;
 import org.eclipse.dltk.debug.core.model.DefaultDebugOptions;
+import org.eclipse.dltk.debug.core.model.IScriptBreakpointLineMapper;
 import org.eclipse.dltk.debug.core.model.IScriptBreakpointPathMapper;
 import org.eclipse.dltk.debug.core.model.IScriptDebugTarget;
 import org.eclipse.dltk.debug.core.model.IScriptDebugTargetListener;
@@ -96,6 +98,8 @@ public class ScriptDebugTarget extends ScriptDebugElement implements
 
 	private final IDebugOptions options;
 
+	private IScriptBreakpointLineMapper lineMapper;
+
 	public static List getAllTargets() {
 		synchronized (targets) {
 			return new ArrayList(targets.keySet());
@@ -128,8 +132,9 @@ public class ScriptDebugTarget extends ScriptDebugElement implements
 
 		this.disconnected = false;
 
+		lineMapper = createLineMapper();
 		this.breakpointManager = new ScriptBreakpointManager(this,
-				createPathMapper());
+				createPathMapper(), lineMapper);
 
 		DebugEventHelper.fireCreateEvent(this);
 		synchronized (targets) {
@@ -295,13 +300,10 @@ public class ScriptDebugTarget extends ScriptDebugElement implements
 
 	// Request timeout
 	public int getRequestTimeout() {
-		// TODO Auto-generated method stub
 		return 0;
 	}
 
 	public void setRequestTimeout(int timeout) {
-		// TODO Auto-generated method stub
-
 	}
 
 	// IBreakpointListener
@@ -341,6 +343,10 @@ public class ScriptDebugTarget extends ScriptDebugElement implements
 
 	protected IScriptBreakpointPathMapper createPathMapper() {
 		return new NopScriptbreakpointPathMapper();
+	}
+
+	protected IScriptBreakpointLineMapper createLineMapper() {
+		return new NopScriptBreakpointLineMapper();
 	}
 
 	public void allThreadsTerminated() {
@@ -550,4 +556,20 @@ public class ScriptDebugTarget extends ScriptDebugElement implements
 		return false;
 	}
 
+	/**
+	 * Update stack traces if it is required.
+	 * 
+	 * @since 5.2
+	 */
+	public void updateStackLevels(IDbgpStackLevel[] levels) {
+		if (lineMapper != null) {
+			for (int i = 0; i < levels.length; i++) {
+				IDbgpStackLevel level = lineMapper
+						.getSourceStackLevel(levels[i]);
+				if (level != null) {
+					levels[i] = level;
+				}
+			}
+		}
+	}
 }

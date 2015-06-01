@@ -341,7 +341,7 @@ public class ScriptOutlineInformationControl extends AbstractInformationControl 
 			setDescription(TextMessages.ScriptOutlineInformationControl_LexicalSortingAction_description);
 
 			DLTKPluginImages.setLocalImageDescriptors(this,
-					"alphab_sort_co.gif"); //$NON-NLS-1$
+					"alphab_sort_co.png"); //$NON-NLS-1$
 
 			fOutlineViewer = outlineViewer;
 
@@ -392,7 +392,7 @@ public class ScriptOutlineInformationControl extends AbstractInformationControl 
 			setToolTipText(TextMessages.ScriptOutlineInformationControl_SortByDefiningTypeAction_tooltip);
 
 			DLTKPluginImages.setLocalImageDescriptors(this,
-					"definingtype_sort_co.gif"); //$NON-NLS-1$
+					"definingtype_sort_co.png"); //$NON-NLS-1$
 
 			fOutlineViewer = outlineViewer;
 

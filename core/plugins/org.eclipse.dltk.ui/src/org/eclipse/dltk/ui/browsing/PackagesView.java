@@ -448,9 +448,9 @@ public class PackagesView extends ScriptBrowsingPart {
 				ScriptBrowsingMessages.PackagesView_HierarchicalLayoutAction_label,
 				TREE_VIEW_STATE);
 		DLTKPluginImages.setLocalImageDescriptors(switchToFlatViewAction,
-				"flatLayout.gif"); //$NON-NLS-1$
+				"flatLayout.png"); //$NON-NLS-1$
 		DLTKPluginImages.setLocalImageDescriptors(
-				switchToHierarchicalViewAction, "hierarchicalLayout.gif"); //$NON-NLS-1$
+				switchToHierarchicalViewAction, "hierarchicalLayout.png"); //$NON-NLS-1$
 
 		return new LayoutActionGroup(new IAction[] { switchToFlatViewAction,
 				switchToHierarchicalViewAction }, fCurrViewState);

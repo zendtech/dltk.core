@@ -25,7 +25,7 @@ public class EnableMemberFilterAction extends Action {
 		setDescription(TypeHierarchyMessages.EnableMemberFilterAction_description); 
 		setToolTipText(TypeHierarchyMessages.EnableMemberFilterAction_tooltip); 
 		
-		DLTKPluginImages.setLocalImageDescriptors(this, "impl_co.gif"); //$NON-NLS-1$
+		DLTKPluginImages.setLocalImageDescriptors(this, "impl_co.png"); //$NON-NLS-1$
 
 		fView= v;
 		setChecked(initValue);

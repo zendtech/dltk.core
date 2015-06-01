@@ -28,7 +28,7 @@ public class SortByDefiningTypeAction extends Action {
 		setDescription(TypeHierarchyMessages.SortByDefiningTypeAction_description); 
 		setToolTipText(TypeHierarchyMessages.SortByDefiningTypeAction_tooltip); 
 		
-		DLTKPluginImages.setLocalImageDescriptors(this, "definingtype_sort_co.gif"); //$NON-NLS-1$
+		DLTKPluginImages.setLocalImageDescriptors(this, "definingtype_sort_co.png"); //$NON-NLS-1$
 
 		fMethodsViewer= viewer;
 		

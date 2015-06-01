@@ -31,6 +31,7 @@ import org.eclipse.dltk.dbgp.commands.IDbgpContextCommands;
 import org.eclipse.dltk.dbgp.exceptions.DbgpDebuggingEngineException;
 import org.eclipse.dltk.dbgp.exceptions.DbgpException;
 import org.eclipse.dltk.debug.core.DLTKDebugPlugin;
+import org.eclipse.dltk.debug.core.IScriptVariableContainer;
 import org.eclipse.dltk.debug.core.ScriptDebugManager;
 import org.eclipse.dltk.debug.core.model.IRefreshableScriptVariable;
 import org.eclipse.dltk.debug.core.model.IScriptStack;
@@ -169,7 +170,8 @@ public class ScriptStackFrame extends ScriptDebugElement implements
 					if (globalsWrapper == null) {
 						globalsWrapper = new ScriptVariableWrapper(target,
 								Messages.ScriptStackFrame_globalVariables,
-								globals);
+								globals,
+								IScriptVariableContainer.ContainerKind.Global);
 					} else {
 						globalsWrapper.refreshValue(globals);
 					}
@@ -179,7 +181,8 @@ public class ScriptStackFrame extends ScriptDebugElement implements
 					if (classesWrapper == null) {
 						classesWrapper = new ScriptVariableWrapper(target,
 								Messages.ScriptStackFrame_classVariables,
-								classes);
+								classes,
+								IScriptVariableContainer.ContainerKind.Class);
 					} else {
 						classesWrapper.refreshValue(classes);
 					}
@@ -235,7 +238,6 @@ public class ScriptStackFrame extends ScriptDebugElement implements
 	}
 
 	public ScriptStackFrame(IScriptStack stack, IDbgpStackLevel stackLevel) {
-
 		this.stack = stack;
 		this.thread = stack.getThread();
 		this.level = stackLevel;
@@ -267,8 +269,8 @@ public class ScriptStackFrame extends ScriptDebugElement implements
 				final ISourceOffsetLookup offsetLookup = DLTKDebugPlugin
 						.getSourceOffsetLookup();
 				if (offsetLookup != null) {
-					return offsetLookup.calculateOffset(this, beginLine, level
-							.getBeginColumn(), false);
+					return offsetLookup.calculateOffset(this, beginLine,
+							level.getBeginColumn(), false);
 				}
 			}
 		}
@@ -302,8 +304,16 @@ public class ScriptStackFrame extends ScriptDebugElement implements
 		return -1;
 	}
 
-	public int getLineNumber() throws DebugException {
+	public int getLineNumber() {
 		return level.getLineNumber();
+	}
+
+	public int getMethodOffset() {
+		return level.getMethodOffset();
+	}
+
+	public String getMethodName() {
+		return level.getMethodName();
 	}
 
 	public int getBeginLine() {
@@ -502,8 +512,8 @@ public class ScriptStackFrame extends ScriptDebugElement implements
 	}
 
 	public String toString() {
-		return NLS.bind(Messages.ScriptStackFrame_stackFrame, new Integer(level
-				.getLevel()));
+		return NLS.bind(Messages.ScriptStackFrame_stackFrame,
+				new Integer(level.getLevel()));
 	}
 
 	public String getSourceLine() {

@@ -24,4 +24,6 @@ public interface IDbgpDebuggerFeedback {
 	void endResume(DbgpException e, IDbgpStatus status);
 
 	void endTerminate(DbgpException e, IDbgpStatus status);
+
+	void endInitialStepInto(DbgpException e, IDbgpStatus status);
 }

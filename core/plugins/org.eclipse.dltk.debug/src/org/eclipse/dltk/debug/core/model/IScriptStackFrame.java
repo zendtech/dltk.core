@@ -17,8 +17,18 @@ import org.eclipse.debug.core.model.IStackFrame;
 public interface IScriptStackFrame extends IStackFrame {
 	IScriptStack getStack();
 
+	/**
+	 * Return associated thread.
+	 * 
+	 * @return
+	 */
 	IScriptThread getScriptThread();
 
+	/**
+	 * Return current stack level.
+	 * 
+	 * @return
+	 */
 	int getLevel();
 
 	String getSourceLine();
@@ -56,4 +66,18 @@ public interface IScriptStackFrame extends IStackFrame {
 	IScriptVariable findVariable(String varName) throws DebugException;
 
 	String getWhere();
+
+	/**
+	 * Return method name returned from debugger or null if not available.
+	 * 
+	 * @return name of method or null.
+	 */
+	String getMethodName();
+
+	/**
+	 * Return method offset returned from debugger.
+	 * 
+	 * @return integer method offset or -1 if not available.
+	 */
+	int getMethodOffset();
 }

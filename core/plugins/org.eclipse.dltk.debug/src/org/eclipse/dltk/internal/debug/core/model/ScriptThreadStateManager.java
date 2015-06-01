@@ -125,6 +125,12 @@ public class ScriptThreadStateManager implements IDbgpDebuggerFeedback {
 		return canStep();
 	}
 
+	@Override
+	public void endInitialStepInto(DbgpException e, IDbgpStatus status) {
+		stepping = false;
+		handleStatus(e, status, DebugEvent.BREAKPOINT);
+	}
+
 	public void endStepInto(DbgpException e, IDbgpStatus status) {
 		endStep(e, status);
 	}

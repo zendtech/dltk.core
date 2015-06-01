@@ -19,6 +19,8 @@ public class DbgpStackLevel implements IDbgpStackLevel {
 	private final int level;
 
 	private final int lineNumber;
+	private final int methodOffset;
+	private final String methodName;
 
 	private final int beginLine;
 	private final int beginColumn;
@@ -31,20 +33,34 @@ public class DbgpStackLevel implements IDbgpStackLevel {
 	private final String where;
 
 	public DbgpStackLevel(URI fileUri, String where, int level, int lineNumber,
-			int beginLine, int endLine) {
-		this(fileUri, where, level, lineNumber, beginLine, -1, endLine, -1);
+			int methodOffset, String methodName, int beginLine, int endLine) {
+		this(fileUri, where, level, lineNumber, methodOffset, methodName,
+				beginLine, -1, endLine, -1);
 	}
 
 	public DbgpStackLevel(URI fileUri, String where, int level, int lineNumber,
-			int beginLine, int beginColumn, int endLine, int endColumn) {
+			int methodOffset, String methodName, int beginLine,
+			int beginColumn, int endLine, int endColumn) {
 		this.fileUri = fileUri;
 		this.level = level;
 		this.lineNumber = lineNumber;
+		this.methodName = methodName;
+		this.methodOffset = methodOffset;
 		this.beginLine = beginLine;
 		this.beginColumn = beginColumn;
 		this.endLine = endLine;
 		this.endColumn = endColumn;
 		this.where = where;
+	}
+
+	@Override
+	public String getMethodName() {
+		return methodName;
+	}
+
+	@Override
+	public int getMethodOffset() {
+		return methodOffset;
 	}
 
 	public String getWhere() {

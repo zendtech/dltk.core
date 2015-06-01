@@ -22,7 +22,7 @@ class RefreshAction extends Action {
 		fPart= part;
 		setText(CallHierarchyMessages.RefreshAction_text); 
 		setToolTipText(CallHierarchyMessages.RefreshAction_tooltip); 
-		DLTKPluginImages.setLocalImageDescriptors(this, "refresh_nav.gif");//$NON-NLS-1$
+		DLTKPluginImages.setLocalImageDescriptors(this, "refresh_nav.png");//$NON-NLS-1$
 		setActionDefinitionId("org.eclipse.ui.file.refresh"); //$NON-NLS-1$
 //        PlatformUI.getWorkbench().getHelpSystem().setHelp(this, IJavaHelpContextIds.CALL_HIERARCHY_REFRESH_ACTION);
 		if (DLTKCore.DEBUG) {
