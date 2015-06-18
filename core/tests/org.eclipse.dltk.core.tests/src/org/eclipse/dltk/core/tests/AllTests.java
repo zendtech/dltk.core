@@ -45,6 +45,8 @@ public class AllTests {
 		suite.addTest(new TestSuite(BuildParticipantManagerTests.class));
 		suite.addTest(BuildpathTests.suite());
 
+		suite.addTest(new TestSuite(UserLibraryTests.class));
+
 		suite.addTest(new TestSuite(CacheTests.class));
 
 		suite.addTest(new TestSuite(CompilerUtilTests.class));

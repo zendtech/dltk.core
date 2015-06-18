@@ -57,8 +57,9 @@ public class UserLibraryManager {
 				toolkit));
 	}
 
-	public static String makeLibraryName(String libName, IDLTKLanguageToolkit toolkit) {
-		if( toolkit == null ) {
+	public static String makeLibraryName(String libName,
+			IDLTKLanguageToolkit toolkit) {
+		if (toolkit == null) {
 			return "#" + libName; //$NON-NLS-1$
 		}
 		return toolkit.getNatureId() + "#" + libName; //$NON-NLS-1$
@@ -131,9 +132,9 @@ public class UserLibraryManager {
 						library = UserLibrary.createFromString(reader);
 					} catch (IOException e) {
 						Util
-								.log(
-										e,
-										"Exception while initializing user library " + libName); //$NON-NLS-1$
+						.log(
+								e,
+								"Exception while initializing user library " + libName); //$NON-NLS-1$
 						instancePreferences.remove(propertyName);
 						preferencesNeedFlush = true;
 						continue;
@@ -231,13 +232,19 @@ public class UserLibraryManager {
 	public synchronized void setUserLibrary(String libName,
 			IBuildpathEntry[] entries, boolean isSystemLibrary,
 			IDLTKLanguageToolkit toolkit) {
+		setUserLibrary(libName, entries, isSystemLibrary, null, toolkit);
+	}
+
+	public synchronized void setUserLibrary(String libName,
+			IBuildpathEntry[] entries, boolean isSystemLibrary,
+			Map<String, String> attributes, IDLTKLanguageToolkit toolkit) {
 		IEclipsePreferences instancePreferences = ModelManager
 				.getModelManager().getInstancePreferences();
 		String propertyName = BP_USERLIBRARY_PREFERENCES_PREFIX
 				+ makeLibraryName(libName, toolkit);
 		try {
 			String propertyValue = UserLibrary.serialize(entries,
-					isSystemLibrary);
+					isSystemLibrary, attributes);
 			instancePreferences.put(propertyName, propertyValue); // sends out
 			// a
 			// PreferenceChangeEvent
