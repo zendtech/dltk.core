@@ -179,6 +179,10 @@ public class H2Cache {
 		}
 	}
 
+	/**
+	 * 
+	 * @deprecated Use {@link #selectFilesByContainerIdAsArray(int)}
+	 */
 	public static Collection<File> selectFilesByContainerId(int id) {
 		fileLock.acquire();
 		try {
@@ -191,4 +195,18 @@ public class H2Cache {
 			fileLock.release();
 		}
 	}
+
+	public static File[] selectFilesByContainerIdAsArray(int id) {
+		fileLock.acquire();
+		try {
+			Map<Integer, File> files = filesByContainer.get(id);
+			if (files != null) {
+				return files.values().toArray(new File[files.values().size()]);
+			}
+			return null;
+		} finally {
+			fileLock.release();
+		}
+	}
+
 }

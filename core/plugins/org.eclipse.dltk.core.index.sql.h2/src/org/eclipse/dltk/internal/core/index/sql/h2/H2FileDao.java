@@ -16,8 +16,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.Collection;
 import java.util.LinkedList;
+import java.util.List;
 
 import org.eclipse.dltk.core.index.sql.File;
 import org.eclipse.dltk.core.index.sql.IFileDao;
@@ -95,9 +95,9 @@ public class H2FileDao implements IFileDao {
 	public File[] selectByContainerId(Connection connection, int containerId)
 			throws SQLException {
 
-		Collection<File> files = H2Cache.selectFilesByContainerId(containerId);
+		File[] files = H2Cache.selectFilesByContainerIdAsArray(containerId);
 		if (files == null) {
-			files = new LinkedList<File>();
+			List<File> containerFiles = new LinkedList<File>();
 
 			PreparedStatement statement = connection
 					.prepareStatement(Q_SELECT_BY_CONTAINER_ID);
@@ -111,7 +111,7 @@ public class H2FileDao implements IFileDao {
 								result.getString(2), result.getLong(3),
 								result.getInt(4));
 
-						files.add(file);
+						containerFiles.add(file);
 						H2Cache.addFile(file);
 					}
 				} finally {
@@ -120,8 +120,9 @@ public class H2FileDao implements IFileDao {
 			} finally {
 				statement.close();
 			}
+			files = containerFiles.toArray(new File[containerFiles.size()]);
 		}
-		return (File[]) files.toArray(new File[files.size()]);
+		return files;
 	}
 
 	public File selectById(Connection connection, int id) throws SQLException {
