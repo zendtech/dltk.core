@@ -22,7 +22,7 @@
 
 	<profiles>
 		<profile>
-			<id>sign</id>
+			<id>zend-sign</id>
 			<build>
 				<plugins>
 					<plugin>
