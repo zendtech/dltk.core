@@ -12,6 +12,7 @@ package org.eclipse.dltk.internal.ui.wizards.buildpath;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
@@ -50,9 +51,15 @@ public class BPUserLibraryElement {
 	private String fName;
 	private List fChildren;
 	private boolean fIsSystemLibrary;
+	private Map<String, String> fAttributes;
 
 	public BPUserLibraryElement(String name, IBuildpathContainer container,
 			IScriptProject project) {
+		this(name, container, project, null);
+	}
+
+	public BPUserLibraryElement(String name, IBuildpathContainer container,
+			IScriptProject project, Map<String, String> attributes) {
 		fName = name;
 		fChildren = new ArrayList();
 		if (container != null) {
@@ -72,10 +79,16 @@ public class BPUserLibraryElement {
 		} else {
 			fIsSystemLibrary = false;
 		}
+		fAttributes = attributes;
 	}
 
 	public BPUserLibraryElement(String name, boolean isSystemLibrary,
 			BPListElement[] children) {
+		this(name, isSystemLibrary, children, null);
+	}
+
+	public BPUserLibraryElement(String name, boolean isSystemLibrary,
+			BPListElement[] children, Map<String, String> attributes) {
 		fName = name;
 		fChildren = new ArrayList();
 		if (children != null) {
@@ -84,6 +97,7 @@ public class BPUserLibraryElement {
 			}
 		}
 		fIsSystemLibrary = isSystemLibrary;
+		fAttributes = attributes;
 	}
 
 	public BPListElement[] getChildren() {
@@ -101,6 +115,13 @@ public class BPUserLibraryElement {
 
 	public boolean isSystemLibrary() {
 		return fIsSystemLibrary;
+	}
+
+	public String getAttribute(String name) {
+		if (fAttributes == null) {
+			return null;
+		}
+		return fAttributes.get(name);
 	}
 
 	public void add(BPListElement element) {
