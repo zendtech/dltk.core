@@ -124,7 +124,7 @@ public class ProposalInfo implements ICompletionProposalInfo {
 		}
 		final StringBuffer buffer = new StringBuffer();
 		HTMLPrinter.addParagraph(buffer, reader);
-		if (buffer.length() == 0) {
+		if (buffer.length() > 0) {
 			if (!HTMLPrinter.hasEpilog(buffer)) {
 				HTMLPrinter.addPageEpilog(buffer);
 			}
@@ -168,8 +168,9 @@ public class ProposalInfo implements ICompletionProposalInfo {
 		return null;
 	}
 
-	private Reader getHTMLContentReader(IMember member, IProgressMonitor monitor)
-			throws ModelException {
+	private Reader getHTMLContentReader(IMember member,
+			IProgressMonitor monitor)
+					throws ModelException {
 		String nature = null;
 		IDLTKLanguageToolkit languageToolkit = DLTKLanguageManager
 				.getLanguageToolkit(member);
