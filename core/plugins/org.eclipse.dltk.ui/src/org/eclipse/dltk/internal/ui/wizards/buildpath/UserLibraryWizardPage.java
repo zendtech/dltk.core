@@ -31,6 +31,8 @@ import org.eclipse.dltk.core.IBuildpathEntry;
 import org.eclipse.dltk.core.IDLTKLanguageToolkit;
 import org.eclipse.dltk.core.IScriptProject;
 import org.eclipse.dltk.core.ModelException;
+import org.eclipse.dltk.internal.core.ModelManager;
+import org.eclipse.dltk.internal.core.UserLibrary;
 import org.eclipse.dltk.internal.core.UserLibraryManager;
 import org.eclipse.dltk.internal.ui.wizards.IBuildpathContainerPage;
 import org.eclipse.dltk.internal.ui.wizards.IBuildpathContainerPageExtension2;
@@ -48,8 +50,11 @@ import org.eclipse.dltk.ui.preferences.UserLibraryPreferencePage;
 import org.eclipse.dltk.ui.wizards.IBuildpathContainerPageExtension;
 import org.eclipse.dltk.ui.wizards.NewElementWizardPage;
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.viewers.DecoratingLabelProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.ui.IDecoratorManager;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.PreferencesUtil;
 
 import com.ibm.icu.text.Collator;
@@ -79,8 +84,11 @@ public class UserLibraryWizardPage extends NewElementWizardPage implements
 
 		LibraryListAdapter adapter = new LibraryListAdapter();
 		String[] buttonLabels = new String[] { NewWizardMessages.UserLibraryWizardPage_list_config_button };
+		IDecoratorManager decoratorManager = PlatformUI.getWorkbench()
+				.getDecoratorManager();
 		fLibrarySelector = new CheckedListDialogField(adapter, buttonLabels,
-				new BPListLabelProvider());
+				new DecoratingLabelProvider(new BPListLabelProvider(),
+						decoratorManager));
 		fLibrarySelector.setDialogFieldListener(adapter);
 		fLibrarySelector
 				.setLabelText(NewWizardMessages.UserLibraryWizardPage_list_label);
@@ -135,26 +143,31 @@ public class UserLibraryWizardPage extends NewElementWizardPage implements
 		ArrayList elements = new ArrayList(names.length);
 		for (int i = 0; i < names.length; i++) {
 			String curr = names[i];
-			IPath path = new Path(DLTKCore.USER_LIBRARY_CONTAINER_ID)
-					.append(UserLibraryManager.makeLibraryName(curr, toolkit));
-			try {
-				IBuildpathContainer container = DLTKCore.getBuildpathContainer(
-						path, fProject);
-				BPUserLibraryElement elem = new BPUserLibraryElement(curr,
-						container, fProject);
-				elements.add(elem);
-				if (!oldCheckedNames.isEmpty()) {
-					if (oldCheckedNames.contains(curr)) {
-						entriesToCheck.add(elem);
+			UserLibrary lib = ModelManager.getUserLibraryManager()
+					.getUserLibrary(curr, toolkit);
+			if (lib != null) {
+				IPath path = new Path(DLTKCore.USER_LIBRARY_CONTAINER_ID)
+						.append(UserLibraryManager.makeLibraryName(curr,
+								toolkit));
+				try {
+					IBuildpathContainer container = DLTKCore
+							.getBuildpathContainer(path, fProject);
+					BPUserLibraryElement elem = new BPUserLibraryElement(curr,
+							container, fProject, lib.getAttributes());
+					elements.add(elem);
+					if (!oldCheckedNames.isEmpty()) {
+						if (oldCheckedNames.contains(curr)) {
+							entriesToCheck.add(elem);
+						}
+					} else {
+						if (!oldNames.contains(curr)) {
+							entriesToCheck.add(elem);
+						}
 					}
-				} else {
-					if (!oldNames.contains(curr)) {
-						entriesToCheck.add(elem);
-					}
+				} catch (ModelException e) {
+					DLTKUIPlugin.log(e);
+					// ignore
 				}
-			} catch (ModelException e) {
-				DLTKUIPlugin.log(e);
-				// ignore
 			}
 		}
 		fLibrarySelector.setElements(elements);
