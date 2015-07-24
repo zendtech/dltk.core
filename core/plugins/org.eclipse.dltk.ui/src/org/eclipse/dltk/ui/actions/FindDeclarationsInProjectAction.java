@@ -21,6 +21,8 @@ import org.eclipse.dltk.ui.DLTKPluginImages;
 import org.eclipse.dltk.ui.search.ElementQuerySpecification;
 import org.eclipse.dltk.ui.search.QuerySpecification;
 import org.eclipse.ui.IWorkbenchSite;
+import org.eclipse.ui.texteditor.AbstractDecoratedTextEditor;
+import org.eclipse.ui.texteditor.AbstractTextEditor;
 
 
 /**
@@ -54,6 +56,18 @@ public class FindDeclarationsInProjectAction extends FindDeclarationsAction {
 			ScriptEditor editor) {
 		super(toolkit, editor);
 	}
+
+	/**
+	 * Note: This constructor is for internal use only. Clients should not call
+	 * this constructor.
+	 * 
+	 * @param editor the Script editor
+	 * @since 5.3
+	 */
+	public FindDeclarationsInProjectAction(IDLTKLanguageToolkit toolkit,
+			AbstractDecoratedTextEditor editor) {
+		super(toolkit, editor);
+	}
 	
 	void init() {
 		setText(SearchMessages.Search_FindDeclarationsInProjectAction_label); 
@@ -67,7 +81,7 @@ public class FindDeclarationsInProjectAction extends FindDeclarationsAction {
 	
 	QuerySpecification createQuery(IModelElement element) throws ModelException {
 		DLTKSearchScopeFactory factory= DLTKSearchScopeFactory.getInstance();
-		ScriptEditor editor= getEditor();
+		AbstractTextEditor editor = getTextEditor();
 		
 		IDLTKSearchScope scope;
 		String description;

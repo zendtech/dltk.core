@@ -25,6 +25,7 @@ import org.eclipse.dltk.ui.DLTKPluginImages;
 import org.eclipse.dltk.ui.search.ElementQuerySpecification;
 import org.eclipse.dltk.ui.search.QuerySpecification;
 import org.eclipse.ui.IWorkbenchSite;
+import org.eclipse.ui.texteditor.AbstractDecoratedTextEditor;
 
 
 /**
@@ -50,11 +51,25 @@ public class FindDeclarationsInHierarchyAction extends FindDeclarationsAction {
 	}
 
 	/**
-	 * Note: This constructor is for internal use only. Clients should not call this constructor.
+	 * Note: This constructor is for internal use only. Clients should not call
+	 * this constructor.
+	 * 
 	 * @param editor the Script editor
 	 */
 	public FindDeclarationsInHierarchyAction(IDLTKLanguageToolkit toolkit,
 			ScriptEditor editor) {
+		super(toolkit, editor);
+	}
+
+	/**
+	 * Note: This constructor is for internal use only. Clients should not call
+	 * this constructor.
+	 * 
+	 * @param editor the Script editor
+	 * @since 5.3
+	 */
+	public FindDeclarationsInHierarchyAction(IDLTKLanguageToolkit toolkit,
+			AbstractDecoratedTextEditor editor) {
 		super(toolkit, editor);
 	}
 	

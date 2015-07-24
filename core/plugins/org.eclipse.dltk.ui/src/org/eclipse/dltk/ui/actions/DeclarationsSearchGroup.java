@@ -27,6 +27,7 @@ import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IWorkbenchSite;
 import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.actions.ActionGroup;
+import org.eclipse.ui.texteditor.AbstractDecoratedTextEditor;
 import org.eclipse.ui.texteditor.ITextEditorActionConstants;
 
 
@@ -44,7 +45,7 @@ public class DeclarationsSearchGroup extends ActionGroup {
 
 	private IWorkbenchSite fSite;
 
-	private ScriptEditor fEditor;
+	private AbstractDecoratedTextEditor fEditor;
 
 	private IActionBars fActionBars;
 
@@ -102,10 +103,26 @@ public class DeclarationsSearchGroup extends ActionGroup {
 	 * Note: This constructor is for internal use only. Clients should not call
 	 * this constructor.
 	 * 
+	 * DLTK < 5.3 binary compatibility
+	 * 
 	 * @param editor
 	 *            the Script editor
 	 */
-	public DeclarationsSearchGroup(ScriptEditor editor, IDLTKLanguageToolkit tk) {
+	public DeclarationsSearchGroup(ScriptEditor editor,
+			IDLTKLanguageToolkit tk) {
+		this((AbstractDecoratedTextEditor) editor, tk);
+	}
+
+	/**
+	 * Note: This constructor is for internal use only. Clients should not call
+	 * this constructor.
+	 * 
+	 * @param editor
+	 *            the Script editor
+	 * @since 5.3
+	 */
+	public DeclarationsSearchGroup(AbstractDecoratedTextEditor editor,
+			IDLTKLanguageToolkit tk) {
 		this.toolkit = tk;
 		fEditor = editor;
 		fSite = fEditor.getSite();

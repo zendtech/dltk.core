@@ -26,6 +26,7 @@ import org.eclipse.dltk.ui.DLTKPluginImages;
 import org.eclipse.dltk.ui.search.ElementQuerySpecification;
 import org.eclipse.dltk.ui.search.QuerySpecification;
 import org.eclipse.ui.IWorkbenchSite;
+import org.eclipse.ui.texteditor.AbstractDecoratedTextEditor;
 
 
 /**
@@ -50,16 +51,27 @@ public class FindReferencesInHierarchyAction extends FindReferencesAction {
 			IWorkbenchSite site) {
 		super(toolkit, site);
 	}
+	
+	/**
+	 * Note: This constructor is for internal use only. Clients should not call
+	 * this constructor.
+	 * 
+	 * @param editor the Script editor
+	 */
+	public FindReferencesInHierarchyAction(IDLTKLanguageToolkit toolkit,
+			ScriptEditor editor) {
+		super(toolkit, editor);
+	}
 
 	/**
 	 * Note: This constructor is for internal use only. Clients should not call
 	 * this constructor.
 	 * 
-	 * @param editor
-	 *            the Script editor
+	 * @param editor the Script editor
+	 * @since 5.3
 	 */
 	public FindReferencesInHierarchyAction(IDLTKLanguageToolkit toolkit,
-			ScriptEditor editor) {
+			AbstractDecoratedTextEditor editor) {
 		super(toolkit, editor);
 	}
 

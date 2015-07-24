@@ -22,6 +22,7 @@ import org.eclipse.dltk.internal.ui.editor.ScriptEditor;
 import org.eclipse.dltk.internal.ui.search.SearchMessages;
 import org.eclipse.dltk.ui.DLTKPluginImages;
 import org.eclipse.ui.IWorkbenchSite;
+import org.eclipse.ui.texteditor.AbstractDecoratedTextEditor;
 
 
 /**
@@ -47,11 +48,26 @@ public class FindDeclarationsAction extends FindAction {
 	}
 
 	/**
-	 * Note: This constructor is for internal use only. Clients should not call this constructor.
+	 * Note: This constructor is for internal use only. Clients should not call
+	 * this constructor.
+	 * 
 	 * @param editor the Script editor
+	 * @since 5.3
 	 */
 	public FindDeclarationsAction(IDLTKLanguageToolkit toolkit,
 			ScriptEditor editor) {
+		super(toolkit, editor);
+	}
+
+	/**
+	 * Note: This constructor is for internal use only. Clients should not call
+	 * this constructor.
+	 * 
+	 * @param editor the Script editor
+	 * @since 5.3
+	 */
+	public FindDeclarationsAction(IDLTKLanguageToolkit toolkit,
+			AbstractDecoratedTextEditor editor) {
 		super(toolkit, editor);
 	}
 	

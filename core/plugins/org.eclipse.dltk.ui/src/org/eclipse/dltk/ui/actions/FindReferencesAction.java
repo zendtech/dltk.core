@@ -29,6 +29,7 @@ import org.eclipse.dltk.ui.DLTKPluginImages;
 import org.eclipse.dltk.ui.search.ElementQuerySpecification;
 import org.eclipse.dltk.ui.search.QuerySpecification;
 import org.eclipse.ui.IWorkbenchSite;
+import org.eclipse.ui.texteditor.AbstractDecoratedTextEditor;
 
 
 /**
@@ -46,8 +47,7 @@ public class FindReferencesAction extends FindAction {
 	 * that the selection provided by the site's selection provider is of type
 	 * <code>org.eclipse.jface.viewers.IStructuredSelection</code>.
 	 * 
-	 * @param site
-	 *            the site providing context information for this action
+	 * @param site the site providing context information for this action
 	 */
 	public FindReferencesAction(IDLTKLanguageToolkit toolkit,
 			IWorkbenchSite site) {
@@ -58,11 +58,22 @@ public class FindReferencesAction extends FindAction {
 	 * Note: This constructor is for internal use only. Clients should not call
 	 * this constructor.
 	 * 
-	 * @param editor
-	 *            the Script editor
+	 * @param editor the Script editor
 	 */
 	public FindReferencesAction(IDLTKLanguageToolkit toolkit,
 			ScriptEditor editor) {
+		super(toolkit, editor);
+	}
+
+	/**
+	 * Note: This constructor is for internal use only. Clients should not call
+	 * this constructor.
+	 * 
+	 * @param editor the Script editor
+	 * @since 5.3
+	 */
+	public FindReferencesAction(IDLTKLanguageToolkit toolkit,
+			AbstractDecoratedTextEditor editor) {
 		super(toolkit, editor);
 	}
 

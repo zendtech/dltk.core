@@ -18,6 +18,7 @@ import org.eclipse.dltk.core.IDLTKLanguageToolkit;
 import org.eclipse.dltk.core.IMember;
 import org.eclipse.dltk.core.IModelElement;
 import org.eclipse.dltk.core.IScriptFolder;
+import org.eclipse.dltk.core.IScriptLanguageProvider;
 import org.eclipse.dltk.core.ISourceModule;
 import org.eclipse.dltk.core.IType;
 import org.eclipse.dltk.core.ModelException;
@@ -46,6 +47,7 @@ import org.eclipse.ui.IWorkbenchSite;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.ElementListSelectionDialog;
 import org.eclipse.ui.progress.IProgressService;
+import org.eclipse.ui.texteditor.AbstractDecoratedTextEditor;
 
 
 /**
@@ -63,7 +65,7 @@ public abstract class FindAction extends SelectionDispatchAction {
 		
 	private Class[] fValidTypes;
 	private final IDLTKLanguageToolkit toolkit;
-	private ScriptEditor fEditor;	
+	private AbstractDecoratedTextEditor fEditor;
 
 
 	FindAction(IDLTKLanguageToolkit toolkit, IWorkbenchSite site) {
@@ -73,7 +75,19 @@ public abstract class FindAction extends SelectionDispatchAction {
 		init();
 	}
 
-	FindAction(IDLTKLanguageToolkit toolkit, ScriptEditor editor) {
+	/**
+	 * DLTK < 5.3 binary compatibility
+	 */
+	FindAction(IDLTKLanguageToolkit tk, ScriptEditor editor) {
+		this(tk, (AbstractDecoratedTextEditor) editor);
+	}
+
+	/**
+	 * 
+	 * @since 5.3
+	 */
+	FindAction(IDLTKLanguageToolkit toolkit,
+			AbstractDecoratedTextEditor editor) {
 		this(toolkit, editor.getEditorSite());
 		fEditor = editor;
 		setEnabled(SelectionConverter.canOperateOn(fEditor));
@@ -154,7 +168,10 @@ public abstract class FindAction extends SelectionDispatchAction {
 	String getOperationUnavailableMessage() {
 		return NLS.bind(
 				SearchMessages.DLTKElementAction_operationUnavailable_generic,
-				fEditor.getLanguageToolkit().getLanguageName());
+				(fEditor instanceof IScriptLanguageProvider
+						? ((IScriptLanguageProvider) fEditor)
+								.getLanguageToolkit()
+						: toolkit).getLanguageName());
 	}
 
 	private IModelElement findType(ISourceModule cu, boolean silent) {
@@ -317,7 +334,10 @@ public abstract class FindAction extends SelectionDispatchAction {
 		return type;
 	}
 	
-	ScriptEditor getEditor() {
+	/**
+	 * @since 5.3
+	 */
+	AbstractDecoratedTextEditor getTextEditor() {
 		return fEditor;
 	}
 		

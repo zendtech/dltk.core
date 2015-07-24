@@ -28,6 +28,7 @@ import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IWorkbenchSite;
 import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.actions.ActionGroup;
+import org.eclipse.ui.texteditor.AbstractDecoratedTextEditor;
 import org.eclipse.ui.texteditor.ITextEditorActionConstants;
 
 
@@ -45,7 +46,7 @@ public class ReferencesSearchGroup extends ActionGroup {
 
 	private IWorkbenchSite fSite;
 
-	private ScriptEditor fEditor;
+	private AbstractDecoratedTextEditor fEditor;
 
 	private IActionBars fActionBars;
 
@@ -98,15 +99,27 @@ public class ReferencesSearchGroup extends ActionGroup {
 		registerAction(fFindReferencesInHierarchyAction, provider, selection);
 		registerAction(fFindReferencesInWorkingSetAction, provider, selection);
 	}
-
+	/**
+	 * Note: This constructor is for internal use only. Clients should not call
+	 * this constructor.
+	 * 
+	 * @param editor the Script editor
+	 */
+	public ReferencesSearchGroup(ScriptEditor editor,
+			IDLTKLanguageToolkit tk) {
+		this((AbstractDecoratedTextEditor) editor, tk);
+	}
+	
 	/**
 	 * Note: This constructor is for internal use only. Clients should not call
 	 * this constructor.
 	 * 
 	 * @param editor
 	 *            the Script editor
+	 * @since 5.3
 	 */
-	public ReferencesSearchGroup(ScriptEditor editor, IDLTKLanguageToolkit tk) {
+	public ReferencesSearchGroup(AbstractDecoratedTextEditor editor,
+			IDLTKLanguageToolkit tk) {
 		Assert.isNotNull(editor);
 		this.toolkit = tk;
 		fEditor = editor;

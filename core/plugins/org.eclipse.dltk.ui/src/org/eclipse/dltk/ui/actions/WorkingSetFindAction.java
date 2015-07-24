@@ -14,6 +14,7 @@ import org.eclipse.dltk.core.DLTKCore;
 import org.eclipse.dltk.core.IModelElement;
 import org.eclipse.dltk.internal.ui.editor.ScriptEditor;
 import org.eclipse.ui.IWorkbenchSite;
+import org.eclipse.ui.texteditor.AbstractDecoratedTextEditor;
 
 
 /**
@@ -44,7 +45,17 @@ public class WorkingSetFindAction extends FindAction {
 	/**
 	 * Note: This constructor is for internal use only. Clients should not call this constructor.
 	 */
-	public WorkingSetFindAction(ScriptEditor editor, FindAction action, String workingSetName) {
+	public WorkingSetFindAction(ScriptEditor editor,
+			FindAction action, String workingSetName) {
+		this((AbstractDecoratedTextEditor) editor, action, workingSetName);
+	}
+	
+	/**
+	 * Note: This constructor is for internal use only. Clients should not call this constructor.
+	 * @since 5.3
+	 */
+	public WorkingSetFindAction(AbstractDecoratedTextEditor editor,
+			FindAction action, String workingSetName) {
 		super(action.getLanguageToolkit(), editor);
 		init(action, workingSetName);
 	}

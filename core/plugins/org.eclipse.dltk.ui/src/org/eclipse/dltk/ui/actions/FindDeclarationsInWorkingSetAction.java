@@ -23,6 +23,7 @@ import org.eclipse.dltk.ui.search.ElementQuerySpecification;
 import org.eclipse.dltk.ui.search.QuerySpecification;
 import org.eclipse.ui.IWorkbenchSite;
 import org.eclipse.ui.IWorkingSet;
+import org.eclipse.ui.texteditor.AbstractDecoratedTextEditor;
 
 
 /**
@@ -65,22 +66,50 @@ public class FindDeclarationsInWorkingSetAction extends FindDeclarationsAction {
 	}
 
 	/**
-	 * Note: This constructor is for internal use only. Clients should not call this constructor.
+	 * Note: This constructor is for internal use only. Clients should not call
+	 * this constructor.
+	 * 
 	 * @param editor the Script editor
 	 */
 	public FindDeclarationsInWorkingSetAction(IDLTKLanguageToolkit toolkit,
 			ScriptEditor editor) {
-		this(toolkit, editor, null);
+		this(toolkit, (AbstractDecoratedTextEditor) editor, null);
 	}
 
 	/**
-	 * Note: This constructor is for internal use only. Clients should not call this constructor.
+	 * Note: This constructor is for internal use only. Clients should not call
+	 * this constructor.
 	 * 
 	 * @param editor the Script editor
 	 * @param workingSets the working sets to be used in the search
 	 */
 	public FindDeclarationsInWorkingSetAction(IDLTKLanguageToolkit toolkit,
 			ScriptEditor editor, IWorkingSet[] workingSets) {
+		this(toolkit, (AbstractDecoratedTextEditor) editor, workingSets);
+	}
+
+	/**
+	 * Note: This constructor is for internal use only. Clients should not call
+	 * this constructor.
+	 * 
+	 * @param editor the Script editor
+	 * @since 5.3
+	 */
+	public FindDeclarationsInWorkingSetAction(IDLTKLanguageToolkit toolkit,
+			AbstractDecoratedTextEditor editor) {
+		this(toolkit, editor, null);
+	}
+
+	/**
+	 * Note: This constructor is for internal use only. Clients should not call
+	 * this constructor.
+	 * 
+	 * @param editor the Script editor
+	 * @param workingSets the working sets to be used in the search
+	 * @since 5.3
+	 */
+	public FindDeclarationsInWorkingSetAction(IDLTKLanguageToolkit toolkit,
+			AbstractDecoratedTextEditor editor, IWorkingSet[] workingSets) {
 		super(toolkit, editor);
 		fWorkingSet= workingSets;
 	}

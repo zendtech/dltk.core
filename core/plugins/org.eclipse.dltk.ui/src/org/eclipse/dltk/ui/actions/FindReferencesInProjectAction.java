@@ -28,6 +28,8 @@ import org.eclipse.dltk.ui.DLTKPluginImages;
 import org.eclipse.dltk.ui.search.ElementQuerySpecification;
 import org.eclipse.dltk.ui.search.QuerySpecification;
 import org.eclipse.ui.IWorkbenchSite;
+import org.eclipse.ui.texteditor.AbstractDecoratedTextEditor;
+import org.eclipse.ui.texteditor.AbstractTextEditor;
 
 /**
  * Finds references to the selected element in the enclosing project of the
@@ -51,13 +53,23 @@ public class FindReferencesInProjectAction extends FindReferencesAction {
 			IWorkbenchSite site) {
 		super(toolkit, site);
 	}
-
+	
 	/**
 	 * Note: This constructor is for internal use only. Clients should not call this constructor.
 	 * @param editor the Script editor
 	 */
 	public FindReferencesInProjectAction(IDLTKLanguageToolkit toolkit,
 			ScriptEditor editor) {
+		super(toolkit, editor);
+	}
+
+	/**
+	 * Note: This constructor is for internal use only. Clients should not call this constructor.
+	 * @param editor the Script editor
+	 * @since 5.3
+	 */
+	public FindReferencesInProjectAction(IDLTKLanguageToolkit toolkit,
+			AbstractDecoratedTextEditor editor) {
 		super(toolkit, editor);
 	}
 	
@@ -80,7 +92,7 @@ public class FindReferencesInProjectAction extends FindReferencesAction {
 
 	QuerySpecification createQuery(IModelElement element) throws ModelException {
 		DLTKSearchScopeFactory factory= DLTKSearchScopeFactory.getInstance();
-		ScriptEditor editor= getEditor();
+		AbstractTextEditor editor = getTextEditor();
 		
 		IDLTKSearchScope scope;
 		String description;
