@@ -61,6 +61,8 @@ public class DeclarationsSearchGroup extends ActionGroup {
 
 	private final IDLTKLanguageToolkit toolkit;
 
+	private ISelectionProvider fSelectionProvider;
+
 	/**
 	 * Creates a new <code>DeclarationsSearchGroup</code>. The group requires
 	 * that the selection provided by the site's selection provider is of type
@@ -91,12 +93,10 @@ public class DeclarationsSearchGroup extends ActionGroup {
 		fFindDeclarationsInWorkingSetAction.setActionDefinitionId(IScriptEditorActionDefinitionIds.SEARCH_DECLARATIONS_IN_WORKING_SET);
 
 		// register the actions as selection listeners
-		ISelectionProvider provider = fSite.getSelectionProvider();
-		ISelection selection = provider.getSelection();
-		registerAction(fFindDeclarationsAction, provider, selection);
-		registerAction(fFindDeclarationsInProjectAction, provider, selection);
-		registerAction(fFindDeclarationsInHierarchyAction, provider, selection);
-		registerAction(fFindDeclarationsInWorkingSetAction, provider, selection);
+		fSelectionProvider = fSite.getSelectionProvider();
+		assert fSelectionProvider != null;
+
+		registerActions();
 	}
 
 	/**
@@ -207,13 +207,9 @@ public class DeclarationsSearchGroup extends ActionGroup {
 	 * Method declared on ActionGroup.
 	 */
 	public void dispose() {
-		ISelectionProvider provider = fSite.getSelectionProvider();
-		if (provider != null) {
-			disposeAction(fFindDeclarationsAction, provider);
-			disposeAction(fFindDeclarationsInProjectAction, provider);
-			disposeAction(fFindDeclarationsInHierarchyAction, provider);
-			disposeAction(fFindDeclarationsInWorkingSetAction, provider);
-		}
+		unregisterActions();
+
+		fSelectionProvider = null;
 		fFindDeclarationsAction = null;
 		fFindDeclarationsInProjectAction = null;
 		fFindDeclarationsInHierarchyAction = null;
@@ -234,5 +230,45 @@ public class DeclarationsSearchGroup extends ActionGroup {
 	private void disposeAction(ISelectionChangedListener action, ISelectionProvider provider) {
 		if (action != null)
 			provider.removeSelectionChangedListener(action);
+	}
+	
+	private void registerActions() {
+		if (fEditor != null) {
+			return;
+		}
+		ISelection selection = fSelectionProvider.getSelection();
+
+		registerAction(fFindDeclarationsAction, fSelectionProvider, selection);
+		registerAction(fFindDeclarationsInProjectAction, fSelectionProvider, selection);
+		registerAction(fFindDeclarationsInHierarchyAction, fSelectionProvider, selection);
+		registerAction(fFindDeclarationsInWorkingSetAction, fSelectionProvider, selection);
+	}
+
+	private void unregisterActions() {
+		if (fEditor != null) {
+			return;
+		}
+		disposeAction(fFindDeclarationsAction, fSelectionProvider);
+		disposeAction(fFindDeclarationsInProjectAction, fSelectionProvider);
+		disposeAction(fFindDeclarationsInHierarchyAction, fSelectionProvider);
+		disposeAction(fFindDeclarationsInWorkingSetAction, fSelectionProvider);
+	}
+
+	/**
+	 * Proxy to {@link SelectionDispatchAction#setSpecialSelectionProvider(ISelectionProvider)}
+	 * 
+	 * @since 5.3
+	 * @param provider
+	 */
+	public void setSpecialSelectionProvider(ISelectionProvider provider) {
+		assert fEditor != null || provider != null;
+		unregisterActions();
+		fSelectionProvider = provider;
+		registerActions();
+
+		fFindDeclarationsAction.setSpecialSelectionProvider(provider);
+		fFindDeclarationsInProjectAction.setSpecialSelectionProvider(provider);
+		fFindDeclarationsInWorkingSetAction.setSpecialSelectionProvider(provider);
+		fFindDeclarationsInHierarchyAction.setSpecialSelectionProvider(provider);
 	}
 }

@@ -62,6 +62,8 @@ public class ReferencesSearchGroup extends ActionGroup {
 
 	private final IDLTKLanguageToolkit toolkit;
 
+	private ISelectionProvider fSelectionProvider;
+	
 	/**
 	 * Creates a new <code>ReferencesSearchGroup</code>. The group requires
 	 * that the selection provided by the site's selection provider is of type
@@ -92,13 +94,12 @@ public class ReferencesSearchGroup extends ActionGroup {
 		fFindReferencesInWorkingSetAction.setActionDefinitionId(IScriptEditorActionDefinitionIds.SEARCH_REFERENCES_IN_WORKING_SET);
 
 		// register the actions as selection listeners
-		ISelectionProvider provider = fSite.getSelectionProvider();
-		ISelection selection = provider.getSelection();
-		registerAction(fFindReferencesAction, provider, selection);
-		registerAction(fFindReferencesInProjectAction, provider, selection);
-		registerAction(fFindReferencesInHierarchyAction, provider, selection);
-		registerAction(fFindReferencesInWorkingSetAction, provider, selection);
+		fSelectionProvider = fSite.getSelectionProvider();
+		assert fSelectionProvider != null;
+
+		registerActions();
 	}
+
 	/**
 	 * Note: This constructor is for internal use only. Clients should not call
 	 * this constructor.
@@ -216,13 +217,8 @@ public class ReferencesSearchGroup extends ActionGroup {
 	 * Overrides method declared in ActionGroup
 	 */
 	public void dispose() {
-		ISelectionProvider provider = fSite.getSelectionProvider();
-		if (provider != null) {
-			disposeAction(fFindReferencesAction, provider);
-			disposeAction(fFindReferencesInProjectAction, provider);
-			disposeAction(fFindReferencesInHierarchyAction, provider);
-			disposeAction(fFindReferencesInWorkingSetAction, provider);
-		}
+		unregisterActions();
+		fSelectionProvider = null;
 		fFindReferencesAction = null;
 		fFindReferencesInProjectAction = null;
 		fFindReferencesInHierarchyAction = null;
@@ -243,5 +239,44 @@ public class ReferencesSearchGroup extends ActionGroup {
 	private void disposeAction(ISelectionChangedListener action, ISelectionProvider provider) {
 		if (action != null)
 			provider.removeSelectionChangedListener(action);
+	}
+
+	private void registerActions() {
+		if (fEditor != null) {
+			return;
+		}
+		ISelection selection = fSelectionProvider.getSelection();
+		registerAction(fFindReferencesAction, fSelectionProvider, selection);
+		registerAction(fFindReferencesInProjectAction, fSelectionProvider, selection);
+		registerAction(fFindReferencesInHierarchyAction, fSelectionProvider, selection);
+		registerAction(fFindReferencesInWorkingSetAction, fSelectionProvider, selection);
+	}
+
+	private void unregisterActions() {
+		if (fEditor != null) {
+			return;
+		}
+		disposeAction(fFindReferencesAction, fSelectionProvider);
+		disposeAction(fFindReferencesInProjectAction, fSelectionProvider);
+		disposeAction(fFindReferencesInHierarchyAction, fSelectionProvider);
+		disposeAction(fFindReferencesInWorkingSetAction, fSelectionProvider);
+	}
+
+	/**
+	 * Proxy to {@link SelectionDispatchAction#setSpecialSelectionProvider(ISelectionProvider)}
+	 * 
+	 * @since 5.3
+	 * @param provider
+	 */
+	public void setSpecialSelectionProvider(ISelectionProvider provider) {
+		assert fEditor != null || provider != null;
+		unregisterActions();
+		fSelectionProvider = provider;
+		registerActions();
+
+		fFindReferencesAction.setSpecialSelectionProvider(provider);
+		fFindReferencesInProjectAction.setSpecialSelectionProvider(provider);
+		fFindReferencesInHierarchyAction.setSpecialSelectionProvider(provider);
+		fFindReferencesInWorkingSetAction.setSpecialSelectionProvider(provider);
 	}
 }
