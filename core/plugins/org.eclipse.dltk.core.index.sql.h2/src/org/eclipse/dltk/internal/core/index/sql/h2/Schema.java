@@ -90,7 +90,7 @@ public class Schema {
 			tableName.append("D_"); //$NON-NLS-1$
 		}
 		tableName.append(natureId.toUpperCase().replace('.', '_')).append('_')
-				.append(elementType).toString();
+				.append(elementType);
 		return tableName.toString();
 	}
 
