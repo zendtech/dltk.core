@@ -26,6 +26,7 @@
    <extension-point id="search" name="search" schema="schema/search.exsd"/>
    <extension-point id="highlighting" name="Semantic Highlighter" schema="schema/highlighting.exsd"/>
    <extension-point id="saveParticipants" name="Save Participants" schema="schema/saveParticipants.exsd"/>
+   <extension-point id="queryParticipants" name="Search Query Participants" schema="schema/queryParticipants.exsd"/>
    <extension
     	id="DLTKSearchResultPage"
         point="org.eclipse.search.searchResultViewPages">

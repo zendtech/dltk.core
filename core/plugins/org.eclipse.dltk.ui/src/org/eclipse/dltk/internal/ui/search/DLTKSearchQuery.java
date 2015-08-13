@@ -85,7 +85,8 @@ public class DLTKSearchQuery implements ISearchQuery {
 
 			int totalTicks= 1000;
 			IProject[] projects= DLTKSearchScopeFactory.getInstance().getProjects(fPatternData.getScope());
-			final SearchParticipantRecord[] participantDescriptors= SearchParticipantsExtensionPoint.getInstance().getSearchParticipants(projects);
+			final SearchParticipantRecord[] participantDescriptors = SearchParticipantsExtensionPoint
+					.getInstance().getSearchParticipants(this.fPatternData.getScope().getLanguageToolkit(), projects);
 			final int[] ticks= new int[participantDescriptors.length];
 			for (int i= 0; i < participantDescriptors.length; i++) {
 				final int iPrime= i;

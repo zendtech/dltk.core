@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -130,6 +130,7 @@ public final class SearchMessages extends NLS {
 	public static String DLTKSearchQuery_error_participant_search;
 	public static String SearchParticipant_error_noID;
 	public static String SearchParticipant_error_noNature;
+	public static String SearchParticipant_error_noLanguage;
 	public static String SearchParticipant_error_noClass;
 	public static String SearchParticipant_error_classCast;
 	public static String MatchFilter_WriteFilter_name;

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,9 +9,6 @@
  *******************************************************************************/
 /*
  * Created on Apr 13, 2004
- * 
- * TODO To change the template for this generated file go to Window -
- * Preferences - Script - Code Generation - Code and Comments
  */
 package org.eclipse.dltk.internal.ui.search;
 
@@ -24,24 +21,26 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.dltk.core.IDLTKLanguageToolkit;
 import org.eclipse.dltk.ui.DLTKUIPlugin;
 import org.eclipse.dltk.ui.search.ScriptSearchPage;
 
 
 public class SearchParticipantsExtensionPoint {
 
-	private Set fActiveParticipants= null;
+	private Set<SearchParticipantDescriptor> fActiveParticipants = null;
 	private static SearchParticipantsExtensionPoint fgInstance;
 
 	public boolean hasAnyParticipants() {
 		return Platform.getExtensionRegistry().getConfigurationElementsFor(ScriptSearchPage.PARTICIPANT_EXTENSION_POINT).length > 0;
 	}
 
-	private synchronized Set getAllParticipants() {
+	private synchronized Set<SearchParticipantDescriptor> getAllParticipants() {
 		if (fActiveParticipants != null)
 			return fActiveParticipants;
 		IConfigurationElement[] allParticipants= Platform.getExtensionRegistry().getConfigurationElementsFor(ScriptSearchPage.PARTICIPANT_EXTENSION_POINT);
-		fActiveParticipants= new HashSet(allParticipants.length);
+		fActiveParticipants = new HashSet<SearchParticipantDescriptor>(
+				allParticipants.length);
 		for (int i= 0; i < allParticipants.length; i++) {
 			SearchParticipantDescriptor descriptor= new SearchParticipantDescriptor(allParticipants[i]);
 			IStatus status= descriptor.checkSyntax();
@@ -54,12 +53,15 @@ public class SearchParticipantsExtensionPoint {
 		return fActiveParticipants;
 	}
 
-	private void collectParticipants(Set participants, IProject[] projects) {
-		Iterator activeParticipants= getAllParticipants().iterator();
-		Set seenParticipants= new HashSet();
+	private void collectParticipants(IDLTKLanguageToolkit language,
+			Set<SearchParticipantRecord> participants,
+			IProject[] projects) {
+		Iterator<SearchParticipantDescriptor> activeParticipants = getAllParticipants()
+				.iterator();
+		Set<String> seenParticipants = new HashSet<String>();
 		while (activeParticipants.hasNext()) {
-			SearchParticipantDescriptor participant= (SearchParticipantDescriptor) activeParticipants.next();
-			if (participant.isEnabled()) {
+			SearchParticipantDescriptor participant = activeParticipants.next();
+			if (participant.isEnabled() && language.getNatureId().equals(participant.getLanguage())) {
 				String id= participant.getID();
 				for (int i= 0; i < projects.length; i++) {
 					if (seenParticipants.contains(id))
@@ -80,11 +82,12 @@ public class SearchParticipantsExtensionPoint {
 
 
 
-	public SearchParticipantRecord[] getSearchParticipants(IProject[] concernedProjects) throws CoreException {
-		Set participantSet= new HashSet();
-		collectParticipants(participantSet, concernedProjects);
-		SearchParticipantRecord[] participants= new SearchParticipantRecord[participantSet.size()];
-		return (SearchParticipantRecord[]) participantSet.toArray(participants);
+	public SearchParticipantRecord[] getSearchParticipants(
+			IDLTKLanguageToolkit language, IProject[] concernedProjects)
+					throws CoreException {
+		Set<SearchParticipantRecord> participantSet = new HashSet<SearchParticipantRecord>();
+		collectParticipants(language, participantSet, concernedProjects);
+		return participantSet.toArray(new SearchParticipantRecord[participantSet.size()]);
 	}
 
 	public static synchronized SearchParticipantsExtensionPoint getInstance() {
