@@ -40,7 +40,7 @@
 					<testClass>org.eclipse.dltk.ui.tests.AllTests</testClass>
 					<useUIHarness>true</useUIHarness>
 					<useUIThread>true</useUIThread>
-					<argLine>-Xms40m -Xmx1G ${os-jvm-flags}</argLine>
+					<argLine>-Xms40m -Xmx1G ${os-jvm-flags} ${tycho.testArgLine}</argLine>
 					<dependencies>
 						<dependency>
 							<type>p2-installable-unit</type>
