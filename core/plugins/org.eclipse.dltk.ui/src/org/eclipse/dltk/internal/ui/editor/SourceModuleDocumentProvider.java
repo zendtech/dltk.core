@@ -611,10 +611,8 @@ public class SourceModuleDocumentProvider extends TextFileDocumentProvider
 			if (problemFactory != null) {
 				return problemFactory.isValidMarker(marker);
 			} else {
-				String markerType = MarkerUtilities.getMarkerType(marker);
-				return markerType != null
-						&& markerType
-								.startsWith(DefaultProblem.MARKER_TYPE_PREFIX);
+				return MarkerUtilities.isMarkerType(marker,
+						DefaultProblem.MARKER_TYPE_PROBLEM);
 			}
 		}
 
