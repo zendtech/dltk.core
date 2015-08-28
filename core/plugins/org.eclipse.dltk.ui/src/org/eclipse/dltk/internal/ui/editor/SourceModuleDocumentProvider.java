@@ -50,6 +50,7 @@ import org.eclipse.dltk.compiler.problem.DefaultProblem;
 import org.eclipse.dltk.compiler.problem.IProblem;
 import org.eclipse.dltk.compiler.problem.IProblemFactory;
 import org.eclipse.dltk.compiler.problem.IProblemIdentifier;
+import org.eclipse.dltk.compiler.problem.IProblemIdentifierExtension;
 import org.eclipse.dltk.core.DLTKCore;
 import org.eclipse.dltk.core.IBuffer;
 import org.eclipse.dltk.core.IBuildpathEntry;
@@ -433,8 +434,13 @@ public class SourceModuleDocumentProvider extends TextFileDocumentProvider
 		 * ()
 		 */
 		public String getMarkerType() {
-			if (fProblem instanceof CategorizedProblem)
+			if (fProblem.getID() instanceof IProblemIdentifierExtension) {
+				return ((IProblemIdentifierExtension) fProblem.getID())
+						.getMarkerType();
+			}
+			if (fProblem instanceof CategorizedProblem) {
 				return ((CategorizedProblem) fProblem).getMarkerType();
+			}
 			return null;
 		}
 
