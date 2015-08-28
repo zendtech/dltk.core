@@ -72,6 +72,14 @@ public class DLTKPluginImages {
 	public static final String IMG_CORRECTION_CHANGE= NAME_PREFIX + "correction_change.png"; //$NON-NLS-1$
 	public static final String IMG_CORRECTION_ADD = NAME_PREFIX
 			+ "add_correction.png"; //$NON-NLS-1$
+	public static final String IMG_CORRECTION_CAST = NAME_PREFIX
+			+ "correction_cast.png"; //$NON-NLS-1$
+	public static final String IMG_CORRECTION_DELETE_IMPORT = NAME_PREFIX
+			+ "correction_delete_import.png"; //$NON-NLS-1$
+	public static final String IMG_CORRECTION_MOVE = NAME_PREFIX
+			+ "correction_move.png"; //$NON-NLS-1$
+	public static final String IMG_CORRECTION_RENAME = NAME_PREFIX
+			+ "correction_rename.png"; //$NON-NLS-1$
 	
 	public static final String IMG_OBJS_ANNOTATION= NAME_PREFIX + "annotation_obj.png"; //$NON-NLS-1$
 	public static final String IMG_OBJS_ANNOTATION_DEFAULT= NAME_PREFIX + "annotation_default_obj.png"; //$NON-NLS-1$
@@ -381,6 +389,10 @@ public class DLTKPluginImages {
 	static {
 		createManagedFromKey(T_OBJ, IMG_CORRECTION_CHANGE);
 		createManagedFromKey(T_OBJ, IMG_CORRECTION_ADD);
+		createManagedFromKey(T_OBJ, IMG_CORRECTION_CAST);
+		createManagedFromKey(T_OBJ, IMG_CORRECTION_DELETE_IMPORT);
+		createManagedFromKey(T_OBJ, IMG_CORRECTION_MOVE);
+		createManagedFromKey(T_OBJ, IMG_CORRECTION_RENAME);
 	}
 
 	private static final class CachedImageDescriptor extends ImageDescriptor {
