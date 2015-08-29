@@ -51,7 +51,9 @@ public class DefaultProblemFactory implements IProblemFactory {
 
 	public boolean isValidMarker(IMarker marker) {
 		try {
-			return isValidMarkerType(marker.getType());
+			return marker.exists() && (marker
+					.isSubtypeOf(DefaultProblem.MARKER_TYPE_PROBLEM)
+					|| marker.isSubtypeOf(DefaultProblem.MARKER_TYPE_TASK));
 		} catch (CoreException e) {
 			DLTKCore.error(e);
 			return false;

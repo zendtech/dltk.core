@@ -612,7 +612,9 @@ public class SourceModuleDocumentProvider extends TextFileDocumentProvider
 				return problemFactory.isValidMarker(marker);
 			} else {
 				return MarkerUtilities.isMarkerType(marker,
-						DefaultProblem.MARKER_TYPE_PROBLEM);
+						DefaultProblem.MARKER_TYPE_PROBLEM)
+						|| MarkerUtilities.isMarkerType(marker,
+								DefaultProblem.MARKER_TYPE_TASK);
 			}
 		}
 
