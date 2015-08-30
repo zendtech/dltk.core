@@ -130,7 +130,8 @@ public class DLTKPluginImages {
 	public static final String IMG_OBJS_EMPTY_LOGICAL_PACKAGE = NAME_PREFIX + "empty_logical_package_obj.png";//$NON-NLS-1$
 	public static final String IMG_OBJS_PACKAGE = NAME_PREFIX
 			+ "package_obj.png"; //$NON-NLS-1$
-	public static final String IMG_OBJS_EMPTY_PACK_RESOURCE = NAME_PREFIX + "empty_pack_fldr_obj.gif"; //$NON-NLS-1$
+	public static final String IMG_OBJS_EMPTY_PACK_RESOURCE = NAME_PREFIX
+			+ "empty_pack_fldr_obj.png"; //$NON-NLS-1$
 	public static final String IMG_OBJS_EMPTY_PACKAGE = NAME_PREFIX + "empty_pack_obj.png"; //$NON-NLS-1$
 	public static final String IMG_OBJS_PACKFRAG_ROOT = NAME_PREFIX
 			+ "packagefolder_obj.png"; //$NON-NLS-1$
@@ -140,7 +141,8 @@ public class DLTKPluginImages {
 			+ "jar_src_obj.png"; //$NON-NLS-1$
 	public static final String IMG_OBJS_EXTZIP_WSRC = NAME_PREFIX
 			+ "jar_lsrc_obj.png"; //$NON-NLS-1$
-	public static final String IMG_OBJS_ENV_VAR = NAME_PREFIX + "envvar_obj.gif"; //$NON-NLS-1$
+	public static final String IMG_OBJS_ENV_VAR = NAME_PREFIX
+			+ "envvar_obj.png"; //$NON-NLS-1$
 	public static final String IMG_OBJS_MODEL = NAME_PREFIX + "java_model_obj.png"; //$NON-NLS-1$
 	public static final String IMG_OBJS_UNKNOWN = NAME_PREFIX + "unknown_obj.png"; //$NON-NLS-1$
 	public static final String IMG_OBJS_LOCAL_VARIABLE = NAME_PREFIX
@@ -168,7 +170,8 @@ public class DLTKPluginImages {
 	public static final String IMG_ELCL_VIEW_MENU= NAME_PREFIX + T_ELCL + "view_menu.png"; //$NON-NLS-1$
 	public static final String IMG_DLCL_VIEW_MENU= NAME_PREFIX + T_DLCL + "view_menu.png"; //$NON-NLS-1$
 	
-	public static final String IMG_OBJS_SEARCH_OCCURRENCE= NAME_PREFIX + "occ_match.gif"; //$NON-NLS-1$
+	public static final String IMG_OBJS_SEARCH_OCCURRENCE = NAME_PREFIX
+			+ "occ_match.png"; //$NON-NLS-1$
 		
 	//TERMINATE_CONSOLE
 	
