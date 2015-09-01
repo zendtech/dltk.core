@@ -11,7 +11,6 @@ package org.eclipse.dltk.internal.ui.editor;
 
 import org.eclipse.core.resources.IStorage;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.dltk.core.IExternalSourceModule;
 import org.eclipse.dltk.core.IModelElement;
 import org.eclipse.dltk.internal.ui.ExternalSourceModuleEditorInputFactory;
@@ -47,12 +46,6 @@ public class ExternalStorageEditorInput implements IEditorInput,
 
 	public IPersistableElement getPersistable() {
 		if (fStorage instanceof IExternalSourceModule) {
-			final IPersistableElement element = (IPersistableElement) Platform
-					.getAdapterManager()
-					.getAdapter(fStorage, IPersistableElement.class);
-			if (element != null) {
-				return element;
-			}
 			return ExternalSourceModuleEditorInputFactory
 					.createPersistableElement((IExternalSourceModule) fStorage);
 		}
