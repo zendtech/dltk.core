@@ -62,7 +62,6 @@ import org.eclipse.dltk.internal.core.UserLibraryBuildpathContainerInitializer;
 import org.eclipse.dltk.internal.core.UserLibraryManager;
 import org.eclipse.dltk.internal.corext.util.Messages;
 import org.eclipse.dltk.internal.ui.IUIConstants;
-import org.eclipse.dltk.ui.dialogs.StatusInfo;
 import org.eclipse.dltk.internal.ui.wizards.BuildpathAttributeConfiguration;
 import org.eclipse.dltk.internal.ui.wizards.buildpath.AccessRulesDialog;
 import org.eclipse.dltk.internal.ui.wizards.buildpath.BPListElement;
@@ -84,6 +83,7 @@ import org.eclipse.dltk.internal.ui.wizards.dialogfields.StringButtonDialogField
 import org.eclipse.dltk.internal.ui.wizards.dialogfields.StringDialogField;
 import org.eclipse.dltk.internal.ui.wizards.dialogfields.TreeListDialogField;
 import org.eclipse.dltk.ui.DLTKUIPlugin;
+import org.eclipse.dltk.ui.dialogs.StatusInfo;
 import org.eclipse.dltk.ui.util.ExceptionHandler;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogSettings;
@@ -1127,10 +1127,6 @@ public abstract class UserLibraryPreferencePage extends PreferencePage
 				IBuildpathContainer updatedContainer = element
 						.getUpdatedContainer();
 				try {
-					if (initializer instanceof UserLibraryBuildpathContainerInitializer) {
-						((UserLibraryBuildpathContainerInitializer) initializer)
-								.setToolkit(getLanguageToolkit());
-					}
 					initializer.requestBuildpathContainerUpdate(path, project,
 							updatedContainer);
 				} catch (CoreException e) {

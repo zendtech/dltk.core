@@ -18,12 +18,14 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.dltk.core.DLTKCore;
 import org.eclipse.dltk.core.IBuildpathContainer;
+import org.eclipse.dltk.core.IBuildpathContainerExtension3;
 import org.eclipse.dltk.core.IBuildpathEntry;
 import org.eclipse.dltk.core.IScriptProject;
 
 public class BPUserLibraryElement {
 
-	private class UpdatedBuildpathContainer implements IBuildpathContainer {
+	private class UpdatedBuildpathContainer
+			implements IBuildpathContainer, IBuildpathContainerExtension3 {
 		public IBuildpathEntry[] getBuildpathEntries() {
 			BPListElement[] children = getChildren();
 			IBuildpathEntry[] entries = new IBuildpathEntry[children.length];
@@ -46,6 +48,11 @@ public class BPUserLibraryElement {
 			return BPUserLibraryElement.this.getPath();
 		}
 
+		public Map<String, String> getAttributes() {
+			return fAttributes != null
+					? Collections.<String, String>unmodifiableMap(fAttributes)
+					: Collections.<String, String> emptyMap();
+		}
 	}
 
 	private String fName;
