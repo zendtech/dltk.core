@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,39 +10,35 @@
 package org.eclipse.dltk.internal.ui.actions;
 
 import java.lang.reflect.InvocationTargetException;
-import java.net.URI;
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 
-import org.eclipse.core.filesystem.EFS;
-import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.IWorkspaceRunnable;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.SubMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.OperationCanceledException;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.dltk.core.DLTKCore;
-import org.eclipse.dltk.core.DLTKLanguageManager;
 import org.eclipse.dltk.core.IModelElement;
-import org.eclipse.dltk.core.IScriptProject;
-import org.eclipse.dltk.internal.core.ProjectRefreshOperation;
-import org.eclipse.dltk.internal.corext.util.Messages;
-import org.eclipse.dltk.internal.corext.util.Resources;
+import org.eclipse.dltk.core.IProjectFragment;
+import org.eclipse.dltk.internal.core.ModelManager;
+import org.eclipse.dltk.internal.ui.navigator.ProjectFragmentContainer;
 import org.eclipse.dltk.ui.DLTKPluginImages;
+import org.eclipse.dltk.ui.DLTKUIPlugin;
 import org.eclipse.dltk.ui.actions.SelectionDispatchAction;
-import org.eclipse.dltk.ui.util.ExceptionHandler;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.window.IShellProvider;
 import org.eclipse.ui.IWorkbenchSite;
 import org.eclipse.ui.IWorkingSet;
-import org.eclipse.ui.PlatformUI;
 
 /**
  * Action for refreshing the workspace from the local file system for the
@@ -57,6 +53,77 @@ import org.eclipse.ui.PlatformUI;
  * </p>
  */
 public class RefreshAction extends SelectionDispatchAction {
+
+	/**
+	 * As the DLTK RefreshAction is already API, we have to wrap the workbench
+	 * action.
+	 */
+	private static class WrappedWorkbenchRefreshAction
+			extends org.eclipse.ui.actions.RefreshAction {
+
+		public WrappedWorkbenchRefreshAction(IShellProvider provider) {
+			super(provider);
+		}
+
+		@Override
+		protected List<? extends IResource> getSelectedResources() {
+			List<? extends IResource> selectedResources = super.getSelectedResources();
+			if (!getStructuredSelection().isEmpty()
+					&& selectedResources.size() == 1
+					&& selectedResources.get(0) instanceof IWorkspaceRoot) {
+				selectedResources = Collections.emptyList(); // Refresh action
+																// refreshes
+																// root when it
+																// can't find
+																// any resources
+																// in selection
+			}
+
+			ArrayList<IResource> allResources = new ArrayList<IResource>(
+					selectedResources);
+			addWorkingSetResources(allResources);
+			return allResources;
+		}
+
+		private void addWorkingSetResources(List<IResource> selectedResources) {
+			Object[] elements = getStructuredSelection().toArray();
+			for (int i = 0; i < elements.length; i++) {
+				Object curr = elements[i];
+				if (curr instanceof IWorkingSet) {
+					IAdaptable[] members = ((IWorkingSet) curr).getElements();
+					for (int k = 0; k < members.length; k++) {
+						IResource adapted = (IResource) members[k]
+								.getAdapter(IResource.class);
+						if (adapted != null) {
+							selectedResources.add(adapted);
+						}
+					}
+				}
+			}
+		}
+
+		public void run(IProgressMonitor monitor)
+				throws CoreException, OperationCanceledException {
+			try {
+				final IStatus[] errorStatus = new IStatus[] {
+						Status.OK_STATUS };
+				createOperation(errorStatus).run(monitor);
+				if (errorStatus[0].matches(IStatus.ERROR)) {
+					throw new CoreException(errorStatus[0]);
+				}
+			} catch (InvocationTargetException e) {
+				Throwable targetException = e.getTargetException();
+				if (targetException instanceof CoreException)
+					throw (CoreException) targetException;
+				throw new CoreException(
+						new Status(IStatus.ERROR, DLTKUIPlugin.PLUGIN_ID,
+								ActionMessages.RefreshAction_error_workbenchaction_message,
+								targetException));
+			} catch (InterruptedException e) {
+				throw new OperationCanceledException();
+			}
+		}
+	}
 
 	/**
 	 * Creates a new <code>RefreshAction</code>. The action requires that the
@@ -79,8 +146,8 @@ public class RefreshAction extends SelectionDispatchAction {
 		// IScriptHelpContextIds.REFRESH_ACTION);
 	}
 
-	/*
-	 * (non-Javadoc) Method declared in SelectionDispatchAction
+	/**
+	 * Method declared in SelectionDispatchAction
 	 */
 	@Override
 	public void selectionChanged(IStructuredSelection selection) {
@@ -109,154 +176,62 @@ public class RefreshAction extends SelectionDispatchAction {
 		return true;
 	}
 
-	/*
-	 * (non-Javadoc) Method declared in SelectionDispatchAction
+	private void performRefresh(IStructuredSelection selection,
+			IProgressMonitor monitor)
+					throws CoreException, OperationCanceledException {
+		monitor.beginTask(ActionMessages.RefreshAction_progressMessage, 2);
+
+		WrappedWorkbenchRefreshAction workbenchAction = new WrappedWorkbenchRefreshAction(
+				getSite());
+		workbenchAction.selectionChanged(selection);
+		workbenchAction.run(new SubProgressMonitor(monitor, 1));
+		refreshScriptElements(selection, new SubProgressMonitor(monitor, 1));
+	}
+
+	private void refreshScriptElements(IStructuredSelection selection,
+			SubProgressMonitor monitor) throws CoreException {
+		Object[] selectedElements = selection.toArray();
+		ArrayList<IModelElement> modelElements = new ArrayList<IModelElement>();
+		for (int i = 0; i < selectedElements.length; i++) {
+			Object curr = selectedElements[i];
+			if (curr instanceof IProjectFragment) {
+				modelElements.add((IProjectFragment) curr);
+			} else if (curr instanceof ProjectFragmentContainer) {
+				modelElements
+						.addAll(Arrays.asList(((ProjectFragmentContainer) curr)
+								.getProjectFragments()));
+			} else if (curr instanceof IWorkingSet) {
+				IAdaptable[] members = ((IWorkingSet) curr).getElements();
+				for (int k = 0; k < members.length; k++) {
+					IModelElement adapted = (IModelElement) members[k]
+							.getAdapter(IModelElement.class);
+					if (adapted instanceof ProjectFragmentContainer) {
+						modelElements.add(adapted);
+					}
+				}
+			}
+		}
+		if (!modelElements.isEmpty()) {
+			ModelManager.getModelManager().getDeltaProcessor()
+					.checkExternalChanges(
+							modelElements.toArray(
+									new IModelElement[modelElements.size()]),
+							monitor);
+		}
+	}
+
+	/**
+	 * Method declared in SelectionDispatchAction
 	 */
 	@Override
-	public void run(IStructuredSelection selection) {
-		final IResource[] resources = getResources(selection);
+	public void run(final IStructuredSelection selection) {
 		IWorkspaceRunnable operation = new IWorkspaceRunnable() {
 			public void run(IProgressMonitor monitor) throws CoreException {
-				SubMonitor progess = SubMonitor.convert(monitor,
-						ActionMessages.RefreshAction_progressMessage,
-						resources.length * 2);
-				List<IModelElement> modelElements = new ArrayList<IModelElement>(
-						5);
-				Set<IProject> affectedProjects = new HashSet<IProject>();
-				for (int r = 0; r < resources.length; r++) {
-					IResource resource = resources[r];
-					if (resource.getType() == IResource.PROJECT) {
-						checkLocationDeleted((IProject) resource);
-						affectedProjects.add((IProject) resource);
-					} else if (resource.getType() == IResource.ROOT) {
-						IProject[] projects = ((IWorkspaceRoot) resource)
-								.getProjects();
-						for (int p = 0; p < projects.length; p++) {
-							checkLocationDeleted(projects[p]);
-							affectedProjects.add(projects[p]);
-						}
-					} else {
-						affectedProjects.add(resource.getProject());
-					}
-					resource.refreshLocal(IResource.DEPTH_INFINITE, progess
-							.newChild(1));
-					IModelElement jElement = DLTKCore.create(resource);
-					if (jElement != null && jElement.exists())
-						modelElements.add(jElement);
-				}
-				// IScriptModel model=
-				// DLTKCore.create(ResourcesPlugin.getWorkspace().getRoot());
-				if (DLTKCore.DEBUG) {
-					System.err
-							.println("Add refreshing of external archives..."); //$NON-NLS-1$
-				}
-				// model.refreshExternalArchives(
-				// (IModelElement[]) modelElements.toArray(new
-				// IModelElement[modelElements.size()]),
-				// new SubProgressMonitor(monitor, resources.length));
-				final List<IScriptProject> scriptProjects = new ArrayList<IScriptProject>(
-						affectedProjects.size());
-				for (IProject project : affectedProjects) {
-					if (project.exists()
-							&& DLTKLanguageManager.hasScriptNature(project)) {
-						scriptProjects.add(DLTKCore.create(project));
-					}
-				}
-				if (!scriptProjects.isEmpty()) {
-					final ProjectRefreshOperation modelRefresh = new ProjectRefreshOperation(
-							scriptProjects
-									.toArray(new IScriptProject[scriptProjects
-											.size()]));
-					modelRefresh.run(progess.newChild(resources.length));
-				}
+				performRefresh(selection, monitor);
 			}
 		};
-
-		try {
-			PlatformUI.getWorkbench().getProgressService().run(true, true,
-					new WorkbenchRunnableAdapter(operation));
-		} catch (InvocationTargetException e) {
-			ExceptionHandler.handle(e, getShell(),
-					ActionMessages.RefreshAction_error_title,
-					ActionMessages.RefreshAction_error_message);
-		} catch (InterruptedException e) {
-			// canceled
-		}
+		new WorkbenchRunnableAdapter(operation).runAsUserJob(
+				ActionMessages.RefreshAction_refresh_operation_label, null);
 	}
 
-	private IResource[] getResources(IStructuredSelection selection) {
-		if (selection.isEmpty()) {
-			return new IResource[] { ResourcesPlugin.getWorkspace().getRoot() };
-		}
-
-		List<IResource> result = new ArrayList<IResource>(selection.size());
-		getResources(result, selection.toArray());
-
-		for (Iterator<IResource> iter = result.iterator(); iter.hasNext();) {
-			IResource resource = iter.next();
-			if (isDescendent(result, resource))
-				iter.remove();
-		}
-
-		return result.toArray(new IResource[result.size()]);
-	}
-
-	private void getResources(List<IResource> result, Object[] elements) {
-		for (int i = 0; i < elements.length; i++) {
-			Object element = elements[i];
-			// Must check working set before IAdaptable since WorkingSet
-			// implements IAdaptable
-			if (element instanceof IWorkingSet) {
-				getResources(result, ((IWorkingSet) element).getElements());
-			} else if (element instanceof IAdaptable) {
-				IResource resource = (IResource) ((IAdaptable) element)
-						.getAdapter(IResource.class);
-				if (resource == null)
-					continue;
-				if (resource.getType() != IResource.PROJECT
-						|| (resource.getType() == IResource.PROJECT && ((IProject) resource)
-								.isOpen())) {
-					result.add(resource);
-				}
-			}
-		}
-	}
-
-	private boolean isDescendent(List<IResource> candidates, IResource element) {
-		IResource parent = element.getParent();
-		while (parent != null) {
-			if (candidates.contains(parent))
-				return true;
-			parent = parent.getParent();
-		}
-		return false;
-	}
-
-	private void checkLocationDeleted(IProject project) throws CoreException {
-		if (!project.exists())
-			return;
-		URI location = project.getLocationURI();
-		if (location == null)
-			return;
-		IFileStore store = EFS.getStore(location);
-		if (!store.fetchInfo().exists()) {
-			final String message = Messages.format(
-					ActionMessages.RefreshAction_locationDeleted_message,
-					new Object[] { project.getName(),
-							Resources.getLocationString(project) });
-			final boolean[] result = new boolean[1];
-			// Must prompt user in UI thread (we're in the operation thread
-			// here).
-			getShell().getDisplay().syncExec(new Runnable() {
-				public void run() {
-					result[0] = MessageDialog.openQuestion(getShell(),
-							ActionMessages.RefreshAction_locationDeleted_title,
-							message);
-				}
-			});
-			if (result[0]) {
-				project.delete(true, true, null);
-			}
-		}
-	}
 }

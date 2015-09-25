@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -48,10 +48,8 @@ public final class ActionMessages extends NLS {
 	public static String RefreshAction_label;
 	public static String RefreshAction_toolTip;
 	public static String RefreshAction_progressMessage;
-	public static String RefreshAction_error_title;
-	public static String RefreshAction_error_message;
-	public static String RefreshAction_locationDeleted_title;
-	public static String RefreshAction_locationDeleted_message;
+	public static String RefreshAction_error_workbenchaction_message;
+	public static String RefreshAction_refresh_operation_label;
 	public static String ActionUtil_notOnBuildPath_title;
 	public static String ActionUtil_notOnBuildPath_message;
 	public static String ActionUtil_notOnBuildPath_resource_message;
