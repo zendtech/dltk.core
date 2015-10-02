@@ -5,7 +5,7 @@
   <parent>
     <artifactId>mylyn</artifactId>
     <groupId>org.eclipse.dltk.mylyn</groupId>
-    <version>5.3.1-SNAPSHOT</version>
+    <version>5.4.0-SNAPSHOT</version>
     <relativePath>../..</relativePath>
   </parent>
   <artifactId>org.eclipse.dltk.mylyn</artifactId>
