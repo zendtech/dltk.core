@@ -15,7 +15,6 @@ import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
@@ -41,7 +40,7 @@ public class UserLibraryManager {
 	public final static String BP_USERLIBRARY_PREFERENCES_PREFIX = DLTKCore.PLUGIN_ID
 			+ ".userLibrary."; //$NON-NLS-1$
 
-	private Map userLibraries;
+	private final Map<String, UserLibrary> userLibraries = new HashMap<String, UserLibrary>();
 
 	public UserLibraryManager() {
 		initialize();
@@ -51,10 +50,11 @@ public class UserLibraryManager {
 	 * Gets the library for a given name or <code>null</code> if no such
 	 * library exists.
 	 */
-	public synchronized UserLibrary getUserLibrary(String libName,
+	public UserLibrary getUserLibrary(String libName,
 			IDLTKLanguageToolkit toolkit) {
-		return (UserLibrary) this.userLibraries.get(makeLibraryName(libName,
-				toolkit));
+		synchronized (userLibraries) {
+			return userLibraries.get(makeLibraryName(libName, toolkit));
+		}
 	}
 
 	public static String makeLibraryName(String libName,
@@ -86,26 +86,25 @@ public class UserLibraryManager {
 	 * Returns the names of all defined user libraries. The corresponding
 	 * classpath container path is the name appended to the CONTAINER_ID.
 	 */
-	public synchronized String[] getUserLibraryNames(
+	public String[] getUserLibraryNames(
 			IDLTKLanguageToolkit toolkit) {
-		Set set = this.userLibraries.keySet();
-		Set result = new HashSet();
-		for (Iterator iterator = set.iterator(); iterator.hasNext();) {
-			String key = (String) iterator.next();
-			int pos = key.indexOf("#"); //$NON-NLS-1$
-			if (pos != -1) {
-				String nature = key.substring(0, pos);
-				if (toolkit.getNatureId().equals(nature)) {
-					result.add(getLibraryName(key));
+		final Set<String> result = new HashSet<String>();
+		synchronized (userLibraries) {
+			for (String key : userLibraries.keySet()) {
+				int pos = key.indexOf("#"); //$NON-NLS-1$
+				if (pos != -1) {
+					String nature = key.substring(0, pos);
+					if (toolkit.getNatureId().equals(nature)) {
+						result.add(getLibraryName(key));
+					}
 				}
 			}
 		}
 
-		return (String[]) result.toArray(new String[result.size()]);
+		return result.toArray(new String[result.size()]);
 	}
 
 	private void initialize() {
-		this.userLibraries = new HashMap();
 		IEclipsePreferences instancePreferences = ModelManager
 				.getModelManager().getInstancePreferences();
 		String[] propertyNames;
@@ -181,10 +180,12 @@ public class UserLibraryManager {
 							encodedUserLibrary));
 
 			// update user libraries map
-			if (userLibrary != null) {
-				this.userLibraries.put(libName, userLibrary);
-			} else {
-				this.userLibraries.remove(libName);
+			synchronized (userLibraries) {
+				if (userLibrary != null) {
+					userLibraries.put(libName, userLibrary);
+				} else {
+					userLibraries.remove(libName);
+				}
 			}
 
 			// update affected projects
@@ -213,7 +214,7 @@ public class UserLibraryManager {
 		}
 	}
 
-	public synchronized void removeUserLibrary(String libName,
+	public void removeUserLibrary(String libName,
 			IDLTKLanguageToolkit toolkit) {
 		IEclipsePreferences instancePreferences = ModelManager
 				.getModelManager().getInstancePreferences();
@@ -229,13 +230,13 @@ public class UserLibraryManager {
 		// preferenceChange(...))
 	}
 
-	public synchronized void setUserLibrary(String libName,
+	public void setUserLibrary(String libName,
 			IBuildpathEntry[] entries, boolean isSystemLibrary,
 			IDLTKLanguageToolkit toolkit) {
 		setUserLibrary(libName, entries, isSystemLibrary, null, toolkit);
 	}
 
-	public synchronized void setUserLibrary(String libName,
+	public void setUserLibrary(String libName,
 			IBuildpathEntry[] entries, boolean isSystemLibrary,
 			Map<String, String> attributes, IDLTKLanguageToolkit toolkit) {
 		IEclipsePreferences instancePreferences = ModelManager
