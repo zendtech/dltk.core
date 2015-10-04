@@ -16,8 +16,7 @@ import java.util.ResourceBundle;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.Assert;
-import org.eclipse.dltk.core.IModelElement;
-import org.eclipse.dltk.core.IScriptProject;
+import org.eclipse.dltk.core.ISourceModule;
 import org.eclipse.dltk.core.PreferencesLookupDelegate;
 import org.eclipse.dltk.core.ScriptUtils;
 import org.eclipse.dltk.internal.ui.editor.EditorUtility;
@@ -26,6 +25,7 @@ import org.eclipse.dltk.ui.CodeFormatterConstants;
 import org.eclipse.dltk.ui.formatter.FormatterException;
 import org.eclipse.dltk.ui.formatter.IScriptFormatter;
 import org.eclipse.dltk.ui.formatter.IScriptFormatterExtension;
+import org.eclipse.dltk.ui.formatter.IScriptFormatterExtension2;
 import org.eclipse.dltk.ui.formatter.IScriptFormatterFactory;
 import org.eclipse.dltk.ui.formatter.ScriptFormatterManager;
 import org.eclipse.dltk.ui.text.util.AutoEditUtils;
@@ -79,18 +79,6 @@ public class IndentAction extends TextEditorAction {
 			ITextEditor editor, boolean isTabAction) {
 		super(bundle, prefix, editor);
 		fIsTabAction = isTabAction;
-	}
-
-	private IProject getProject() {
-		final IModelElement input = EditorUtility.getEditorInputModelElement(
-				getTextEditor(), false);
-		if (input != null) {
-			final IScriptProject scriptProject = input.getScriptProject();
-			if (scriptProject != null) {
-				return scriptProject.getProject();
-			}
-		}
-		return null;
 	}
 
 	/*
@@ -147,7 +135,15 @@ public class IndentAction extends TextEditorAction {
 					}
 					return;
 				}
-				final IProject project = getProject();
+
+				IProject project = null;
+				final ISourceModule sourceModule = EditorUtility
+						.getEditorInputModelElement(getTextEditor(), false);
+				if (sourceModule != null
+						&& sourceModule.getScriptProject() != null) {
+					project = sourceModule.getScriptProject().getProject();
+				}
+
 				final IScriptFormatterFactory factory = ScriptFormatterManager
 						.getSelected(ScriptUtils.getNatureId(getTextEditor()),
 								project);
@@ -165,6 +161,12 @@ public class IndentAction extends TextEditorAction {
 						((IScriptFormatterExtension) formatter)
 								.initialize(project);
 					}
+					if (sourceModule != null
+							&& formatter instanceof IScriptFormatterExtension2) {
+						((IScriptFormatterExtension2) formatter)
+								.initialize(sourceModule);
+					}
+
 					final Position end = new Position(offset + length);
 					document.addPosition(end);
 					if (indentLines(document, startLine, lastLine, formatter)) {
