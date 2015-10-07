@@ -10,7 +10,6 @@
 package org.eclipse.dltk.core;
 
 import java.io.File;
-import java.util.HashMap;
 import java.util.Hashtable;
 
 import org.eclipse.core.resources.IContainer;
@@ -1801,8 +1800,9 @@ public class DLTKCore extends Plugin {
 	 */
 	public static BuildpathContainerInitializer getBuildpathContainerInitializer(
 			String containerID) {
-		HashMap containerInitializersCache = ModelManager.getModelManager().containerInitializersCache;
-		BuildpathContainerInitializer initializer = (BuildpathContainerInitializer) containerInitializersCache
+		final Hashtable<String, BuildpathContainerInitializer> containerInitializersCache = ModelManager
+				.getModelManager().containerInitializersCache;
+		BuildpathContainerInitializer initializer = containerInitializersCache
 				.get(containerID);
 		if (initializer == null) {
 			initializer = computeBuildpathContainerInitializer(containerID);

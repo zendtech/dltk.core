@@ -132,7 +132,8 @@ public class ModelManager implements ISaveParticipant {
 	public HashMap previousSessionContainers = new HashMap(5);
 	private ThreadLocal containerInitializationInProgress = new ThreadLocal();
 	public boolean batchContainerInitializations = false;
-	public HashMap containerInitializersCache = new HashMap(5);
+	public final Hashtable<String, BuildpathContainerInitializer> containerInitializersCache = new Hashtable<String, BuildpathContainerInitializer>(
+			5);
 	/**
 	 * Special value used for recognizing ongoing initialization and breaking
 	 * initialization cycles
