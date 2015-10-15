@@ -508,9 +508,7 @@ public abstract class AbstractSourceModule extends Openable implements
 			p.done(natureId, "Source Element parser", 0);
 		}
 		if (problemReporter != null) {
-			if (!problemReporter.hasErrors()) {
-				new ReconcileBuilder(natureId, this, problemReporter).build();
-			}
+			new ReconcileBuilder(natureId, this, problemReporter).build();
 			problemReporter.reportToRequestor();
 		}
 
