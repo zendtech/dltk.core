@@ -699,11 +699,13 @@ public abstract class NewSourceModulePage extends NewContainerWizardPage {
 		String[] extensions = getFileExtensions();
 		for (int i = 0; i < extensions.length; ++i) {
 			String extension = extensions[i];
-			if (extension.length() > 0 && fileText.endsWith("." + extension)) { //$NON-NLS-1$
+			if (!extension.isEmpty() && fileText.endsWith("." + extension)) { //$NON-NLS-1$
 				return fileText;
 			}
 		}
-
+		if (extensions[0].isEmpty()) {
+			return fileText;
+		}
 		return fileText + "." + extensions[0]; //$NON-NLS-1$
 	}
 
@@ -712,9 +714,11 @@ public abstract class NewSourceModulePage extends NewContainerWizardPage {
 
 		IDLTKLanguageToolkit toolkit = DLTKLanguageManager
 				.getLanguageToolkit(requiredNature);
-		String[] extensions = ScriptModelUtil.getFileExtensions(toolkit);
-		if (extensions != null) {
-			return extensions;
+		if (toolkit != null) {
+			String[] extensions = ScriptModelUtil.getFileExtensions(toolkit);
+			if (extensions != null) {
+				return extensions;
+			}
 		}
 
 		return new String[] { Util.EMPTY_STRING };
