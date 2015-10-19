@@ -132,7 +132,7 @@ public class DLTKSearchResultPage extends AbstractTextSearchViewPage implements 
 		initSortActions();
 		initGroupingActions();
 		// initFilterActions();
-		setElementLimit(new Integer(DEFAULT_ELEMENT_LIMIT));
+		setElementLimit(Integer.valueOf(DEFAULT_ELEMENT_LIMIT));
 	}
 	
 	private void initSortActions() {
@@ -188,8 +188,8 @@ public class DLTKSearchResultPage extends AbstractTextSearchViewPage implements 
 		try {
 			IMarker marker= file.createMarker(NewSearchUI.SEARCH_MARKER);
 			HashMap<String, Integer> attributes= new HashMap<String, Integer>(4);
-			attributes.put(IMarker.CHAR_START, new Integer(offset));
-			attributes.put(IMarker.CHAR_END, new Integer(offset + length));
+			attributes.put(IMarker.CHAR_START, Integer.valueOf(offset));
+			attributes.put(IMarker.CHAR_END, Integer.valueOf(offset + length));
 			marker.setAttributes(attributes);
 			IDE.gotoMarker(editor, marker);
 			marker.delete();
@@ -383,7 +383,7 @@ public class DLTKSearchResultPage extends AbstractTextSearchViewPage implements 
 			if (value != null)
 				elementLimit = limitElements ? value.intValue() : -1;
 		}
-		setElementLimit(new Integer(elementLimit));
+		setElementLimit(Integer.valueOf(elementLimit));
 	}
 
 	/* (non-Javadoc)

@@ -206,7 +206,7 @@ public class DLTKSearchQuery implements ISearchQuery {
 					return Messages.format(SearchMessages.DLTKSearchOperation_singularOccurrencesPostfix, args); 
 			}
 		} else {
-			Object[] args= { getSearchPatternDescription(), new Integer(nMatches), fPatternData.getScopeDescription() };
+			Object[] args= { getSearchPatternDescription(), Integer.valueOf(nMatches), fPatternData.getScopeDescription() };
 			switch (fPatternData.getLimitTo()) {
 //				case IDLTKSearchConstants.IMPLEMENTORS:
 //					return Messages.format(SearchMessages.DLTKSearchOperation_pluralImplementorsPostfix, args); 

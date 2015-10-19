@@ -129,8 +129,7 @@ public abstract class DialogPackageExplorer implements IMenuListener,
 							return Messages
 									.format(
 											NewWizardMessages.DialogPackageExplorer_LabelProvider_MultiExcluded,
-											new Object[] { text,
-													new Integer(excluded) });
+									new Object[] { text, excluded });
 					}
 				}
 				if (element instanceof IScriptProject) {
@@ -150,8 +149,7 @@ public abstract class DialogPackageExplorer implements IMenuListener,
 								return Messages
 										.format(
 												NewWizardMessages.DialogPackageExplorer_LabelProvider_MultiExcluded,
-												new Object[] { text,
-														new Integer(excluded) });
+										new Object[] { text, excluded });
 						}
 					}
 				}

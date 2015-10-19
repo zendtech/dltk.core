@@ -131,7 +131,7 @@ public class Resources {
 		Map map= new HashMap();
 		for (Iterator iter= files.iterator(); iter.hasNext(); ) {
 			IFile file= (IFile)iter.next();
-			map.put(file, new Long(file.getModificationStamp()));
+			map.put(file, Long.valueOf(file.getModificationStamp()));
 		}
 		return map;
 	}

@@ -274,9 +274,9 @@ public class RuntimeBuildpathEntry implements IRuntimeBuildpathEntry {
 		}
 		Element node = doc.createElement("runtimeBuildpathEntry"); //$NON-NLS-1$
 		doc.appendChild(node);
-		node.setAttribute("type", (new Integer(getType())).toString()); //$NON-NLS-1$
+		node.setAttribute("type", Integer.toString(getType())); //$NON-NLS-1$
 		node.setAttribute(
-				"path", (new Integer(getBuildpathProperty())).toString()); //$NON-NLS-1$
+				"path", Integer.toString(getBuildpathProperty())); //$NON-NLS-1$
 		switch (getType()) {
 		case PROJECT:
 			node.setAttribute("projectName", getPath().lastSegment()); //$NON-NLS-1$

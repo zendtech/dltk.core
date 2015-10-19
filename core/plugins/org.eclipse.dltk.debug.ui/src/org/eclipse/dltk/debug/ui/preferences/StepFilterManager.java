@@ -14,7 +14,8 @@ public class StepFilterManager {
 	public static String[] getActiveFilters(String nature) {
 		IDLTKUILanguageToolkit languageToolkit = DLTKUILanguageManager
 				.getLanguageToolkit(nature);
-		return toStrings(getActiveFilters(languageToolkit.getPreferenceStore()));
+		return toStrings(
+				getActiveFilters(languageToolkit.getPreferenceStore()));
 	}
 
 	public static String[] getActiveFilters(IScriptProject project) {
@@ -23,8 +24,8 @@ public class StepFilterManager {
 					.getLanguageToolkit(project);
 			IDLTKUILanguageToolkit languageToolkit = DLTKUILanguageManager
 					.getLanguageToolkit(coreToolkit.getNatureId());
-			return toStrings(getActiveFilters(languageToolkit
-					.getPreferenceStore()));
+			return toStrings(
+					getActiveFilters(languageToolkit.getPreferenceStore()));
 		} catch (Exception e) {
 			return new String[0];
 		}
@@ -41,17 +42,16 @@ public class StepFilterManager {
 	public static Filter[] getActiveFilters(IPreferenceStore store) {
 		Filter[] filters = null;
 		String[] activefilters;
-		activefilters = ScriptDebugOptionsManager
-				.parseList(store
-						.getString(IDLTKDebugUIPreferenceConstants.PREF_ACTIVE_FILTERS_LIST));
+		activefilters = ScriptDebugOptionsManager.parseList(store.getString(
+				IDLTKDebugUIPreferenceConstants.PREF_ACTIVE_FILTERS_LIST));
 		filters = new Filter[activefilters.length];
 		for (int i = 0; i < activefilters.length; i++) {
 			String[] split = activefilters[i].split(":"); //$NON-NLS-1$
 			if (split.length == 1) {
 				filters[i] = new Filter(split[0], true, 0);
 			} else {
-				filters[i] = new Filter(split[0], true, (new Integer(split[1]))
-						.intValue());
+				filters[i] = new Filter(split[0], true,
+						Integer.parseInt(split[1]));
 			}
 		}
 

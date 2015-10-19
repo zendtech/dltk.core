@@ -70,7 +70,7 @@ public class FormatterDocument implements IFormatterDocument {
 	}
 
 	public void setInt(String key, int value) {
-		ints.put(key, new Integer(value));
+		ints.put(key, Integer.valueOf(value));
 	}
 
 	public int getInt(String key) {

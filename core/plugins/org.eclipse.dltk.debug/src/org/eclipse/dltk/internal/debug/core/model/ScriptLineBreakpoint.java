@@ -44,9 +44,9 @@ public class ScriptLineBreakpoint extends AbstractScriptBreakpoint implements
 		if (path != null) {
 			attributes.put(IMarker.LOCATION, path.toPortableString());
 		}
-		attributes.put(IMarker.LINE_NUMBER, new Integer(lineNumber));
-		attributes.put(IMarker.CHAR_START, new Integer(charStart));
-		attributes.put(IMarker.CHAR_END, new Integer(charEnd));
+		attributes.put(IMarker.LINE_NUMBER, Integer.valueOf(lineNumber));
+		attributes.put(IMarker.CHAR_START, Integer.valueOf(charStart));
+		attributes.put(IMarker.CHAR_END, Integer.valueOf(charEnd));
 	}
 
 	public ScriptLineBreakpoint() {

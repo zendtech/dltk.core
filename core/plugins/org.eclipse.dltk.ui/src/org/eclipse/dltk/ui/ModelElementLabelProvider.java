@@ -122,7 +122,7 @@ public class ModelElementLabelProvider extends LabelProvider {
 	 * Currently the default is equivalent to
 	 * <code>SHOW_PARAMETERS | SHOW_OVERLAY_ICONS</code>.
 	 */
-	public final static int SHOW_DEFAULT= new Integer(SHOW_PARAMETERS | SHOW_OVERLAY_ICONS).intValue();
+	public final static int SHOW_DEFAULT= Integer.valueOf(SHOW_PARAMETERS | SHOW_OVERLAY_ICONS).intValue();
 
 	private ScriptElementImageProvider fImageLabelProvider;
 	

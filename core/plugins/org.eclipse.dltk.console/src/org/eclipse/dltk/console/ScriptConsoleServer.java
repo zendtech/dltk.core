@@ -87,8 +87,7 @@ public class ScriptConsoleServer implements Runnable {
 				Thread clientHandler = new Thread(new Runnable() {
 					public void run() {
 						try {
-							SocketScriptConsoleIO proxy = new SocketScriptConsoleIO(
-									client);
+							SocketScriptConsoleIO proxy = new SocketScriptConsoleIO(client);
 
 							String id = proxy.getId();
 

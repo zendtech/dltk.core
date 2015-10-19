@@ -115,7 +115,7 @@ public class ScriptExplorerActionProvider extends CommonActionProvider {
 		if (state == null) {
 			IPreferenceStore store = DLTKUIPlugin.getDefault()
 					.getPreferenceStore();
-			state = new Integer(store.getInt(TAG_LAYOUT));
+			state = Integer.valueOf(store.getInt(TAG_LAYOUT));
 		}
 
 		if (state.intValue() == FLAT_LAYOUT)

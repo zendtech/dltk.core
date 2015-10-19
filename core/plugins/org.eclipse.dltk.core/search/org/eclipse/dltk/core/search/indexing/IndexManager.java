@@ -67,10 +67,10 @@ public class IndexManager extends JobManager implements IIndexConstants {
 	private SimpleLookupTable indexStates = null;
 	private File savedIndexNamesFile = getScriptPluginWorkingLocation().append(
 			"savedIndexNames.txt").toFile(); //$NON-NLS-1$
-	public static final Integer SAVED_STATE = new Integer(0);
-	public static final Integer UPDATING_STATE = new Integer(1);
-	public static final Integer UNKNOWN_STATE = new Integer(2);
-	public static final Integer REBUILDING_STATE = new Integer(3);
+	public static final Integer SAVED_STATE = Integer.valueOf(0);
+	public static final Integer UPDATING_STATE = Integer.valueOf(1);
+	public static final Integer UNKNOWN_STATE = Integer.valueOf(2);
+	public static final Integer REBUILDING_STATE = Integer.valueOf(3);
 
 	public static final String SPECIAL = "#special#"; //$NON-NLS-1$
 	public static final String SPECIAL_MIXIN = "#special#mixin#"; //$NON-NLS-1$

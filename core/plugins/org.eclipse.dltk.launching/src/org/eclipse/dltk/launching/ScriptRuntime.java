@@ -2368,11 +2368,11 @@ public final class ScriptRuntime {
 		if (projects == null) {
 			projects = new ArrayList<IScriptProject>();
 			fgProjects.set(projects);
-			count = new Integer(0);
+			count = Integer.valueOf(0);
 		}
 		int intCount = count.intValue();
 		intCount++;
-		fgEntryCount.set(new Integer(intCount));
+		fgEntryCount.set(Integer.valueOf(intCount));
 		try {
 			for (int i = 0; i < cpes.length; i++) {
 				IBuildpathEntry cpe = cpes[i];
@@ -2405,7 +2405,7 @@ public final class ScriptRuntime {
 				fgProjects.set(null);
 				fgEntryCount.set(null);
 			} else {
-				fgEntryCount.set(new Integer(intCount));
+				fgEntryCount.set(Integer.valueOf(intCount));
 			}
 		}
 		// set buildpath property

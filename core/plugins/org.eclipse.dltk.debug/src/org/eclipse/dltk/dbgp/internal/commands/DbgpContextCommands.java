@@ -49,7 +49,7 @@ public class DbgpContextCommands extends DbgpBaseCommands implements
 		for (int i = 0; i < contexts.getLength(); ++i) {
 			Element context = (Element) contexts.item(i);
 			String name = context.getAttribute(ATTR_NAME);
-			Integer id = new Integer(context.getAttribute(ATTR_ID));
+			Integer id = Integer.valueOf(context.getAttribute(ATTR_ID));
 			map.put(id, name);
 		}
 

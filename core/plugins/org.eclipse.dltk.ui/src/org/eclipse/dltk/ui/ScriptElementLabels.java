@@ -262,7 +262,7 @@ public class ScriptElementLabels {
 	/**
 	 * Qualify all elements
 	 */
-	public final static long ALL_FULLY_QUALIFIED = new Long(F_FULLY_QUALIFIED
+	public final static long ALL_FULLY_QUALIFIED = Long.valueOf(F_FULLY_QUALIFIED
 			| M_FULLY_QUALIFIED | I_FULLY_QUALIFIED | T_FULLY_QUALIFIED
 			| D_QUALIFIED | CF_QUALIFIED | CU_QUALIFIED | P_QUALIFIED
 			| ROOT_QUALIFIED | M_PRE_RETURNTYPE).longValue();
@@ -270,7 +270,7 @@ public class ScriptElementLabels {
 	/**
 	 * Post qualify all elements
 	 */
-	public final static long ALL_POST_QUALIFIED = new Long(F_POST_QUALIFIED
+	public final static long ALL_POST_QUALIFIED = Long.valueOf(F_POST_QUALIFIED
 			| M_POST_QUALIFIED | I_POST_QUALIFIED | T_POST_QUALIFIED
 			| D_POST_QUALIFIED | CF_POST_QUALIFIED | CU_POST_QUALIFIED
 			| P_POST_QUALIFIED | ROOT_POST_QUALIFIED).longValue();
@@ -279,7 +279,7 @@ public class ScriptElementLabels {
 	 * Default options (M_PARAMETER_TYPES, M_APP_TYPE_PARAMETERS &
 	 * T_TYPE_PARAMETERS enabled)
 	 */
-	public final static long ALL_DEFAULT = new Long(M_PARAMETER_NAMES
+	public final static long ALL_DEFAULT = Long.valueOf(M_PARAMETER_NAMES
 			| T_TYPE_PARAMETERS | M_PARAMETER_INITIALIZERS | M_APP_RETURNTYPE)
 			.longValue();
 
@@ -295,21 +295,21 @@ public class ScriptElementLabels {
 	 */
 	public final static long T_CATEGORY = 1L << 51;
 
-	public final static long ALL_CATEGORY = new Long(
+	public final static long ALL_CATEGORY = Long.valueOf(
 			ScriptElementLabels.F_CATEGORY | ScriptElementLabels.M_CATEGORY
 					| ScriptElementLabels.T_CATEGORY).longValue();
 
 	/**
 	 * Default qualify options (All except Root and Package)
 	 */
-	public final static long DEFAULT_QUALIFIED = new Long(F_FULLY_QUALIFIED
+	public final static long DEFAULT_QUALIFIED = Long.valueOf(F_FULLY_QUALIFIED
 			| M_FULLY_QUALIFIED | I_FULLY_QUALIFIED | T_FULLY_QUALIFIED
 			| D_QUALIFIED | CF_QUALIFIED | CU_QUALIFIED).longValue();
 
 	/**
 	 * Default post qualify options (All except Root and Package)
 	 */
-	public final static long DEFAULT_POST_QUALIFIED = new Long(F_POST_QUALIFIED
+	public final static long DEFAULT_POST_QUALIFIED = Long.valueOf(F_POST_QUALIFIED
 			| M_POST_QUALIFIED | I_POST_QUALIFIED | T_POST_QUALIFIED
 			| D_POST_QUALIFIED | CF_POST_QUALIFIED | CU_POST_QUALIFIED)
 			.longValue();

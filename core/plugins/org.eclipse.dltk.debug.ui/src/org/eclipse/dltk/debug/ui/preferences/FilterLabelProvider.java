@@ -55,7 +55,7 @@ public class FilterLabelProvider extends LabelProvider implements
 		if (name.endsWith("*") || name.equals("")) { //$NON-NLS-1$ //$NON-NLS-2$
 			return DLTKPluginImages.get(DLTKPluginImages.IMG_OBJS_PACKAGE);
 		}
-		Integer mod = new Integer(filter.getModifiers());
+		Integer mod = Integer.valueOf(filter.getModifiers());
 		if (typeImages.containsKey(mod)) {
 			return typeImages.get(mod);
 		} else {

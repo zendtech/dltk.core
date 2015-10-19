@@ -231,7 +231,8 @@ public class ModelManager implements ISaveParticipant {
 					if (fragments[i] instanceof IProjectFragmentTimestamp) {
 						IProjectFragmentTimestamp stamp = (IProjectFragmentTimestamp) fragments[i];
 						long timeStamp = stamp.getTimeStamp();
-						customTimeStamps.put(fragments[i].getPath(), new Long(
+						customTimeStamps.put(fragments[i].getPath(),
+								new Long(
 								timeStamp));
 					}
 				}
@@ -2425,8 +2426,8 @@ public class ModelManager implements ISaveParticipant {
 	}
 
 	private void traceContainers(String action, long start) {
-		Long delta = new Long(System.currentTimeMillis() - start);
-		Long length = new Long(getContainersFile().length());
+		Long delta = System.currentTimeMillis() - start;
+		Long length = getContainersFile().length();
 		String pattern = "{0} {1} bytes in containers.dat in {2}ms"; //$NON-NLS-1$
 		String message = NLS.bind(pattern,
 				new Object[] { action, length, delta });

@@ -41,7 +41,7 @@ public class DbgpRequest implements IDbgpRawPacket {
 	}
 
 	public void addOption(String optionNmae, int optionValue) {
-		addOption(optionNmae, new Integer(optionValue));
+		addOption(optionNmae, Integer.valueOf(optionValue));
 	}
 
 	public void addOption(String optionName, Object optionValue) {

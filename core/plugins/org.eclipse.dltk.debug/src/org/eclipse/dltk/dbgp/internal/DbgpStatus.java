@@ -16,24 +16,24 @@ import org.eclipse.dltk.dbgp.IDbgpStatus;
 
 public class DbgpStatus implements IDbgpStatus {
 	// Reasons
-	public static final Integer REASON_OK = new Integer(0);
+	public static final Integer REASON_OK = Integer.valueOf(0);
 
-	public static final Integer REASON_ERROR = new Integer(1);
+	public static final Integer REASON_ERROR = Integer.valueOf(1);
 
-	public static final Integer REASON_ABORTED = new Integer(2);
+	public static final Integer REASON_ABORTED = Integer.valueOf(2);
 
-	public static final Integer REASON_EXCEPTION = new Integer(3);
+	public static final Integer REASON_EXCEPTION = Integer.valueOf(3);
 
 	// Status
-	public static final Integer STATUS_STARTING = new Integer(0);
+	public static final Integer STATUS_STARTING = Integer.valueOf(0);
 
-	public static final Integer STATUS_STOPPING = new Integer(1);
+	public static final Integer STATUS_STOPPING = Integer.valueOf(1);
 
-	public static final Integer STATUS_STOPPED = new Integer(2);
+	public static final Integer STATUS_STOPPED = Integer.valueOf(2);
 
-	public static final Integer STATUS_RUNNING = new Integer(3);
+	public static final Integer STATUS_RUNNING = Integer.valueOf(3);
 
-	public static final Integer STATUS_BREAK = new Integer(4);
+	public static final Integer STATUS_BREAK = Integer.valueOf(4);
 
 	private static final Map statusParser = new TreeMap(
 			String.CASE_INSENSITIVE_ORDER);

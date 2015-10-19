@@ -123,9 +123,8 @@ public abstract class ScriptDebugModelPresentation extends LabelProvider
 			thread = (IScriptThread) frame.getThread();
 		}
 
-		if (thread != null
-				&& (!thread.getDebugTarget().equals(target) || (!thread
-						.isSuspended()))) {
+		if (thread != null && (!thread.getDebugTarget().equals(target)
+				|| (!thread.isSuspended()))) {
 			thread = null; // can only use suspended threads in the same target
 		}
 		if (thread == null) {
@@ -161,8 +160,8 @@ public abstract class ScriptDebugModelPresentation extends LabelProvider
 	protected String getThreadText(IScriptThread thread) {
 		try {
 			return NLS.bind(Messages.ScriptDebugModelPresentation_threadText,
-					thread.getName(), thread.isSuspended() ? SUSPENDED_LABEL
-							: RUNNING_LABEL);
+					thread.getName(),
+					thread.isSuspended() ? SUSPENDED_LABEL : RUNNING_LABEL);
 
 		} catch (DebugException e) {
 			DLTKDebugUIPlugin.log(e);
@@ -214,8 +213,8 @@ public abstract class ScriptDebugModelPresentation extends LabelProvider
 						final IDocumentProvider provider = DLTKUIPlugin
 								.getDocumentProvider();
 
-						final IDocument document = provider
-								.getDocument(new FileEditorInput((IFile) object));
+						final IDocument document = provider.getDocument(
+								new FileEditorInput((IFile) object));
 
 						if (document != null) {
 							try {
@@ -240,26 +239,22 @@ public abstract class ScriptDebugModelPresentation extends LabelProvider
 						- stackFrame.getLevel() - 1;
 				sourceLine = NLS.bind(
 						Messages.ScriptDebugModelPresentation_stackFrameText,
-						new Integer(level));
+						level);
 			}
 
 			// TODO: may be make external option for file:line
 			if (stackFrame.getLineNumber() > 0) {
-				if (DLTKDebugConstants.FILE_SCHEME.equalsIgnoreCase(sourceURI
-						.getScheme())) {
+				if (DLTKDebugConstants.FILE_SCHEME
+						.equalsIgnoreCase(sourceURI.getScheme())) {
 					final IPath path = getStackFrameRelativePath(stackFrame);
-					return NLS
-							.bind(Messages.ScriptDebugModelPresentation_stackFrameText2,
-									new Object[] {
-											sourceLine,
-											path.toString(),
-											new Integer(stackFrame
-													.getLineNumber()) });
+					return NLS.bind(
+							Messages.ScriptDebugModelPresentation_stackFrameText2,
+							new Object[] { sourceLine, path.toString(),
+									stackFrame.getLineNumber() });
 				} else {
-					return NLS
-							.bind(Messages.ScriptDebugModelPresentation_stackFrameText3,
-									sourceLine,
-									new Integer(stackFrame.getLineNumber()));
+					return NLS.bind(
+							Messages.ScriptDebugModelPresentation_stackFrameText3,
+							sourceLine, stackFrame.getLineNumber());
 				}
 			} else {
 				return sourceLine;
@@ -321,11 +316,11 @@ public abstract class ScriptDebugModelPresentation extends LabelProvider
 	}
 
 	private static String retrieveStackFrameLine(IScriptStackFrame frame,
-			final IDocument document) throws BadLocationException,
-			DebugException {
+			final IDocument document)
+					throws BadLocationException, DebugException {
 		if (frame.getBeginLine() > 0 && frame.getEndLine() > 0) {
-			final IRegion region = document.getLineInformation(frame
-					.getBeginLine() - 1);
+			final IRegion region = document
+					.getLineInformation(frame.getBeginLine() - 1);
 			final int start = region.getOffset() + frame.getBeginColumn();
 			final int len;
 			if (frame.getBeginLine() == frame.getEndLine()) {
@@ -335,8 +330,8 @@ public abstract class ScriptDebugModelPresentation extends LabelProvider
 			}
 			return document.get(start, len).trim();
 		}
-		final IRegion region = document.getLineInformation(frame
-				.getLineNumber() - 1);
+		final IRegion region = document
+				.getLineInformation(frame.getLineNumber() - 1);
 		return document.get(region.getOffset(), region.getLength()).trim();
 	}
 
@@ -389,8 +384,8 @@ public abstract class ScriptDebugModelPresentation extends LabelProvider
 		IScriptDebugTarget target = (IScriptDebugTarget) value.getDebugTarget();
 		String natureId = target.getLanguageToolkit().getNatureId();
 
-		IPreferenceStore store = DLTKDebugUILanguageManager.getLanguageToolkit(
-				natureId).getPreferenceStore();
+		IPreferenceStore store = DLTKDebugUILanguageManager
+				.getLanguageToolkit(natureId).getPreferenceStore();
 		String details = store
 				.getString(IDLTKDebugUIPreferenceConstants.PREF_SHOW_DETAILS);
 
@@ -469,8 +464,8 @@ public abstract class ScriptDebugModelPresentation extends LabelProvider
 		try {
 			StringBuffer sb = new StringBuffer();
 
-			final String language = BreakpointUtils.getLanguageToolkit(
-					breakpoint).getLanguageName();
+			final String language = BreakpointUtils
+					.getLanguageToolkit(breakpoint).getLanguageName();
 
 			final int hitCount = breakpoint.getHitCount();
 
@@ -481,14 +476,14 @@ public abstract class ScriptDebugModelPresentation extends LabelProvider
 				final int lineNumber = w.getLineNumber();
 				final String fieldName = w.getFieldName();
 				if (lineNumber >= 0 && file != null) {
-					sb.append(NLS
-							.bind(Messages.ScriptDebugModelPresentation_breakpointText,
-									new Object[] { language, file,
-											new Integer(lineNumber), fieldName }));
+					sb.append(NLS.bind(
+							Messages.ScriptDebugModelPresentation_breakpointText,
+							new Object[] { language, file, lineNumber,
+									fieldName }));
 				} else {
-					sb.append(NLS
-							.bind(Messages.ScriptDebugModelPresentation_breakpointNoResourceText,
-									language, fieldName));
+					sb.append(NLS.bind(
+							Messages.ScriptDebugModelPresentation_breakpointNoResourceText,
+							language, fieldName));
 				}
 			} else if (breakpoint instanceof IScriptLineBreakpoint) { // IScriptLineBreakpoint
 				IScriptLineBreakpoint b = (IScriptLineBreakpoint) breakpoint;
@@ -496,10 +491,9 @@ public abstract class ScriptDebugModelPresentation extends LabelProvider
 				final String file = b.getResourceName();
 				final int lineNumber = b.getLineNumber();
 
-				sb.append(NLS
-						.bind(Messages.ScriptDebugModelPresentation_breakpointText2,
-								new Object[] { language, file,
-										new Integer(lineNumber) }));
+				sb.append(NLS.bind(
+						Messages.ScriptDebugModelPresentation_breakpointText2,
+						new Object[] { language, file, lineNumber }));
 			} else if (breakpoint instanceof IScriptExceptionBreakpoint) {
 				IScriptExceptionBreakpoint b = (IScriptExceptionBreakpoint) breakpoint;
 				String typeName = b.getTypeName();
@@ -527,7 +521,7 @@ public abstract class ScriptDebugModelPresentation extends LabelProvider
 			if (hitCount != -1) {
 				sb.append(NLS.bind(
 						Messages.ScriptDebugModelPresentation_breakpointText5,
-						new Integer(hitCount)));
+						hitCount));
 			}
 
 			return sb.toString();
@@ -634,9 +628,9 @@ public abstract class ScriptDebugModelPresentation extends LabelProvider
 	protected Image getBreakpointImage(IScriptBreakpoint breakpoint) {
 		if (breakpoint instanceof IScriptSpawnpoint) {
 			try {
-				return ScriptDebugImages
-						.get(breakpoint.isEnabled() ? ScriptDebugImages.IMG_OBJS_SPAWNPOINT
-								: ScriptDebugImages.IMG_OBJS_SPAWNPOINT_DISABLED);
+				return ScriptDebugImages.get(breakpoint.isEnabled()
+						? ScriptDebugImages.IMG_OBJS_SPAWNPOINT
+						: ScriptDebugImages.IMG_OBJS_SPAWNPOINT_DISABLED);
 			} catch (CoreException e) {
 				DLTKDebugUIPlugin.log(e);
 			}

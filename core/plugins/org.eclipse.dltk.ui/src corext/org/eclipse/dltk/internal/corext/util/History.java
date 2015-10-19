@@ -241,7 +241,7 @@ public abstract class History {
 				continue;
 			}
 			Object key = getKey(element);
-			fPositions.put(key, new Integer(pos));
+			fPositions.put(key, Integer.valueOf(pos));
 			pos++;
 		}
 	}

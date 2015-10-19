@@ -520,7 +520,7 @@ public class MethodInfoViewer {
 								DLTKUIMessages.TypeInfoViewer_progress_label,
 								new Object[] {
 										fName,
-										new Integer(
+										Integer.valueOf(
 												(int) ((fWorked * 100) / fTotalWork)) });
 			}
 		}

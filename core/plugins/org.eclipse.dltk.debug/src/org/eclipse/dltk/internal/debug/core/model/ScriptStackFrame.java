@@ -104,19 +104,19 @@ public class ScriptStackFrame extends ScriptDebugElement implements
 		final Map names = commands.getContextNames(getLevel());
 		final ScriptVariableContainer result = new ScriptVariableContainer();
 		if (thread.retrieveLocalVariables()
-				&& names.containsKey(new Integer(
+				&& names.containsKey(Integer.valueOf(
 						IDbgpContextCommands.LOCAL_CONTEXT_ID))) {
 			result.locals = readVariables(this,
 					IDbgpContextCommands.LOCAL_CONTEXT_ID, commands);
 		}
 		if (thread.retrieveGlobalVariables()
-				&& names.containsKey(new Integer(
+				&& names.containsKey(Integer.valueOf(
 						IDbgpContextCommands.GLOBAL_CONTEXT_ID))) {
 			result.globals = readVariables(this,
 					IDbgpContextCommands.GLOBAL_CONTEXT_ID, commands);
 		}
 		if (thread.retrieveClassVariables()
-				&& names.containsKey(new Integer(
+				&& names.containsKey(Integer.valueOf(
 						IDbgpContextCommands.CLASS_CONTEXT_ID))) {
 			result.classes = readVariables(this,
 					IDbgpContextCommands.CLASS_CONTEXT_ID, commands);
@@ -513,7 +513,7 @@ public class ScriptStackFrame extends ScriptDebugElement implements
 
 	public String toString() {
 		return NLS.bind(Messages.ScriptStackFrame_stackFrame,
-				new Integer(level.getLevel()));
+				Integer.valueOf(level.getLevel()));
 	}
 
 	public String getSourceLine() {

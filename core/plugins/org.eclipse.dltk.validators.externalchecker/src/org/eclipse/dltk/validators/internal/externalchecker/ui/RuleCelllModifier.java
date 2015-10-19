@@ -34,7 +34,7 @@ public class RuleCelllModifier implements ICellModifier {
 			int i = choices.length - 1;
 			while (!stringValue.equals(choices[i]) && i > 0)
 				--i;
-			result = new Integer(i);	
+			result = Integer.valueOf(i);	
 		default:
 			break;
 		}

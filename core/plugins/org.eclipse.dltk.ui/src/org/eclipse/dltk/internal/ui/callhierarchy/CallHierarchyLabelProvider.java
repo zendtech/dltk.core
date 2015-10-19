@@ -24,7 +24,7 @@ import org.eclipse.ui.model.IWorkbenchAdapter;
 
 
 class CallHierarchyLabelProvider extends AppearanceAwareLabelProvider {
-//	private final static long FULLY_QUALIFIED = new Long(ScriptElementLabels.F_FULLY_QUALIFIED | ScriptElementLabels.M_FULLY_QUALIFIED | ScriptElementLabels.I_FULLY_QUALIFIED | ScriptElementLabels.T_FULLY_QUALIFIED ).longValue();
+//	private final static long FULLY_QUALIFIED = Long.valueOf(ScriptElementLabels.F_FULLY_QUALIFIED | ScriptElementLabels.M_FULLY_QUALIFIED | ScriptElementLabels.I_FULLY_QUALIFIED | ScriptElementLabels.T_FULLY_QUALIFIED ).longValue();
 //	
 //    private static final long TEXTFLAGS= DEFAULT_TEXTFLAGS | FULLY_QUALIFIED | ScriptElementLabels.P_POST_QUALIFIED | ScriptElementLabels.P_COMPRESSED;// | ScriptElementLabels.M_FULLY_QUALIFIED | ScriptElementLabels.PREPEND_ROOT_PATH;
 //    private static final int IMAGEFLAGS= DEFAULT_IMAGEFLAGS | ScriptElementImageProvider.SMALL_ICONS;

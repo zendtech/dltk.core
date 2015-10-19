@@ -165,7 +165,7 @@ public class DefaultFoldingPreferenceConfigurationBlock extends
 						NLS
 								.bind(
 										PreferencesMessages.FoldingConfigurationBlock_minLinesToEnableFolding,
-										new Integer(minLines)), 0, 1);
+										Integer.valueOf(minLines)), 0, 1);
 
 		Text textBox = SWTFactory.createText(composite, SWT.BORDER, 1,
 				Util.EMPTY_STRING);

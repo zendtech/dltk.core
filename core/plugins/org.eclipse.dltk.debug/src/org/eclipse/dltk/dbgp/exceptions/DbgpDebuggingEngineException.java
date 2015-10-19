@@ -108,7 +108,7 @@ public class DbgpDebuggingEngineException extends DbgpException {
 				NLS
 						.bind(
 								Messages.DbgpDebuggingEngineException_dbgpDebuggingEngineException,
-								new Integer(code), message));
+								Integer.valueOf(code), message));
 		this.code = code;
 	}
 
@@ -123,7 +123,7 @@ public class DbgpDebuggingEngineException extends DbgpException {
 				NLS
 						.bind(
 								Messages.DbgpDebuggingEngineException_dbgpDebuggingEngineException2,
-								message, new Integer(code)), cause);
+								message, Integer.valueOf(code)), cause);
 		this.code = code;
 	}
 

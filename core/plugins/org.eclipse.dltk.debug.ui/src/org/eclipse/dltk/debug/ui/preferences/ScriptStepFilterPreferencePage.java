@@ -71,8 +71,8 @@ import org.eclipse.ui.PlatformUI;
  * The preference page for Java step filtering, located at the node Java > Debug
  * > Step Filtering
  */
-public class ScriptStepFilterPreferencePage extends PreferencePage implements
-		IWorkbenchPreferencePage, IExecutableExtension {
+public class ScriptStepFilterPreferencePage extends PreferencePage
+		implements IWorkbenchPreferencePage, IExecutableExtension {
 
 	public static final String PAGE_ID = "org.eclipse.dltk.debug.ui.ScriptStepFilterPreferencePage"; //$NON-NLS-1$
 
@@ -90,7 +90,8 @@ public class ScriptStepFilterPreferencePage extends PreferencePage implements
 			return getAllFiltersFromTable();
 		}
 
-		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
+		public void inputChanged(Viewer viewer, Object oldInput,
+				Object newInput) {
 		}
 
 		public void dispose() {
@@ -114,8 +115,10 @@ public class ScriptStepFilterPreferencePage extends PreferencePage implements
 	public ScriptStepFilterPreferencePage() {
 		super();
 		setPreferenceStore(DLTKDebugUIPlugin.getDefault().getPreferenceStore());
-		setTitle(ScriptDebugPreferencesMessages.ScriptStepFilterPreferencePage_title);
-		setDescription(ScriptDebugPreferencesMessages.ScriptStepFilterPreferencePage_description);
+		setTitle(
+				ScriptDebugPreferencesMessages.ScriptStepFilterPreferencePage_title);
+		setDescription(
+				ScriptDebugPreferencesMessages.ScriptStepFilterPreferencePage_description);
 	}
 
 	/*
@@ -129,8 +132,8 @@ public class ScriptStepFilterPreferencePage extends PreferencePage implements
 		// PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(),
 		// IJavaDebugHelpContextIds.JAVA_STEP_FILTER_PREFERENCE_PAGE);
 		// The main composite
-		Composite composite = SWTFactory.createComposite(parent, parent
-				.getFont(), 1, 1, GridData.FILL_BOTH, 0, 0);
+		Composite composite = SWTFactory.createComposite(parent,
+				parent.getFont(), 1, 1, GridData.FILL_BOTH, 0, 0);
 		createStepFilterPreferences(composite);
 		return composite;
 	}
@@ -160,14 +163,12 @@ public class ScriptStepFilterPreferencePage extends PreferencePage implements
 	 * Create a group to contain the step filter related widgetry
 	 */
 	private void createStepFilterPreferences(Composite parent) {
-		Composite container = SWTFactory.createComposite(parent, parent
-				.getFont(), 2, 1, GridData.FILL_BOTH, 0, 0);
-		fUseStepFiltersButton = SWTFactory
-				.createCheckButton(
-						container,
-						ScriptDebugPreferencesMessages.ScriptStepFilterPreferencePage__Use_step_filters,
-						null, StepFilterManager
-								.isUseStepFilters(getPreferenceStore()), 2);
+		Composite container = SWTFactory.createComposite(parent,
+				parent.getFont(), 2, 1, GridData.FILL_BOTH, 0, 0);
+		fUseStepFiltersButton = SWTFactory.createCheckButton(container,
+				ScriptDebugPreferencesMessages.ScriptStepFilterPreferencePage__Use_step_filters,
+				null, StepFilterManager.isUseStepFilters(getPreferenceStore()),
+				2);
 		fUseStepFiltersButton.addSelectionListener(new SelectionListener() {
 			public void widgetSelected(SelectionEvent e) {
 				setPageEnablement(fUseStepFiltersButton.getSelection());
@@ -176,11 +177,9 @@ public class ScriptStepFilterPreferencePage extends PreferencePage implements
 			public void widgetDefaultSelected(SelectionEvent e) {
 			}
 		});
-		SWTFactory
-				.createLabel(
-						container,
-						ScriptDebugPreferencesMessages.ScriptStepFilterPreferencePage_Defined_step_fi_lters__8,
-						2);
+		SWTFactory.createLabel(container,
+				ScriptDebugPreferencesMessages.ScriptStepFilterPreferencePage_Defined_step_fi_lters__8,
+				2);
 		fTableViewer = CheckboxTableViewer.newCheckList(container, SWT.H_SCROLL
 				| SWT.V_SCROLL | SWT.BORDER | SWT.MULTI | SWT.FULL_SELECTION);
 		fTableViewer.getTable().setFont(container.getFont());
@@ -244,8 +243,8 @@ public class ScriptStepFilterPreferencePage extends PreferencePage implements
 		fDeselectAllButton.setEnabled(enabled);
 		fSelectAllButton.setEnabled(enabled);
 		fTableViewer.getTable().setEnabled(enabled);
-		fRemoveFilterButton.setEnabled(enabled
-				& !fTableViewer.getSelection().isEmpty());
+		fRemoveFilterButton
+				.setEnabled(enabled & !fTableViewer.getSelection().isEmpty());
 	}
 
 	/**
@@ -281,36 +280,30 @@ public class ScriptStepFilterPreferencePage extends PreferencePage implements
 		// }
 		// });
 		// Add type button
-		fAddTypeButton = SWTFactory
-				.createPushButton(
-						buttonContainer,
-						ScriptDebugPreferencesMessages.ScriptStepFilterPreferencePage_Add__Type____11,
-						ScriptDebugPreferencesMessages.ScriptStepFilterPreferencePage_Choose_a_Java_type_and_add_it_to_step_filters_12,
-						null);
+		fAddTypeButton = SWTFactory.createPushButton(buttonContainer,
+				ScriptDebugPreferencesMessages.ScriptStepFilterPreferencePage_Add__Type____11,
+				ScriptDebugPreferencesMessages.ScriptStepFilterPreferencePage_Choose_a_Java_type_and_add_it_to_step_filters_12,
+				null);
 		fAddTypeButton.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event e) {
 				addType();
 			}
 		});
 		// Add package button
-		fAddAllButton = SWTFactory
-				.createPushButton(
-						buttonContainer,
-						ScriptDebugPreferencesMessages.ScriptStepFilterPreferencePage_Add__All____13,
-						ScriptDebugPreferencesMessages.ScriptStepFilterPreferencePage_Choose_a_package_and_add_it_to_step_filters_14,
-						null);
+		fAddAllButton = SWTFactory.createPushButton(buttonContainer,
+				ScriptDebugPreferencesMessages.ScriptStepFilterPreferencePage_Add__All____13,
+				ScriptDebugPreferencesMessages.ScriptStepFilterPreferencePage_Choose_a_package_and_add_it_to_step_filters_14,
+				null);
 		fAddAllButton.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event e) {
 				addAll();
 			}
 		});
 		// Remove button
-		fRemoveFilterButton = SWTFactory
-				.createPushButton(
-						buttonContainer,
-						ScriptDebugPreferencesMessages.ScriptStepFilterPreferencePage__Remove_15,
-						ScriptDebugPreferencesMessages.ScriptStepFilterPreferencePage_Remove_all_selected_step_filters_16,
-						null);
+		fRemoveFilterButton = SWTFactory.createPushButton(buttonContainer,
+				ScriptDebugPreferencesMessages.ScriptStepFilterPreferencePage__Remove_15,
+				ScriptDebugPreferencesMessages.ScriptStepFilterPreferencePage_Remove_all_selected_step_filters_16,
+				null);
 		fRemoveFilterButton.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event e) {
 				removeFilters();
@@ -326,24 +319,20 @@ public class ScriptStepFilterPreferencePage extends PreferencePage implements
 		gd.heightHint = 4;
 		separator.setLayoutData(gd);
 		// Select All button
-		fSelectAllButton = SWTFactory
-				.createPushButton(
-						buttonContainer,
-						ScriptDebugPreferencesMessages.ScriptStepFilterPreferencePage__Select_All_1,
-						ScriptDebugPreferencesMessages.ScriptStepFilterPreferencePage_Selects_all_step_filters_2,
-						null);
+		fSelectAllButton = SWTFactory.createPushButton(buttonContainer,
+				ScriptDebugPreferencesMessages.ScriptStepFilterPreferencePage__Select_All_1,
+				ScriptDebugPreferencesMessages.ScriptStepFilterPreferencePage_Selects_all_step_filters_2,
+				null);
 		fSelectAllButton.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event e) {
 				fTableViewer.setAllChecked(true);
 			}
 		});
 		// De-Select All button
-		fDeselectAllButton = SWTFactory
-				.createPushButton(
-						buttonContainer,
-						ScriptDebugPreferencesMessages.ScriptStepFilterPreferencePage_Deselect_All_3,
-						ScriptDebugPreferencesMessages.ScriptStepFilterPreferencePage_Deselects_all_step_filters_4,
-						null);
+		fDeselectAllButton = SWTFactory.createPushButton(buttonContainer,
+				ScriptDebugPreferencesMessages.ScriptStepFilterPreferencePage_Deselect_All_3,
+				ScriptDebugPreferencesMessages.ScriptStepFilterPreferencePage_Deselects_all_step_filters_4,
+				null);
 		fDeselectAllButton.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event e) {
 				fTableViewer.setAllChecked(false);
@@ -361,17 +350,17 @@ public class ScriptStepFilterPreferencePage extends PreferencePage implements
 		// SearchEngine.createWorkspaceScope(),
 		// IJavaElementSearchConstants.CONSIDER_CLASSES, false);
 		FilteredTypesSelectionDialog dialog = new FilteredTypesSelectionDialog(
-				getShell(), false, PlatformUI.getWorkbench()
-						.getProgressService(), SearchEngine
-						.createWorkspaceScope(fToolkit),
+				getShell(), false,
+				PlatformUI.getWorkbench().getProgressService(),
+				SearchEngine.createWorkspaceScope(fToolkit),
 				IDLTKSearchConstants.TYPE, fToolkit);
-		dialog
-				.setMessage(ScriptDebugPreferencesMessages.ScriptStepFilterPreferencePage_search);
+		dialog.setMessage(
+				ScriptDebugPreferencesMessages.ScriptStepFilterPreferencePage_search);
 		dialog.setInitialPattern(""); //$NON-NLS-1$
-		dialog
-				.setTitle(ScriptDebugPreferencesMessages.ScriptStepFilterPreferencePage_Add_type_to_step_filters_20);
-		dialog
-				.setMessage(ScriptDebugPreferencesMessages.ScriptStepFilterPreferencePage_Select_a_type_to_filter_when_stepping_23);
+		dialog.setTitle(
+				ScriptDebugPreferencesMessages.ScriptStepFilterPreferencePage_Add_type_to_step_filters_20);
+		dialog.setMessage(
+				ScriptDebugPreferencesMessages.ScriptStepFilterPreferencePage_Select_a_type_to_filter_when_stepping_23);
 		if (dialog.open() == IDialogConstants.OK_ID) {
 			Object[] types = dialog.getResult();
 			if (types != null && types.length > 0) {
@@ -392,21 +381,23 @@ public class ScriptStepFilterPreferencePage extends PreferencePage implements
 	 * add a new package to the list of all available package filters
 	 */
 	private void addAll() {
-		IScriptModel model = DLTKCore.create(ResourcesPlugin.getWorkspace()
-				.getRoot());
+		IScriptModel model = DLTKCore
+				.create(ResourcesPlugin.getWorkspace().getRoot());
 		try {
 			model.accept(new IModelElementVisitor() {
 				public boolean visit(IModelElement element) {
-					if (element.getElementType() == IModelElement.SCRIPT_PROJECT) {
+					if (element
+							.getElementType() == IModelElement.SCRIPT_PROJECT) {
 						IDLTKLanguageToolkit languageToolkit;
 						languageToolkit = DLTKLanguageManager
 								.getLanguageToolkit(element);
-						if (!fToolkit.getNatureId().equals(
-								languageToolkit.getNatureId())) {
+						if (!fToolkit.getNatureId()
+								.equals(languageToolkit.getNatureId())) {
 							return false;
 						}
 					}
-					if (element.getElementType() == IModelElement.PROJECT_FRAGMENT) {
+					if (element
+							.getElementType() == IModelElement.PROJECT_FRAGMENT) {
 						IProjectFragment fragment = (IProjectFragment) element;
 						if (fragment.isExternal()) {
 							return false;
@@ -439,9 +430,8 @@ public class ScriptStepFilterPreferencePage extends PreferencePage implements
 	 * Removes the currently selected filters.
 	 */
 	protected void removeFilters() {
-		fTableViewer
-				.remove(((IStructuredSelection) fTableViewer.getSelection())
-						.toArray());
+		fTableViewer.remove(
+				((IStructuredSelection) fTableViewer.getSelection()).toArray());
 	}
 
 	/*
@@ -450,8 +440,8 @@ public class ScriptStepFilterPreferencePage extends PreferencePage implements
 	 * @see org.eclipse.jface.preference.PreferencePage#performOk()
 	 */
 	public boolean performOk() {
-		StepFilterManager.setUseStepFilters(fUseStepFiltersButton
-				.getSelection(), getPreferenceStore());
+		StepFilterManager.setUseStepFilters(
+				fUseStepFiltersButton.getSelection(), getPreferenceStore());
 		IPreferenceStore store = getPreferenceStore();
 		ArrayList active = new ArrayList();
 		ArrayList inactive = new ArrayList();
@@ -467,12 +457,12 @@ public class ScriptStepFilterPreferencePage extends PreferencePage implements
 				inactive.add(name + modifiers);
 			}
 		}
-		String pref = ScriptDebugOptionsManager.serializeList((String[]) active
-				.toArray(new String[active.size()]));
-		store.setValue(
-				IDLTKDebugUIPreferenceConstants.PREF_ACTIVE_FILTERS_LIST, pref);
-		pref = ScriptDebugOptionsManager.serializeList((String[]) inactive
-				.toArray(new String[inactive.size()]));
+		String pref = ScriptDebugOptionsManager.serializeList(
+				(String[]) active.toArray(new String[active.size()]));
+		store.setValue(IDLTKDebugUIPreferenceConstants.PREF_ACTIVE_FILTERS_LIST,
+				pref);
+		pref = ScriptDebugOptionsManager.serializeList(
+				(String[]) inactive.toArray(new String[inactive.size()]));
 		store.setValue(
 				IDLTKDebugUIPreferenceConstants.PREF_INACTIVE_FILTERS_LIST,
 				pref);
@@ -552,18 +542,17 @@ public class ScriptStepFilterPreferencePage extends PreferencePage implements
 		IPreferenceStore store = getPreferenceStore();
 		if (defaults) {
 			activefilters = ScriptDebugOptionsManager
-					.parseList(store
-							.getDefaultString(IDLTKDebugUIPreferenceConstants.PREF_ACTIVE_FILTERS_LIST));
+					.parseList(store.getDefaultString(
+							IDLTKDebugUIPreferenceConstants.PREF_ACTIVE_FILTERS_LIST));
 			inactivefilters = ScriptDebugOptionsManager
-					.parseList(store
-							.getDefaultString(IDLTKDebugUIPreferenceConstants.PREF_INACTIVE_FILTERS_LIST));
+					.parseList(store.getDefaultString(
+							IDLTKDebugUIPreferenceConstants.PREF_INACTIVE_FILTERS_LIST));
 		} else {
-			activefilters = ScriptDebugOptionsManager
-					.parseList(store
-							.getString(IDLTKDebugUIPreferenceConstants.PREF_ACTIVE_FILTERS_LIST));
+			activefilters = ScriptDebugOptionsManager.parseList(store.getString(
+					IDLTKDebugUIPreferenceConstants.PREF_ACTIVE_FILTERS_LIST));
 			inactivefilters = ScriptDebugOptionsManager
-					.parseList(store
-							.getString(IDLTKDebugUIPreferenceConstants.PREF_INACTIVE_FILTERS_LIST));
+					.parseList(store.getString(
+							IDLTKDebugUIPreferenceConstants.PREF_INACTIVE_FILTERS_LIST));
 		}
 		filters = new Filter[activefilters.length + inactivefilters.length];
 		for (int i = 0; i < activefilters.length; i++) {
@@ -571,8 +560,8 @@ public class ScriptStepFilterPreferencePage extends PreferencePage implements
 			if (split.length == 1) {
 				filters[i] = new Filter(split[0], true, 0);
 			} else {
-				filters[i] = new Filter(split[0], true, (new Integer(split[1]))
-						.intValue());
+				filters[i] = new Filter(split[0], true,
+						Integer.parseInt(split[1]));
 			}
 		}
 		for (int i = 0; i < inactivefilters.length; i++) {
@@ -582,7 +571,7 @@ public class ScriptStepFilterPreferencePage extends PreferencePage implements
 						0);
 			} else {
 				filters[i + activefilters.length] = new Filter(split[0], false,
-						(new Integer(split[1])).intValue());
+						Integer.parseInt(split[1]));
 			}
 		}
 		return filters;

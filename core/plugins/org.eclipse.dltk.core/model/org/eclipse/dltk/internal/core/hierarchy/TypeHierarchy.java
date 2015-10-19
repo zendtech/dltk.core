@@ -282,7 +282,7 @@ public class TypeHierarchy implements ITypeHierarchy, IElementChangedListener {
 
 	private static Integer bytesToFlags(byte[] bytes) {
 		if (bytes != null && bytes.length > 0) {
-			return new Integer(new String(bytes));
+			return Integer.valueOf(new String(bytes));
 		} else {
 			return null;
 		}
@@ -292,7 +292,7 @@ public class TypeHierarchy implements ITypeHierarchy, IElementChangedListener {
 	 * cacheFlags.
 	 */
 	public void cacheFlags(IType type, int flags) {
-		this.typeFlags.put(type, new Integer(flags));
+		this.typeFlags.put(type, flags);
 	}
 
 	/**
@@ -1101,11 +1101,11 @@ public class TypeHierarchy implements ITypeHierarchy, IElementChangedListener {
 			while ((b = (byte) input.read()) != SEPARATOR1 && b != -1) {
 				bytes = readUntil(input, SEPARATOR3, 1);
 				bytes[0] = b;
-				int subClass = new Integer(new String(bytes)).intValue();
+				int subClass = Integer.parseInt(new String(bytes));
 
 				// read super type
 				bytes = readUntil(input, SEPARATOR1);
-				int superClass = new Integer(new String(bytes)).intValue();
+				int superClass = Integer.parseInt(new String(bytes));
 
 				typeHierarchy.cacheSuperclass(types[subClass],
 						types[superClass]);
@@ -1115,7 +1115,7 @@ public class TypeHierarchy implements ITypeHierarchy, IElementChangedListener {
 			while ((b = (byte) input.read()) != SEPARATOR1 && b != -1) {
 				bytes = readUntil(input, SEPARATOR3, 1);
 				bytes[0] = b;
-				// int subClass = new Integer(new String(bytes)).intValue();
+				// int subClass = Integer.parseInt(new String(bytes));
 
 				// read super interface
 				bytes = readUntil(input, SEPARATOR1);
@@ -1129,14 +1129,14 @@ public class TypeHierarchy implements ITypeHierarchy, IElementChangedListener {
 						b2 = new byte[i - j];
 						System.arraycopy(bytes, j, b2, 0, i - j);
 						j = i + 1;
-						superInterfaces[interfaceCount++] = types[new Integer(
-								new String(b2)).intValue()];
+						superInterfaces[interfaceCount++] = types[Integer.parseInt(
+								new String(b2))];
 					}
 				}
 				b2 = new byte[bytes.length - j];
 				System.arraycopy(bytes, j, b2, 0, bytes.length - j);
-				superInterfaces[interfaceCount++] = types[new Integer(
-						new String(b2)).intValue()];
+				superInterfaces[interfaceCount++] = types[Integer.parseInt(
+						new String(b2))];
 				System.arraycopy(superInterfaces, 0,
 						superInterfaces = new IType[interfaceCount], 0,
 						interfaceCount);
@@ -1260,7 +1260,7 @@ public class TypeHierarchy implements ITypeHierarchy, IElementChangedListener {
 			int count = 0;
 
 			if (this.focusType != null) {
-				Integer index = new Integer(count++);
+				Integer index = Integer.valueOf(count++);
 				hashtable.put(this.focusType, index);
 				hashtable2.put(index, this.focusType);
 			}
@@ -1271,7 +1271,7 @@ public class TypeHierarchy implements ITypeHierarchy, IElementChangedListener {
 				Map.Entry<IType, TypeVector> entry = (Map.Entry<IType, TypeVector>) type;
 				final IType t = entry.getKey();
 				if (hashtable.get(t) == null) {
-					Integer index = new Integer(count++);
+					Integer index = Integer.valueOf(count++);
 					hashtable.put(t, index);
 					hashtable2.put(index, t);
 				}
@@ -1283,7 +1283,7 @@ public class TypeHierarchy implements ITypeHierarchy, IElementChangedListener {
 						IType superInterface = sp[i];
 						if (superInterface != null
 								&& hashtable.get(superInterface) == null) {
-							Integer index = new Integer(count++);
+							Integer index = Integer.valueOf(count++);
 							hashtable.put(superInterface, index);
 							hashtable2.put(index, superInterface);
 						}
@@ -1318,7 +1318,7 @@ public class TypeHierarchy implements ITypeHierarchy, IElementChangedListener {
 
 			// save types
 			for (int i = 0; i < count; i++) {
-				IType t = hashtable2.get(new Integer(i));
+				IType t = hashtable2.get(Integer.valueOf(i));
 
 				// n bytes
 				output.write(t.getHandleIdentifier().getBytes());

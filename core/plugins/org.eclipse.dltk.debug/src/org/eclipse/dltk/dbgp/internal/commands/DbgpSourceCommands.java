@@ -59,11 +59,11 @@ public class DbgpSourceCommands extends DbgpBaseCommands implements
 	}
 
 	public String getSource(URI uri, int beginLine) throws DbgpException {
-		return getSource(uri, new Integer(beginLine), null);
+		return getSource(uri, Integer.valueOf(beginLine), null);
 	}
 
 	public String getSource(URI uri, int beginLine, int endLine)
 			throws DbgpException {
-		return getSource(uri, new Integer(beginLine), new Integer(endLine));
+		return getSource(uri, Integer.valueOf(beginLine), Integer.valueOf(endLine));
 	}
 }

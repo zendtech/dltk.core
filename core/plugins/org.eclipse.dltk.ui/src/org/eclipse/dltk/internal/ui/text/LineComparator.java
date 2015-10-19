@@ -89,7 +89,7 @@ public class LineComparator implements IRangeComparator {
 			IRegion lineRegion = fDocument.getLineInformation(line);
 			String lineContents = fDocument.get(lineRegion.getOffset(),
 					lineRegion.getLength());
-			hash = new Integer(computeDJBHash(lineContents));
+			hash = Integer.valueOf(computeDJBHash(lineContents));
 			fHashes.set(line, hash);
 		}
 

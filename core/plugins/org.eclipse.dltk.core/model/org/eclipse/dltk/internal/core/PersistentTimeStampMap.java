@@ -50,8 +50,7 @@ public class PersistentTimeStampMap {
 			while (size-- > 0) {
 				String key = in.readUTF();
 				long timestamp = in.readLong();
-				timeStamps.put(Path.fromPortableString(key),
-						new Long(timestamp));
+				timeStamps.put(Path.fromPortableString(key), timestamp);
 			}
 		} catch (IOException e) {
 			if (timestampsFile.exists())

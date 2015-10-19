@@ -120,7 +120,7 @@ public class DbgpBreakpointCommands extends DbgpBaseCommands implements
 
 	public String setLineBreakpoint(URI uri, int lineNumber,
 			DbgpBreakpointConfig info) throws DbgpException {
-		return setBreakpoint(LINE_BREAKPOINT, uri, new Integer(lineNumber),
+		return setBreakpoint(LINE_BREAKPOINT, uri, Integer.valueOf(lineNumber),
 				null, null, info);
 	}
 
@@ -148,13 +148,13 @@ public class DbgpBreakpointCommands extends DbgpBaseCommands implements
 
 	public String setConditionalBreakpoint(URI uri, int lineNumber,
 			DbgpBreakpointConfig info) throws DbgpException {
-		return setBreakpoint(CONDITIONAL_BREAKPOINT, uri, new Integer(
+		return setBreakpoint(CONDITIONAL_BREAKPOINT, uri, Integer.valueOf(
 				lineNumber), null, null, info);
 	}
 
 	public String setWatchBreakpoint(URI uri, int line,
 			DbgpBreakpointConfig info) throws DbgpException {
-		return setBreakpoint(WATCH_BREAKPOINT, uri, new Integer(line), null,
+		return setBreakpoint(WATCH_BREAKPOINT, uri, Integer.valueOf(line), null,
 				null, info);
 	}
 

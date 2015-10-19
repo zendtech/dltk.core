@@ -24,8 +24,8 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.dltk.debug.core.DLTKDebugPlugin;
 import org.eclipse.dltk.debug.core.model.IScriptWatchpoint;
 
-public class ScriptWatchpoint extends ScriptLineBreakpoint implements
-		IScriptWatchpoint {
+public class ScriptWatchpoint extends ScriptLineBreakpoint
+		implements IScriptWatchpoint {
 
 	public static final String FIELD_NAME = DLTKDebugPlugin.PLUGIN_ID
 			+ ".fieldName"; //$NON-NLS-1$
@@ -35,10 +35,9 @@ public class ScriptWatchpoint extends ScriptLineBreakpoint implements
 	public static final String MODIFICATION = DLTKDebugPlugin.PLUGIN_ID
 			+ ".modification"; //$NON-NLS-1$
 
-	public ScriptWatchpoint(final String debugModelId,
-			final IResource resource, final IPath path, final int lineNumber,
-			final int start, final int end, final String fieldName)
-			throws CoreException {
+	public ScriptWatchpoint(final String debugModelId, final IResource resource,
+			final IPath path, final int lineNumber, final int start,
+			final int end, final String fieldName) throws CoreException {
 		IWorkspaceRunnable wr = new IWorkspaceRunnable() {
 			public void run(IProgressMonitor monitor) throws CoreException {
 				// create the marker
@@ -47,8 +46,8 @@ public class ScriptWatchpoint extends ScriptLineBreakpoint implements
 				final Map attributes = new HashMap();
 				// add attributes
 				addScriptBreakpointAttributes(attributes, debugModelId, true);
-				addLineBreakpointAttributes(attributes, path, lineNumber,
-						start, end);
+				addLineBreakpointAttributes(attributes, path, lineNumber, start,
+						end);
 				attributes.put(FIELD_NAME, fieldName);
 
 				// set attributes
@@ -77,13 +76,13 @@ public class ScriptWatchpoint extends ScriptLineBreakpoint implements
 	}
 
 	public boolean isAccess() throws CoreException {
-		return (new Boolean(this.getMarker().getAttribute(ACCESS, "true"))) //$NON-NLS-1$
-				.booleanValue();
+		return Boolean
+				.parseBoolean(this.getMarker().getAttribute(ACCESS, "true")); //$NON-NLS-1$
 	}
 
 	public boolean isModification() throws CoreException {
-		return (new Boolean(this.getMarker().getAttribute(MODIFICATION, "true"))) //$NON-NLS-1$
-				.booleanValue();
+		return Boolean.parseBoolean(
+				this.getMarker().getAttribute(MODIFICATION, "true")); //$NON-NLS-1$
 	}
 
 	public void setAccess(boolean access) throws CoreException {

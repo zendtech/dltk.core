@@ -20,8 +20,8 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -386,7 +386,7 @@ public final class ContentAssistHistory {
 			int rank= 1;
 			for (Iterator it= rhsCache.iterator(); it.hasNext(); rank++) {
 				String type= (String) it.next();
-				history.put(type, new Integer(rank));
+				history.put(type, rank);
 			}
 			return new RHSHistory(history);
 		}

@@ -46,8 +46,8 @@ import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.ui.texteditor.IEditorStatusLine;
 import org.eclipse.ui.texteditor.ITextEditor;
 
-public abstract class ScriptToggleBreakpointAdapter implements
-		IToggleBreakpointsTargetExtension {
+public abstract class ScriptToggleBreakpointAdapter
+		implements IToggleBreakpointsTargetExtension {
 
 	protected boolean isRemote(IWorkbenchPart part, ISelection selection) {
 		if (selection instanceof IStructuredSelection) {
@@ -106,8 +106,8 @@ public abstract class ScriptToggleBreakpointAdapter implements
 						statusLine.setMessage(true, null, null);
 					}
 				}
-				if (message != null
-						&& DLTKDebugUIPlugin.getActiveWorkbenchShell() != null) {
+				if (message != null && DLTKDebugUIPlugin
+						.getActiveWorkbenchShell() != null) {
 					DLTKDebugUIPlugin.getActiveWorkbenchShell().getDisplay()
 							.beep();
 				}
@@ -270,17 +270,12 @@ public abstract class ScriptToggleBreakpointAdapter implements
 									BreakpointUtils.addLineBreakpoint(editor,
 											lineNumber, debugModelId);
 								} else {
-									report(
-											NLS
-													.bind(
-															Messages.ScriptToggleBreakpointAdapter_breakpointAlreadySetAtLine,
-															new Object[] { new Integer(
-																	lineNumber) }),
-											part);
+									report(NLS.bind(
+											Messages.ScriptToggleBreakpointAdapter_breakpointAlreadySetAtLine,
+											lineNumber), part);
 								}
 							} else {
-								report(
-										Messages.ScriptToggleBreakpointAdapter_invalidBreakpointPosition,
+								report(Messages.ScriptToggleBreakpointAdapter_invalidBreakpointPosition,
 										part);
 							}
 						}

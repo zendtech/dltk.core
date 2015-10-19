@@ -35,9 +35,9 @@ public class MatchingNodeSet {
 	private HashtableOfLong matchingNodesKeys = new HashtableOfLong(3); // sourceRange
 	// ->
 	// node
-	static Integer EXACT_MATCH = new Integer(SearchMatch.A_ACCURATE);
-	static Integer POTENTIAL_MATCH = new Integer(SearchMatch.A_INACCURATE);
-	static Integer ERASURE_MATCH = new Integer(SearchPattern.R_ERASURE_MATCH);
+	static final Integer EXACT_MATCH = Integer.valueOf(SearchMatch.A_ACCURATE);
+	static final Integer POTENTIAL_MATCH = Integer.valueOf(SearchMatch.A_INACCURATE);
+	static final Integer ERASURE_MATCH = Integer.valueOf(SearchPattern.R_ERASURE_MATCH);
 	/**
 	 * Set of possible matching ast nodes. They need to be resolved to determine
 	 * if they really match the search pattern.

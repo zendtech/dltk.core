@@ -144,7 +144,7 @@ public class RenameScriptFolderChange extends AbstractModelElementRenameChange {
 			IResource resource= units[i].getResource();
 			long stamp= IResource.NULL_STAMP;
 			if (resource != null && (stamp= resource.getModificationStamp()) != IResource.NULL_STAMP) {
-				stamps.put(resource, new Long(stamp));
+				stamps.put(resource, Long.valueOf(stamp));
 			}
 		}
 	}

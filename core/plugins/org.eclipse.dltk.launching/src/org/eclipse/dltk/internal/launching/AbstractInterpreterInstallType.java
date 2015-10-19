@@ -343,7 +343,7 @@ public abstract class AbstractInterpreterInstallType implements
 		if (pos1 != -1 && pos2 != -1) {
 			String totalWork = line.substring(pos1
 					+ DLTK_TOTAL_WORK_START.length(), pos2);
-			int intValue = new Integer(totalWork).intValue();
+			int intValue = Integer.parseInt(totalWork);
 			if (intValue == -1) {
 				return IProgressMonitor.UNKNOWN;
 			}

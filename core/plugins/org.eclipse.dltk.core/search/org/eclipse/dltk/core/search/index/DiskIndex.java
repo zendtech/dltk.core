@@ -335,7 +335,7 @@ public class DiskIndex {
 					newDocNames[count++] = (String) added[i];
 			Util.sort(newDocNames);
 			for (int i = 0, l = newDocNames.length; i < l; i++)
-				indexedDocuments.put(newDocNames[i], new Integer(i));
+				indexedDocuments.put(newDocNames[i], i);
 			return newDocNames;
 		}
 
@@ -391,7 +391,7 @@ public class DiskIndex {
 			Util.sort(newDocNames);
 			for (int i = 0, l = newDocNames.length; i < l; i++)
 				if (indexedDocuments.containsKey(newDocNames[i]))
-					indexedDocuments.put(newDocNames[i], new Integer(i)); // remember
+					indexedDocuments.put(newDocNames[i], i); // remember
 			// the
 			// position
 			// for
@@ -414,7 +414,7 @@ public class DiskIndex {
 			case RE_INDEXED:
 				String newName = newDocNames[++count];
 				if (newName.equals(onDiskNames[i])) {
-					indexedDocuments.put(newName, new Integer(count)); // the
+					indexedDocuments.put(newName, count); // the
 					// reindexed
 					// docName
 					// that
@@ -826,7 +826,7 @@ public class DiskIndex {
 							firstOffset = arrayOffset;
 						matchingWords[count++] = word;
 					}
-					categoryTable.put(word, new Integer(arrayOffset)); // offset
+					categoryTable.put(word, arrayOffset); // offset
 					// to
 					// array
 					// in
@@ -1106,7 +1106,7 @@ public class DiskIndex {
 					o = values[i] = ((IntList) values[i]).asArray();
 				int[] documentNumbers = (int[]) o;
 				if (documentNumbers.length >= largeArraySize) {
-					values[i] = new Integer(stream.size());
+					values[i] = stream.size();
 					writeDocumentNumbers(documentNumbers, stream);
 				}
 			}

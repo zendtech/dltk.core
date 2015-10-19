@@ -643,8 +643,7 @@ public class BPListElement {
 		elem.setAttribute(EXCLUSION, curr.getExclusionPatterns());
 		elem.setAttribute(INCLUSION, curr.getInclusionPatterns());
 		elem.setAttribute(ACCESSRULES, curr.getAccessRules());
-		elem.setAttribute(COMBINE_ACCESSRULES, new Boolean(curr
-				.combineAccessRules()));
+		elem.setAttribute(COMBINE_ACCESSRULES, curr.combineAccessRules());
 		elem.setSourcePath(curr.getSourceAttachmentPath());
 		elem.setSourceRootPath(curr.getSourceAttachmentRootPath());
 

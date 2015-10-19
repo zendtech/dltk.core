@@ -76,18 +76,18 @@ public class DbgpPropertyCommands extends DbgpBaseCommands implements
 
 	public IDbgpProperty getProperty(String name, int stackDepth)
 			throws DbgpException {
-		return getProperty(name, new Integer(stackDepth), null);
+		return getProperty(name, Integer.valueOf(stackDepth), null);
 	}
 
 	public IDbgpProperty getProperty(String name, int stackDepth, int contextId)
 			throws DbgpException {
-		return getProperty(name, new Integer(stackDepth),
-				new Integer(contextId));
+		return getProperty(name, Integer.valueOf(stackDepth),
+				Integer.valueOf(contextId));
 	}
 
 	public IDbgpProperty getProperty(int page, String name, int stackDepth)
 			throws DbgpException {
-		return getProperty(new Integer(page), name, new Integer(stackDepth),
+		return getProperty(Integer.valueOf(page), name, Integer.valueOf(stackDepth),
 				null);
 	}
 

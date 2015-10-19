@@ -39,15 +39,15 @@ public class DbgpDataTypeCommands extends DbgpBaseCommands implements
 		super(communicator);
 
 		converter = new HashMap();
-		converter.put("bool", new Integer(BOOL_TYPE)); //$NON-NLS-1$
-		converter.put("int", new Integer(INT_TYPE)); //$NON-NLS-1$
-		converter.put("float", new Integer(FLOAT_TYPE)); //$NON-NLS-1$
-		converter.put("string", new Integer(STRING_TYPE)); //$NON-NLS-1$
-		converter.put("null", new Integer(NULL_TYPE)); //$NON-NLS-1$
-		converter.put("array", new Integer(ARRAY_TYPE)); //$NON-NLS-1$
-		converter.put("hash", new Integer(HASH_TYPE)); //$NON-NLS-1$
-		converter.put("object", new Integer(OBJECT_TYPE)); //$NON-NLS-1$
-		converter.put("resource", new Integer(RESOURCE_TYPE)); //$NON-NLS-1$
+		converter.put("bool", Integer.valueOf(BOOL_TYPE)); //$NON-NLS-1$
+		converter.put("int", Integer.valueOf(INT_TYPE)); //$NON-NLS-1$
+		converter.put("float", Integer.valueOf(FLOAT_TYPE)); //$NON-NLS-1$
+		converter.put("string", Integer.valueOf(STRING_TYPE)); //$NON-NLS-1$
+		converter.put("null", Integer.valueOf(NULL_TYPE)); //$NON-NLS-1$
+		converter.put("array", Integer.valueOf(ARRAY_TYPE)); //$NON-NLS-1$
+		converter.put("hash", Integer.valueOf(HASH_TYPE)); //$NON-NLS-1$
+		converter.put("object", Integer.valueOf(OBJECT_TYPE)); //$NON-NLS-1$
+		converter.put("resource", Integer.valueOf(RESOURCE_TYPE)); //$NON-NLS-1$
 	}
 
 	public Map getTypeMap() throws DbgpException {

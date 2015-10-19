@@ -253,7 +253,7 @@ public class OpenMethodHistory extends History {
 		// Fetching the timestamp might not be cheap (remote file system
 		// external Jars. So check if we alreay have one.
 		if (!fTimestampMapping.containsKey(info)) {
-			fTimestampMapping.put(info, new Long(getContainerTimestamp(info)));
+			fTimestampMapping.put(info, Long.valueOf(getContainerTimestamp(info)));
 		}
 		super.accessed(info);
 	}
@@ -266,7 +266,7 @@ public class OpenMethodHistory extends History {
 	public synchronized void replace(MethodNameMatch old,
 			MethodNameMatch newMatch) {
 		fTimestampMapping.remove(old);
-		fTimestampMapping.put(newMatch, new Long(
+		fTimestampMapping.put(newMatch, Long.valueOf(
 				getContainerTimestamp(newMatch)));
 		super.remove(old);
 		super.accessed(newMatch);
@@ -332,7 +332,7 @@ public class OpenMethodHistory extends History {
 						replace(type, SearchEngine.createMethodNameMatch(
 								sMethod, modifiers));
 					} else {
-						fTimestampMapping.put(type, new Long(currentTimestamp));
+						fTimestampMapping.put(type, Long.valueOf(currentTimestamp));
 					}
 				}
 			} catch (ModelException e) {
@@ -429,7 +429,7 @@ public class OpenMethodHistory extends History {
 			}
 		}
 		if (timestamp != IResource.NULL_STAMP) {
-			fTimestampMapping.put(info, new Long(timestamp));
+			fTimestampMapping.put(info, Long.valueOf(timestamp));
 		}
 		return info;
 	}

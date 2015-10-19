@@ -36,7 +36,7 @@ public class WildcardMatcher {
 					String group = matcher.group(i);
 					Matcher lMatch = lPattern.matcher(group);
 					if (lMatch.find()) {
-						lineNumber = new Integer(lMatch.group()).intValue();
+						lineNumber = Integer.parseInt(lMatch.group());
 						continue;
 					}
 

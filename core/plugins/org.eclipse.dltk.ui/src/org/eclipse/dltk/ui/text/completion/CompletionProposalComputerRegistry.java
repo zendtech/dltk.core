@@ -297,7 +297,7 @@ public final class CompletionProposalComputerRegistry {
 			StringTokenizer inner = new StringTokenizer(tok.nextToken(), ":"); //$NON-NLS-1$
 			String id = inner.nextToken();
 			int rank = Integer.parseInt(inner.nextToken());
-			ordered.put(id, new Integer(rank));
+			ordered.put(id, Integer.valueOf(rank));
 		}
 
 		List<CompletionProposalCategory> categories = new ArrayList<CompletionProposalCategory>();

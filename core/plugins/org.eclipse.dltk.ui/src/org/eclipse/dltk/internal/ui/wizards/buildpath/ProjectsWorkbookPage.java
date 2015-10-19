@@ -376,7 +376,7 @@ public class ProjectsWorkbookPage extends BuildPathBasePage {
 			selElement.setAttribute(BPListElement.ACCESSRULES, dialog
 					.getAccessRules());
 			selElement.setAttribute(BPListElement.COMBINE_ACCESSRULES,
-					new Boolean(dialog.doCombineAccessRules()));
+					dialog.doCombineAccessRules());
 			fProjectsList.refresh();
 			fBuildpathList.dialogFieldChanged(); // validate
 

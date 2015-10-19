@@ -14,13 +14,13 @@ public final class DbgpResponcePacketWaiter {
 
 	public synchronized void put(DbgpResponsePacket packet) {
 		int id = packet.getTransactionId();
-		map.put(new Integer(id), packet);
+		map.put(Integer.valueOf(id), packet);
 		notifyAll();
 	}
 
 	public synchronized DbgpResponsePacket waitPacket(int id, int timeout)
 			throws InterruptedException {
-		Integer key = new Integer(id);
+		Integer key = Integer.valueOf(id);
 		long endTime = 0;
 		if (timeout > 0) {
 			endTime = System.currentTimeMillis() + timeout;
