@@ -16,7 +16,6 @@ import java.util.List;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.dltk.core.IMember;
 import org.eclipse.dltk.core.ISourceRange;
-import org.eclipse.dltk.core.ISourceReference;
 import org.eclipse.dltk.core.IType;
 import org.eclipse.dltk.core.ModelException;
 import org.eclipse.dltk.internal.core.SourceRange;
@@ -49,7 +48,6 @@ public class GoToNextPreviousMemberAction extends Action implements IUpdate {
 		super(text);
 		fEditor= editor;
 		fIsGotoNext= isGotoNext;
-		update();
 //		if (isGotoNext)
 //			PlatformUI.getWorkbench().getHelpSystem().setHelp(this, IJavaHelpContextIds.GOTO_NEXT_MEMBER_ACTION);
 //		else
@@ -65,18 +63,8 @@ public class GoToNextPreviousMemberAction extends Action implements IUpdate {
 	}
 
 	public void update() {
-		boolean enabled= false;
-		ISourceReference ref= getSourceReference();
-		if (ref != null) {
-			ISourceRange range;
-			try {
-				range= ref.getSourceRange();
-				enabled= range != null && range.getLength() > 0;
-			} catch (ModelException e) {
-				// enabled= false;
-			}
-		}
-		setEnabled(enabled);
+		// Enable by default always.
+		setEnabled(true);
 	}
 
 	/* (non-JavaDoc)
@@ -94,11 +82,6 @@ public class GoToNextPreviousMemberAction extends Action implements IUpdate {
 	private IType[] getTypes() throws ModelException {
 		IEditorInput input= fEditor.getEditorInput();		
 		return DLTKUIPlugin.getDefault().getWorkingCopyManager().getWorkingCopy(input).getTypes();
-	}
-
-	private ISourceReference getSourceReference() {
-		IEditorInput input= fEditor.getEditorInput();		
-		return DLTKUIPlugin.getDefault().getWorkingCopyManager().getWorkingCopy(input);		
 	}
 
 	private ITextSelection getTextSelection() {
