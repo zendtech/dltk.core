@@ -56,6 +56,7 @@ public abstract class ScriptLaunchingTests extends AbstractModelTests {
 	}
 
 	// Configuration
+	@Override
 	public void setUpSuite() throws Exception {
 		super.setUpSuite();
 		scriptProject = setUpScriptProject(getProjectName());
@@ -82,6 +83,7 @@ public abstract class ScriptLaunchingTests extends AbstractModelTests {
 		return new IInterpreterInstall[0];
 	}
 
+	@Override
 	public void tearDownSuite() throws Exception {
 		deleteProject(getProjectName());
 		super.tearDownSuite();
@@ -92,23 +94,28 @@ public abstract class ScriptLaunchingTests extends AbstractModelTests {
 			final String natureId, final String projectName,
 			final String script, final String arguments) {
 		return new ILaunchConfiguration() {
+			@Override
 			public boolean contentsEqual(ILaunchConfiguration configuration) {
 				return false;
 			}
 
+			@Override
 			public ILaunchConfigurationWorkingCopy copy(String name)
 					throws CoreException {
 				return null;
 			}
 
+			@Override
 			public void delete() throws CoreException {
 
 			}
 
+			@Override
 			public boolean exists() {
 				return false;
 			}
 
+			@Override
 			public boolean getAttribute(String attributeName,
 					boolean defaultValue) throws CoreException {
 				if (attributeName
@@ -122,6 +129,7 @@ public abstract class ScriptLaunchingTests extends AbstractModelTests {
 				return defaultValue;
 			}
 
+			@Override
 			public int getAttribute(String attributeName, int defaultValue)
 					throws CoreException {
 				if (attributeName
@@ -131,27 +139,31 @@ public abstract class ScriptLaunchingTests extends AbstractModelTests {
 				return defaultValue;
 			}
 
+			@Override
 			public List getAttribute(String attributeName, List defaultValue)
 					throws CoreException {
 				return defaultValue;
 			}
 
+			@Override
 			public Set getAttribute(String attributeName, Set defaultValue)
 					throws CoreException {
 				return defaultValue;
 			}
 
+			@Override
 			public Map getAttribute(String attributeName, Map defaultValue)
 					throws CoreException {
 				if (attributeName
 						.equals(ILaunchManager.ATTR_ENVIRONMENT_VARIABLES)) {
-					Map env = new HashMap();
+					Map<Object, Object> env = new HashMap<Object, Object>();
 					configureEnvironment(env);
 					return env;
 				}
 				return defaultValue;
 			}
 
+			@Override
 			public String getAttribute(String attributeName, String defaultValue)
 					throws CoreException {
 
@@ -177,96 +189,118 @@ public abstract class ScriptLaunchingTests extends AbstractModelTests {
 				return defaultValue;
 			}
 
+			@Override
 			public Map getAttributes() throws CoreException {
 				return null;
 			}
 
+			@Override
 			public String getCategory() throws CoreException {
 				return null;
 			}
 
+			@Override
 			public IFile getFile() {
 				return ScriptLaunchingTests.this.getFile(projectName + '/'
 						+ script);
 			}
 
+			@Override
 			public IPath getLocation() {
 				return null;
 			}
 
+			@Override
 			public IResource[] getMappedResources() throws CoreException {
 				return null;
 			}
 
+			@Override
 			public String getMemento() throws CoreException {
 				return null;
 			}
 
+			@Override
 			public Set getModes() throws CoreException {
 				return null;
 			}
 
+			@Override
 			public String getName() {
 				return null;
 			}
 
+			@Override
 			public ILaunchDelegate getPreferredDelegate(Set modes)
 					throws CoreException {
 				return null;
 			}
 
+			@Override
 			public ILaunchConfigurationType getType() throws CoreException {
 				return null;
 			}
 
+			@Override
 			public ILaunchConfigurationWorkingCopy getWorkingCopy()
 					throws CoreException {
 				return null;
 			}
 
+			@Override
 			public boolean isLocal() {
 				return false;
 			}
 
+			@Override
 			public boolean isMigrationCandidate() throws CoreException {
 				return false;
 			}
 
+			@Override
 			public boolean isReadOnly() {
 				return false;
 			}
 
+			@Override
 			public boolean isWorkingCopy() {
 				return false;
 			}
 
+			@Override
 			public ILaunch launch(String mode, IProgressMonitor monitor)
 					throws CoreException {
 				return null;
 			}
 
+			@Override
 			public ILaunch launch(String mode, IProgressMonitor monitor,
 					boolean build) throws CoreException {
 				return null;
 			}
 
+			@Override
 			public ILaunch launch(String mode, IProgressMonitor monitor,
 					boolean build, boolean register) throws CoreException {
 				return null;
 			}
 
+			@Override
 			public void migrate() throws CoreException {
 
 			}
 
+			@Override
 			public boolean supportsMode(String mode) throws CoreException {
 				return false;
 			}
 
+			@Override
 			public Object getAdapter(Class adapter) {
 				return null;
 			}
 
+			@Override
 			public boolean hasAttribute(String attributeName)
 					throws CoreException {
 				return false;
@@ -274,11 +308,11 @@ public abstract class ScriptLaunchingTests extends AbstractModelTests {
 		};
 	}
 
-	protected void configureEnvironment(Map env) {
+	protected void configureEnvironment(Map<?, ?> env) {
 	}
 
 	public IInterpreterInstall[] searchInstalls(String natureId) {
-		final List installs = new ArrayList();
+		final List<IInterpreterInstall> installs = new ArrayList<IInterpreterInstall>();
 		final InterpreterSearcher searcher = new InterpreterSearcher();
 
 		searcher.search(EnvironmentManager.getLocalEnvironment(), natureId,
@@ -422,6 +456,7 @@ public abstract class ScriptLaunchingTests extends AbstractModelTests {
 			this.resumeCount = 0;
 		}
 
+		@Override
 		public void handleDebugEvents(DebugEvent[] events) {
 			for (int i = 0; i < events.length; ++i) {
 				DebugEvent event = events[i];
@@ -622,7 +657,7 @@ public abstract class ScriptLaunchingTests extends AbstractModelTests {
 		return install;
 	}
 
-	protected void createAddInstall(List installs, String path, String id,
+	protected void createAddInstall(List<IInterpreterInstall> installs, String path, String id,
 			IInterpreterInstallType type) {
 		IInterpreterInstall install = createInstall(path, id, type);
 		if (install != null) {

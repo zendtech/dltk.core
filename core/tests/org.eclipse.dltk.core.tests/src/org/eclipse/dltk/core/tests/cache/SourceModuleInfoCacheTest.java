@@ -50,10 +50,12 @@ public class SourceModuleInfoCacheTest extends Assert {
 	}
 
 	private static final Matcher<ISourceModule> IS_CACHED = new BaseMatcher<ISourceModule>() {
+		@Override
 		public void describeTo(Description description) {
 			description.appendText("ISourceModule contained in AST cache");
 		}
 
+		@Override
 		public boolean matches(Object item) {
 			return !getCache().get((ISourceModule) item).isEmpty();
 		}
@@ -108,6 +110,7 @@ public class SourceModuleInfoCacheTest extends Assert {
 
 		final IFile file = (IFile) module.getResource();
 		project.getWorkspace().run(new IWorkspaceRunnable() {
+			@Override
 			public void run(IProgressMonitor monitor) throws CoreException {
 				file.delete(true, monitor);
 				file.create(
@@ -180,6 +183,7 @@ public class SourceModuleInfoCacheTest extends Assert {
 		final int capacity = getCache().capacity();
 		final List<ISourceModule> modules = new ArrayList<ISourceModule>();
 		project.getWorkspace().run(new IWorkspaceRunnable() {
+			@Override
 			public void run(IProgressMonitor monitor) throws CoreException {
 				for (int i = 0; i < capacity; ++i) {
 					modules.add(folder.createSourceModule("m" + i + ".txt", "",

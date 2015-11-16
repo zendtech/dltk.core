@@ -32,18 +32,22 @@ public class TestLanguageToolkit extends AbstractLanguageToolkit implements
 				Messages.convention_unit_notScriptName, "txt", "Test"), null);
 	}
 
+	@Override
 	public boolean languageSupportZIPBuildpath() {
 		return true;
 	}
 
+	@Override
 	public boolean validateSourcePackage(IPath path, IEnvironment env) {
 		return true;
 	}
 
+	@Override
 	public String getNatureId() {
 		return ModelTestsPlugin.TEST_NATURE;
 	}
 
+	@Override
 	public IStatus validateSourceModule(IResource resource) {
 		return validateSourceModule(resource.getName());
 	}
@@ -52,6 +56,7 @@ public class TestLanguageToolkit extends AbstractLanguageToolkit implements
 		return toolkit;
 	}
 
+	@Override
 	public String getLanguageName() {
 		return "Test";
 	}
@@ -60,6 +65,7 @@ public class TestLanguageToolkit extends AbstractLanguageToolkit implements
 		return name.endsWith(".txt");
 	}
 
+	@Override
 	public String getLanguageContentType() {
 		return "org.eclipse.dltk.core.test.testContentType";
 	}

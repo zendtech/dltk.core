@@ -41,14 +41,17 @@ public class WorkspaceSetup implements IWorkspaceSetup {
 		this(FrameworkUtil.getBundle(classFromBundle));
 	}
 
+	@Override
 	public String getBundleName() {
 		return bundleName;
 	}
 
+	@Override
 	public void before() throws Throwable {
 		WorkspaceAutoBuild.disable();
 	}
 
+	@Override
 	public void after() {
 	}
 
@@ -61,6 +64,7 @@ public class WorkspaceSetup implements IWorkspaceSetup {
 
 	private File sourceWorkspaceDirectory;
 
+	@Override
 	public synchronized File getSourceWorkspaceDirectory() {
 		if (sourceWorkspaceDirectory != null) {
 			return sourceWorkspaceDirectory;

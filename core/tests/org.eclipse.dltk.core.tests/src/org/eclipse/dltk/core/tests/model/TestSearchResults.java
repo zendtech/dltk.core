@@ -16,8 +16,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import junit.framework.Assert;
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.dltk.core.IMethod;
 import org.eclipse.dltk.core.IModelElement;
@@ -25,6 +23,7 @@ import org.eclipse.dltk.core.ISourceModule;
 import org.eclipse.dltk.core.IType;
 import org.eclipse.dltk.core.search.SearchMatch;
 import org.eclipse.dltk.core.search.SearchRequestor;
+import org.junit.Assert;
 
 public class TestSearchResults extends SearchRequestor {
 
@@ -118,6 +117,7 @@ public class TestSearchResults extends SearchRequestor {
 
 	public void sortByOffset() {
 		Collections.sort(matches, new Comparator<SearchMatch>() {
+			@Override
 			public int compare(SearchMatch o1, SearchMatch o2) {
 				return o1.getOffset() - o2.getOffset();
 			}

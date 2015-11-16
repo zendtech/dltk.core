@@ -9,7 +9,6 @@ import junit.framework.TestCase;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.dltk.core.caching.ArchiveCacheIndexBuilder;
 import org.eclipse.dltk.core.caching.IContentCache;
 import org.eclipse.dltk.core.caching.MetadataContentCache;
@@ -29,6 +28,7 @@ public class CacheTests extends AbstractModelTests {
 		super(ModelTestsPlugin.PLUGIN_NAME, name);
 	}
 
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 		PROJECT = createProject("testProject");
@@ -38,6 +38,7 @@ public class CacheTests extends AbstractModelTests {
 				new NullProgressMonitor());
 	}
 
+	@Override
 	protected void tearDown() throws Exception {
 		super.tearDown();
 		PROJECT.delete(true, new NullProgressMonitor());

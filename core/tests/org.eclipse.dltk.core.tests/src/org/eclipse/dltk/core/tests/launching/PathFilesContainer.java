@@ -37,11 +37,11 @@ public class PathFilesContainer {
 		}
 
 		// Path variable
-		Map env = DebugPlugin.getDefault().getLaunchManager()
+		Map<?, ?> env = DebugPlugin.getDefault().getLaunchManager()
 				.getNativeEnvironmentCasePreserved();
 
 		String path = null;
-		final Iterator it = env.keySet().iterator();
+		final Iterator<?> it = env.keySet().iterator();
 		while (it.hasNext()) {
 			final String name = (String) it.next();
 			if (name.compareToIgnoreCase(PATH) == 0) { //$NON-NLS-1$
@@ -56,14 +56,14 @@ public class PathFilesContainer {
 		// Folder list
 		final String separator = Platform.getOS().equals(Platform.OS_WIN32) ? ";" : ":"; //$NON-NLS-1$ $NON-NLS-1$
 
-		final List folders = new ArrayList();
+		final List<IPath> folders = new ArrayList<IPath>();
 		String[] res = path.split(separator);
 		for (int i = 0; i < res.length; i++) {
 			folders.add(Path.fromOSString(res[i]));
 		}
 
-		ArrayList searchedFiles = new ArrayList();
-		final Iterator iter = folders.iterator();
+		ArrayList<IFileHandle> searchedFiles = new ArrayList<IFileHandle>();
+		final Iterator<IPath> iter = folders.iterator();
 		while (iter.hasNext()) {
 			final IPath folder = (IPath) iter.next();
 
@@ -92,7 +92,7 @@ public class PathFilesContainer {
 	 * @param searchedFiles
 	 */
 	protected void visitFolder(IFileVisitor visitor, IFileHandle directory,
-			IProgressMonitor monitor, int deep, ArrayList searchedFiles) {
+			IProgressMonitor monitor, int deep, ArrayList<IFileHandle> searchedFiles) {
 		if (deep == 0) {
 			return;
 		}
@@ -110,7 +110,7 @@ public class PathFilesContainer {
 			return;
 		}
 
-		List subDirs = new ArrayList();
+		List<?> subDirs = new ArrayList<Object>();
 		for (int i = 0; i < childFiles.length; i++) {
 			if (monitor.isCanceled()) {
 				return;

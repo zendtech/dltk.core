@@ -23,7 +23,7 @@ import org.eclipse.dltk.core.IOpenable;
  */
 public class TestBuffer implements IBuffer {
 	private IOpenable owner;
-	private ArrayList changeListeners;
+	private ArrayList<IBufferChangedListener> changeListeners;
 	private char[] contents = null;
 	private boolean hasUnsavedChanges = false;
 
@@ -31,23 +31,27 @@ public class TestBuffer implements IBuffer {
 		this.owner = owner;
 	}
 
+	@Override
 	public void addBufferChangedListener(IBufferChangedListener listener) {
 		if (this.changeListeners == null) {
-			this.changeListeners = new ArrayList(5);
+			this.changeListeners = new ArrayList<IBufferChangedListener>(5);
 		}
 		if (!this.changeListeners.contains(listener)) {
 			this.changeListeners.add(listener);
 		}
 	}
 
+	@Override
 	public void append(char[] text) {
 		this.hasUnsavedChanges = true;
 	}
 
+	@Override
 	public void append(String text) {
 		this.hasUnsavedChanges = true;
 	}
 
+	@Override
 	public void close() {
 		this.contents = null; // mark as closed
 		if (this.changeListeners != null) {
@@ -62,46 +66,57 @@ public class TestBuffer implements IBuffer {
 		}
 	}
 
+	@Override
 	public char getChar(int position) {
 		return 0;
 	}
 
+	@Override
 	public char[] getCharacters() {
 		return contents;
 	}
 
+	@Override
 	public String getContents() {
 		return new String(contents);
 	}
 
+	@Override
 	public int getLength() {
 		return contents.length;
 	}
 
+	@Override
 	public IOpenable getOwner() {
 		return this.owner;
 	}
 
+	@Override
 	public String getText(int offset, int length) {
 		return null;
 	}
 
+	@Override
 	public IResource getUnderlyingResource() {
 		return null;
 	}
 
+	@Override
 	public boolean hasUnsavedChanges() {
 		return this.hasUnsavedChanges;
 	}
 
+	@Override
 	public boolean isClosed() {
 		return this.contents == null;
 	}
 
+	@Override
 	public boolean isReadOnly() {
 		return false;
 	}
 
+	@Override
 	public void removeBufferChangedListener(IBufferChangedListener listener) {
 		if (this.changeListeners != null) {
 			this.changeListeners.remove(listener);
@@ -111,23 +126,28 @@ public class TestBuffer implements IBuffer {
 		}
 	}
 
+	@Override
 	public void replace(int position, int length, char[] text) {
 		this.hasUnsavedChanges = true;
 	}
 
+	@Override
 	public void replace(int position, int length, String text) {
 		this.hasUnsavedChanges = true;
 	}
 
+	@Override
 	public void save(IProgressMonitor progress, boolean force) {
 		this.hasUnsavedChanges = false;
 	}
 
+	@Override
 	public void setContents(char[] characters) {
 		this.contents = characters;
 		this.hasUnsavedChanges = true;
 	}
 
+	@Override
 	public void setContents(String characters) {
 		this.contents = characters.toCharArray();
 		this.hasUnsavedChanges = true;

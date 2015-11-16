@@ -221,6 +221,7 @@ public class ProjectSetup extends AbstractProjectSetup {
 		final IProject project = getWorkspaceRoot().getProject(
 				workspaceProjectName);
 		ResourcesPlugin.getWorkspace().run(new IWorkspaceRunnable() {
+			@Override
 			public void run(IProgressMonitor monitor) throws CoreException {
 				project.create(null);
 				if (!hasOption(Option.CLOSED)) {

@@ -79,6 +79,7 @@ public abstract class SuiteOfTestCases extends TestCase {
 
 		private void warning(final String name, final String message) {
 			addTest(new TestCase(name) {
+				@Override
 				protected void runTest() {
 					fail(message);
 				}
@@ -116,8 +117,10 @@ public abstract class SuiteOfTestCases extends TestCase {
 			}
 		}
 
+		@Override
 		public void run(final TestResult result) {
 			Protectable p = new Protectable() {
+				@Override
 				public void protect() throws Exception {
 					try {
 						// run suite (first test run will setup the suite)
@@ -138,6 +141,7 @@ public abstract class SuiteOfTestCases extends TestCase {
 			super.run(result);
 		}
 
+		@Override
 		public void runTest(Test test, TestResult result) {
 			if (test instanceof SuiteOfTestCases) {
 				final SuiteOfTestCases current = (SuiteOfTestCases) test;
@@ -219,22 +223,27 @@ public abstract class SuiteOfTestCases extends TestCase {
 				// TODO (alex) tearDownSuite() not executed
 				final AtomicBoolean errors = new AtomicBoolean();
 				final TestListener listener = new TestListener() {
+					@Override
 					public void startTest(Test test) {
 					}
 
+					@Override
 					public void endTest(Test test) {
 					}
 
+					@Override
 					public void addFailure(Test test, AssertionFailedError t) {
 						errors.set(true);
 					}
 
+					@Override
 					public void addError(Test test, Throwable t) {
 						errors.set(true);
 					}
 				};
 				result.addListener(listener);
 				result.runProtected(this, new Protectable() {
+					@Override
 					public void protect() throws Throwable {
 						setUpSuite();
 					}

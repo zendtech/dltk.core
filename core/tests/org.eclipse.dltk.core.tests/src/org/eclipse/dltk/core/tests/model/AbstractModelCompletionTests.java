@@ -23,7 +23,7 @@ import org.eclipse.dltk.core.WorkingCopyOwner;
 
 
 public abstract class AbstractModelCompletionTests extends AbstractModelTests {
-	public static List COMPLETION_SUITES = null;
+	public static List<?> COMPLETION_SUITES = null;
 	protected IScriptProject PROJECT;
 	protected class CompletionResult {
 		public String proposals;
@@ -32,13 +32,14 @@ public abstract class AbstractModelCompletionTests extends AbstractModelTests {
 		public int tokenStart;
 		public int tokenEnd;
 	}
-	Hashtable oldOptions;
+	Hashtable<?, ?> oldOptions;
 	ISourceModule wc = null;
 
 	public AbstractModelCompletionTests(String projectName, String name) {
 		super(projectName, name);
 	}
 
+	@Override
 	public ISourceModule getWorkingCopy(String path, String source) throws ModelException {
 		return super.getWorkingCopy(path, source, this.wcOwner, null);
 	}
@@ -94,18 +95,21 @@ public abstract class AbstractModelCompletionTests extends AbstractModelTests {
 		return result;
 	}
 
+	@Override
 	public void setUpSuite() throws Exception {
 		super.setUpSuite();
 		this.oldOptions = DLTKCore.getOptions();
 		// waitUntilIndexesReady();
 	}
 
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 		this.wcOwner = new WorkingCopyOwner() {
 		};
 	}
 
+	@Override
 	public void tearDownSuite() throws Exception {
 		DLTKCore.setOptions(this.oldOptions);
 		this.oldOptions = null;
@@ -121,6 +125,7 @@ public abstract class AbstractModelCompletionTests extends AbstractModelTests {
 		super.tearDownSuite();
 	}
 
+	@Override
 	protected void tearDown() throws Exception {
 		if (this.wc != null) {
 			this.wc.discardWorkingCopy();

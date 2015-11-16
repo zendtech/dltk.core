@@ -25,6 +25,7 @@ public class TestModelProvider implements IModelProvider {
 	public TestModelProvider() {
 	}
 
+	@Override
 	public void provideModelChanges(IModelElement parentElement, List children) {
 		IScriptProject project = parentElement.getScriptProject();
 		if (!"ModelMembersq".equals(project.getElementName())) {
@@ -32,8 +33,8 @@ public class TestModelProvider implements IModelProvider {
 		}
 		switch (parentElement.getElementType()) {
 		case IModelElement.PROJECT_FRAGMENT:
-			List addon = new ArrayList();
-			for (Iterator iterator = children.iterator(); iterator.hasNext();) {
+			List<TestFolder> addon = new ArrayList<TestFolder>();
+			for (Iterator<TestFolder> iterator = children.iterator(); iterator.hasNext();) {
 				IModelElement el = (IModelElement) iterator.next();
 				if (el.getElementType() == IModelElement.SCRIPT_FOLDER) {
 					addon.add(new TestFolder((ModelElement) parentElement,
@@ -48,6 +49,7 @@ public class TestModelProvider implements IModelProvider {
 		}
 	}
 
+	@Override
 	public boolean isModelChangesProvidedFor(IModelElement modelElement,
 			String name) {
 		IScriptProject project = modelElement.getScriptProject();

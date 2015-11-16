@@ -73,18 +73,22 @@ public class BuildpathTests extends ModifyingResourceTests {
 			this.entries = entries;
 		}
 
+		@Override
 		public IPath getPath() {
 			return this.path;
 		}
 
+		@Override
 		public IBuildpathEntry[] getBuildpathEntries() {
 			return this.entries;
 		}
 
+		@Override
 		public String getDescription() {
 			return this.path.toString();
 		}
 
+		@Override
 		public int getKind() {
 			return 0;
 		}

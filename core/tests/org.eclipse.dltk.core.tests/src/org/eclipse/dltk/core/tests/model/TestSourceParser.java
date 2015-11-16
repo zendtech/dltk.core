@@ -7,6 +7,7 @@ import org.eclipse.dltk.compiler.problem.IProblemReporter;
 
 public class TestSourceParser extends AbstractSourceParser {
 
+	@Override
 	public ModuleDeclaration parse(IModuleSource input,
 			IProblemReporter reporter) {
 		return new ModuleDeclaration(input.getSourceContents().length());

@@ -119,6 +119,7 @@ public class ModifyingResourceTests extends AbstractModelTests {
 		getProject(project).move(new Path(newName), true, null);
 	}
 
+	@Override
 	protected ISourceModule getSourceModule(String path) {
 		return (ISourceModule) DLTKCore.create(getFile(path));
 	}
@@ -162,6 +163,7 @@ public class ModifyingResourceTests extends AbstractModelTests {
 		final IFile first = this.getFile(firstPath);
 		final IFile second = this.getFile(secondPath);
 		IWorkspaceRunnable runnable = new IWorkspaceRunnable() {
+			@Override
 			public void run(IProgressMonitor monitor) throws CoreException {
 				IPath tempPath = first.getParent().getFullPath().append("swappingFile.temp");
 				first.move(tempPath, false, monitor);

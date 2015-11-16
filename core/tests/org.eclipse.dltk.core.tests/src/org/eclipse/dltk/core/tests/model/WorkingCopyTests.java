@@ -29,6 +29,7 @@ public class WorkingCopyTests extends ModifyingResourceTests {
 	ISourceModule cu = null;
 	ISourceModule copy = null;
 	public class TestWorkingCopyOwner extends WorkingCopyOwner {
+		@Override
 		public IBuffer createBuffer(ISourceModule workingCopy) {
 			return new TestBuffer(workingCopy);
 		}
@@ -42,6 +43,7 @@ public class WorkingCopyTests extends ModifyingResourceTests {
 		return new Suite(WorkingCopyTests.class);
 	}
 
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 		try {
@@ -63,6 +65,7 @@ public class WorkingCopyTests extends ModifyingResourceTests {
 		}
 	}
 
+	@Override
 	protected void tearDown() throws Exception {
 		if (this.copy != null)
 			this.copy.discardWorkingCopy();

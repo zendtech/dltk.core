@@ -47,14 +47,17 @@ public class CoreDDPTests extends SuiteOfTestCases {
 			this.answer = answer;
 		}		
 
+		@Override
 		public Object produceResult() {
 			return answer;
 		}
 
+		@Override
 		public IGoal[] init() {
 			return IGoal.NO_GOALS;
 		}
 
+		@Override
 		public IGoal[] subGoalDone(IGoal goal2, Object result, GoalState state) {
 			return IGoal.NO_GOALS;
 		}
@@ -85,17 +88,20 @@ public class CoreDDPTests extends SuiteOfTestCases {
 			this.answer = (IEvaluatedType) answer;
 		}
 	
+		@Override
 		public IGoal[] init() {
 			++produceCalls;
 			return dependents;
 		}
 
+		@Override
 		public IGoal[] subGoalDone(IGoal goal2, Object result, GoalState _state) {
 			++produceCalls;
 			assertTrue(result instanceof MyNum || _state == GoalState.RECURSIVE);			
 			return IGoal.NO_GOALS;
 		}
 
+		@Override
 		public Object produceResult() {
 			++produceTypeCalls;
 			return answer;
@@ -114,14 +120,17 @@ public class CoreDDPTests extends SuiteOfTestCases {
 
 	class MyNum implements IEvaluatedType {
 
+		@Override
 		public String toString() {
 			return "MyNum";
 		}
 
+		@Override
 		public String getTypeName() {
 			return "MyNum";
 		}
 
+		@Override
 		public boolean subtypeOf(IEvaluatedType type) {
 			// TODO Auto-generated method stub
 			return false;
@@ -137,6 +146,7 @@ public class CoreDDPTests extends SuiteOfTestCases {
 
 		IGoalEvaluatorFactory factory = new IGoalEvaluatorFactory() {
 
+			@Override
 			public GoalEvaluator createEvaluator(IGoal goal) {
 				if (goal instanceof ExpressionTypeGoal) {
 					ExpressionTypeGoal egoal = (ExpressionTypeGoal) goal;
@@ -169,7 +179,7 @@ public class CoreDDPTests extends SuiteOfTestCases {
 		final Expression z = new SimpleReference(0, 0, "z");
 		final Expression num = new NumericLiteral(0,0,0);
 		
-		final Collection evaluators = new ArrayList();
+		final Collection<GoalEvaluator> evaluators = new ArrayList<GoalEvaluator>();
 		IGoalEvaluatorFactory factory = new IGoalEvaluatorFactory() {
 
 			public GoalEvaluator createEvaluator2(IGoal goal) {
@@ -191,6 +201,7 @@ public class CoreDDPTests extends SuiteOfTestCases {
 				return null;
 			}
 			
+			@Override
 			public GoalEvaluator createEvaluator(IGoal goal) {
 				GoalEvaluator result = createEvaluator2(goal);
 				if (result != null) 
@@ -206,7 +217,7 @@ public class CoreDDPTests extends SuiteOfTestCases {
 		IEvaluatedType answer = man.evaluateType(rootGoal, -1);
 
 		assertTrue(answer instanceof MyNum);
-		for (Iterator iter = evaluators.iterator(); iter.hasNext();) {
+		for (Iterator<GoalEvaluator> iter = evaluators.iterator(); iter.hasNext();) {
 			GoalEvaluator ev = (GoalEvaluator) iter.next();
 			if (ev instanceof SingleDependentGoalEvaluator) {
 				SingleDependentGoalEvaluator sdge = (SingleDependentGoalEvaluator) ev;

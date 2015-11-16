@@ -19,6 +19,7 @@ public class TestSourceElementParser implements ISourceElementParser {
 	private static final String PARSEME_HEADER = "# parseme!\n";
 	private ISourceElementRequestor requestor;
 
+	@Override
 	public void parseSourceModule(IModuleSource module) {
 		String file = module.getSourceContents().replace("\r\n", "\n");
 		if (file.startsWith(PARSEME_HEADER)) {
@@ -83,10 +84,12 @@ public class TestSourceElementParser implements ISourceElementParser {
 		requestor.exitModule(file.length());
 	}
 
+	@Override
 	public void setRequestor(ISourceElementRequestor requestor) {
 		this.requestor = requestor;
 	}
 
+	@Override
 	public void setReporter(IProblemReporter reporter) {
 	}
 }

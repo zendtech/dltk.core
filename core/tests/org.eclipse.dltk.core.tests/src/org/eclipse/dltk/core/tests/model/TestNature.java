@@ -17,18 +17,22 @@ public class TestNature implements IProjectNature {
 
 	private IProject project;
 
+	@Override
 	public void configure() throws CoreException {
 
 	}
 
+	@Override
 	public void deconfigure() throws CoreException {
 
 	}
 
+	@Override
 	public IProject getProject() {
 		return project;
 	}
 
+	@Override
 	public void setProject(IProject value) {
 		project = value;
 	}

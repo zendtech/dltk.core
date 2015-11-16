@@ -11,11 +11,13 @@ public class TestContentCacheProvider implements IContentCacheProvider {
 	public TestContentCacheProvider() {
 	}
 
+	@Override
 	public InputStream getAttributeAndUpdateCache(IFileHandle handle,
 			String attribute) {
 		return null;
 	}
 
+	@Override
 	public void setCache(IContentCache cache) {
 	}
 }

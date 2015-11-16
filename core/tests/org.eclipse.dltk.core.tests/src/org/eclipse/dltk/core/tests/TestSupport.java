@@ -14,10 +14,10 @@ package org.eclipse.dltk.core.tests;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 
+import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import junit.framework.Assert;
 import junit.framework.TestCase;
 
 public class TestSupport {

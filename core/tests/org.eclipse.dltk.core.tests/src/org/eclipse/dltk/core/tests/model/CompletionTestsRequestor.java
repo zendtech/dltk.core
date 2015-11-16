@@ -11,11 +11,10 @@ package org.eclipse.dltk.core.tests.model;
 
 import java.util.Vector;
 
-import junit.framework.Assert;
-
 import org.eclipse.dltk.compiler.problem.IProblem;
 import org.eclipse.dltk.core.CompletionProposal;
 import org.eclipse.dltk.core.CompletionRequestor;
+import org.junit.Assert;
 
 public class CompletionTestsRequestor extends CompletionRequestor {
 	private Vector<String> fElements = new Vector<String>();

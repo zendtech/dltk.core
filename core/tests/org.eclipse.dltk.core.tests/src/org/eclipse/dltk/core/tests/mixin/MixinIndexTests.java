@@ -31,6 +31,7 @@ public class MixinIndexTests extends TestCase {
 	private File file;
 	private MixinIndex index;
 
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 		file = File.createTempFile("mixin", ".index");
@@ -41,6 +42,7 @@ public class MixinIndexTests extends TestCase {
 		return new MixinIndex(file.getPath(), file.getPath(), !isNew);
 	}
 
+	@Override
 	protected void tearDown() throws Exception {
 		index = null;
 		file.delete();

@@ -33,6 +33,7 @@ public class BuildParticipantManagerTests extends TestCase {
 			this.key = key;
 		}
 
+		@Override
 		public IBuildParticipant createBuildParticipant(IScriptProject project)
 				throws CoreException {
 			return new TestBuildParticipant(key);
@@ -48,6 +49,7 @@ public class BuildParticipantManagerTests extends TestCase {
 			this.key = key;
 		}
 
+		@Override
 		public void build(IBuildContext context) throws CoreException {
 			// NOP
 		}

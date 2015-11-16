@@ -23,11 +23,13 @@ public class InterpreterConfigTests extends AbstractModelTests {
 	}
 
 	// Configuration
+	@Override
 	public void setUpSuite() throws Exception {
 		super.setUpSuite();
 		scriptProject = setUpScriptProject(PROJECT_NAME);
 	}
 
+	@Override
 	public void tearDownSuite() throws Exception {
 		deleteProject(PROJECT_NAME);
 		super.tearDownSuite();
@@ -145,7 +147,7 @@ public class InterpreterConfigTests extends AbstractModelTests {
 		config.addScriptArg("-pXXX");
 		assertTrue(config.hasScriptArg("-pXXX"));
 
-		final List args = config.getScriptArgs();
+		final List<?> args = config.getScriptArgs();
 		assertEquals(2, args.size());
 		assertEquals("-gXXX", args.get(0));
 		assertEquals("-pXXX", args.get(1));
@@ -173,7 +175,7 @@ public class InterpreterConfigTests extends AbstractModelTests {
 		config.addInterpreterArg("arg2");
 		assertTrue(config.hasInterpreterArg("arg2"));
 
-		final List args = config.getInterpreterArgs();
+		final List<?> args = config.getInterpreterArgs();
 		assertEquals(2, args.size());
 		assertEquals("arg1", args.get(0));
 		assertEquals("arg2", args.get(1));

@@ -47,6 +47,7 @@ public class ProblemTestUtil extends Assert {
 				DefaultProblem.MARKER_TYPE_PROBLEM, true,
 				IResource.DEPTH_INFINITE);
 		Arrays.sort(problems, new Comparator<IMarker>() {
+			@Override
 			public int compare(IMarker o1, IMarker o2) {
 				return o1.getAttribute(IMarker.CHAR_START, 0)
 						- o2.getAttribute(IMarker.CHAR_START, 0);

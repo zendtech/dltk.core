@@ -74,9 +74,9 @@ public class ModelTestUtils
 			TestCase.assertTrue("Can't get children's parent",false);
 		}
 		
-		Collection classes = new ArrayList(1);
-		Collection methods = new ArrayList(1);
-		Collection fields = new ArrayList(1);
+		Collection<IModelElement> classes = new ArrayList<IModelElement>(1);
+		Collection<IModelElement> methods = new ArrayList<IModelElement>(1);
+		Collection<IModelElement> fields = new ArrayList<IModelElement>(1);
 		
 		getElementChildren(parent,classes,methods,fields);
 	
@@ -106,13 +106,13 @@ public class ModelTestUtils
 			TestCase.assertTrue("Can't get children's parent",false);
 		}
 		
-		Collection classes = new ArrayList(1);
-		Collection methods = new ArrayList(1);
-		Collection fields = new ArrayList(1);
+		Collection<IModelElement> classes = new ArrayList<IModelElement>(1);
+		Collection<IModelElement> methods = new ArrayList<IModelElement>(1);
+		Collection<IModelElement> fields = new ArrayList<IModelElement>(1);
 		
 		getElementChildren(parent,classes,methods,fields);
 		
-		Iterator i = fields.iterator();
+		Iterator<IModelElement> i = fields.iterator();
 		while( i.hasNext() ) {
 			IModelElement element = (IModelElement)i.next();
 			
@@ -139,13 +139,13 @@ public class ModelTestUtils
 			TestCase.assertTrue("Can't get children's parent",false);
 		}
 		
-		Collection classes = new ArrayList(1);
-		Collection methods = new ArrayList(1);
-		Collection fields = new ArrayList(1);
+		Collection<IModelElement> classes = new ArrayList<IModelElement>(1);
+		Collection<IModelElement> methods = new ArrayList<IModelElement>(1);
+		Collection<IModelElement> fields = new ArrayList<IModelElement>(1);
 		
 		getElementChildren(parent,classes,methods,fields);
 		
-		Iterator i = methods.iterator();
+		Iterator<IModelElement> i = methods.iterator();
 		while( i.hasNext() ) {
 			IModelElement element = (IModelElement)i.next();
 
@@ -176,12 +176,12 @@ public class ModelTestUtils
 			TestCase.assertTrue("Can't get children's parent",false);
 		}
 		
-		Collection classes = new ArrayList(1);
-		Collection methods = new ArrayList(1);
-		Collection fields = new ArrayList(1);
+		Collection<IModelElement> classes = new ArrayList<IModelElement>(1);
+		Collection<IModelElement> methods = new ArrayList<IModelElement>(1);
+		Collection<IModelElement> fields = new ArrayList<IModelElement>(1);
 		
 		getElementChildren(parent,classes,methods,fields);
-		Iterator i = classes.iterator();
+		Iterator<IModelElement> i = classes.iterator();
 		while( i.hasNext() ) {
 			IModelElement element = (IModelElement)i.next();
 
@@ -196,8 +196,8 @@ public class ModelTestUtils
 		TestCase.assertEquals("Class not exist", "", name);
 		return null;
 	}
-	private static void getElementChildren(IModelElement element,Collection classes, 
-			Collection methods, Collection fields) throws ModelException{
+	private static void getElementChildren(IModelElement element,Collection<IModelElement> classes, 
+			Collection<IModelElement> methods, Collection<IModelElement> fields) throws ModelException{
 		
 		classes.clear();
 		fields.clear();

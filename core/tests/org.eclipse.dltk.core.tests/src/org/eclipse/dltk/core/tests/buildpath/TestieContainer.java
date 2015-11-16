@@ -21,18 +21,22 @@ public class TestieContainer implements IBuildpathContainer {
 		this.fPath = srcPath;
 	}
 
+	@Override
 	public IBuildpathEntry[] getBuildpathEntries() {
 		return new IBuildpathEntry[] { DLTKCore.newExtLibraryEntry(this.fPath) };
 	}
 
+	@Override
 	public String getDescription() {
 		return "Testie Buildpath Container";
 	}
 
+	@Override
 	public int getKind() {
 		return IBuildpathContainer.K_DEFAULT_SYSTEM;
 	}
 
+	@Override
 	public IPath getPath() {
 		return fPath;
 	}

@@ -205,7 +205,7 @@ public class DOMSerializer {
 	private Node[] collectChildren(Node parent) {
 		final NodeList children = parent.getChildNodes();
 		if (children != null && children.getLength() > 0) {
-			final List result = new ArrayList();
+			final List<Node> result = new ArrayList<Node>();
 			for (int i = 0; i < children.getLength(); i++) {
 				final Node child = children.item(i);
 				if (child == null) {

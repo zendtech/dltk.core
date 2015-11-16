@@ -14,16 +14,19 @@ public class TestContentDescriber implements ITextContentDescriber {
 		// TODO Auto-generated constructor stub
 	}
 
+	@Override
 	public int describe(Reader contents, IContentDescription description)
 			throws IOException {
 		return INVALID;
 	}
 
+	@Override
 	public int describe(InputStream contents, IContentDescription description)
 			throws IOException {
 		return INVALID;
 	}
 
+	@Override
 	public QualifiedName[] getSupportedOptions() {
 		return null;
 	}

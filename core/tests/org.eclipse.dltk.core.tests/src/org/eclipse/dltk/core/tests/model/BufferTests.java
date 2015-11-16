@@ -28,7 +28,7 @@ public class BufferTests extends ModifyingResourceTests implements IBufferChange
 		ModelTestsPlugin.TEST_NATURE
 	};
 	
-	protected ArrayList events = null;
+	protected ArrayList<BufferChangedEvent> events = null;
 	
 	public BufferTests(String name) {
 		super(ModelTestsPlugin.PLUGIN_NAME, name);
@@ -41,6 +41,7 @@ public class BufferTests extends ModifyingResourceTests implements IBufferChange
 	/**
 	 * @see AbstractModelTests#setUpSuite()
 	 */
+	@Override
 	public void setUpSuite() throws Exception {
 		super.setUpSuite();
 		try {
@@ -54,6 +55,7 @@ public class BufferTests extends ModifyingResourceTests implements IBufferChange
 	/**
 	 * @see AbstractModelTests#tearDownSuite()
 	 */
+	@Override
 	public void tearDownSuite() throws Exception {
 		super.tearDownSuite();
 		this.deleteProject("P");
@@ -66,7 +68,7 @@ public class BufferTests extends ModifyingResourceTests implements IBufferChange
 		ISourceModule sm = this.getSourceModule(path);
 		IBuffer buffer = sm.getBuffer();
 		buffer.addBufferChangedListener(this);
-		this.events = new ArrayList();
+		this.events = new ArrayList<BufferChangedEvent>();
 		return buffer;
 	}
 
@@ -466,6 +468,7 @@ public class BufferTests extends ModifyingResourceTests implements IBufferChange
 		}
 	}
 
+	@Override
 	public void bufferChanged(BufferChangedEvent bufferChangedEvent) {
 		this.events.add(bufferChangedEvent);
 	}

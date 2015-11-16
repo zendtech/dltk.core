@@ -188,6 +188,7 @@ public class Bug387751Test extends Assert {
 	private List<ISourceModule> listModules() throws ModelException {
 		final List<ISourceModule> modules = new ArrayList<ISourceModule>();
 		project.getScriptProject().accept(new IModelElementVisitor() {
+			@Override
 			public boolean visit(IModelElement element) {
 				if (element instanceof ISourceModule) {
 					modules.add((ISourceModule) element);

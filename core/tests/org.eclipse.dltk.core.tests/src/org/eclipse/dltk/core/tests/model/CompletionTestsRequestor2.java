@@ -160,6 +160,7 @@ public class CompletionTestsRequestor2 extends CompletionRequestor {
 	public String getReversedResults() {
 		if(this.proposalsPtr < 0) return "";
 		Arrays.sort(this.proposals, new Comparator<CompletionProposal>() {
+			@Override
 			public int compare(CompletionProposal p1, CompletionProposal p2) {
 				int relDif = p2.getRelevance() - p1.getRelevance();
 				if(relDif != 0)  return relDif;

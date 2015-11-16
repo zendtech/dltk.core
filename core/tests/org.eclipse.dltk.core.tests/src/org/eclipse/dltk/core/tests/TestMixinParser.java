@@ -20,6 +20,7 @@ public class TestMixinParser implements IMixinParser {
 
 	private IMixinRequestor requestor;
 
+	@Override
 	public void parserSourceModule(boolean signature, ISourceModule module) {
 		if (module.getElementName().equals("X.txt")) {
 			requestor.reportElement(key("{foo"));
@@ -36,6 +37,7 @@ public class TestMixinParser implements IMixinParser {
 		return info;
 	}
 
+	@Override
 	public void setRequirestor(IMixinRequestor requestor) {
 		this.requestor = requestor;
 	}

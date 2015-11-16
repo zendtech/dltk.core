@@ -16,7 +16,6 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.dltk.core.IProjectFragment;
 import org.eclipse.dltk.internal.core.ModelElement;
-import org.eclipse.dltk.internal.core.ProjectFragment;
 import org.eclipse.dltk.internal.core.ScriptFolder;
 
 public class TestFolder extends ScriptFolder {
@@ -24,14 +23,17 @@ public class TestFolder extends ScriptFolder {
 		super(parent, path);
 	}
 
+	@Override
 	public String getElementName() {
 		return super.getElementName() + "Goo";
 	}
 
+	@Override
 	public boolean isRootFolder() {
 		return false;
 	}
 
+	@Override
 	public IResource getResource() {
 		IProjectFragment root = this.getProjectFragment();
 		if (root.isArchive()) {
@@ -47,10 +49,12 @@ public class TestFolder extends ScriptFolder {
 		}
 	}
 
+	@Override
 	public IPath getPath() {
 		return super.getPath().append("Goo");
 	}
 
+	@Override
 	protected char getHandleMementoDelimiter() {
 		return JEM_USER_ELEMENT;
 	}

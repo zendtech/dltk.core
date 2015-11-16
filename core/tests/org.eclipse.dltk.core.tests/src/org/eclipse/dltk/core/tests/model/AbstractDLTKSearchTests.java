@@ -50,7 +50,7 @@ import org.eclipse.dltk.internal.core.util.Util;
 public class AbstractDLTKSearchTests extends AbstractModelTests implements
 		IDLTKSearchConstants, IScriptProjectFilenames {
 
-	public static List JAVA_SEARCH_SUITES = null;
+	public static List<?> JAVA_SEARCH_SUITES = null;
 	protected IScriptProject SCRIPT_PROJECT;
 	protected static boolean COPY_DIRS = true;
 	protected static int EXACT_RULE = SearchPattern.R_EXACT_MATCH
@@ -80,6 +80,7 @@ public class AbstractDLTKSearchTests extends AbstractModelTests implements
 		public boolean showSynthetic;
 		public int count = 0;
 
+		@Override
 		public void acceptSearchMatch(SearchMatch searchMatch)
 				throws CoreException {
 			count++;
@@ -357,6 +358,7 @@ public class AbstractDLTKSearchTests extends AbstractModelTests implements
 			return contents;
 		}
 
+		@Override
 		public String toString() {
 			return results.toString();
 		}
@@ -462,7 +464,7 @@ public class AbstractDLTKSearchTests extends AbstractModelTests implements
 		IModelElement[] searchPackages = null;
 		if (addSubpackages) {
 			// Create list of package with first found one
-			List packages = new ArrayList();
+			List<IScriptFolder> packages = new ArrayList<IScriptFolder>();
 			packages.add(fragment);
 			// Add all possible subpackages
 			IModelElement[] children = ((IProjectFragment) fragment.getParent())
@@ -568,7 +570,7 @@ public class AbstractDLTKSearchTests extends AbstractModelTests implements
 	}
 
 	// Search for sources only.
-	protected List searchSourceOnly(IModelElement element, int limitTo,
+	protected List<?> searchSourceOnly(IModelElement element, int limitTo,
 			int matchRule, IDLTKSearchScope scope) throws CoreException {
 		SearchPattern pattern = SearchPattern.createPattern(element, limitTo,
 				matchRule, scope.getLanguageToolkit());
@@ -578,20 +580,20 @@ public class AbstractDLTKSearchTests extends AbstractModelTests implements
 						.getDefaultSearchParticipant() }, scope, null);
 	}
 
-	protected List searchSourceOnly(SearchPattern searchPattern,
+	protected List<?> searchSourceOnly(SearchPattern searchPattern,
 			IDLTKSearchScope scope) throws CoreException {
 		return new SearchEngine().searchSourceOnly(searchPattern,
 				new SearchParticipant[] { SearchEngine
 						.getDefaultSearchParticipant() }, scope, null);
 	}
 
-	protected List searchSourceOnly(String patternString, int searchFor,
+	protected List<?> searchSourceOnly(String patternString, int searchFor,
 			int limitTo, IDLTKSearchScope scope) throws CoreException {
 		return searchSourceOnly(patternString, searchFor, limitTo, EXACT_RULE,
 				scope);
 	}
 
-	protected List searchSourceOnly(String patternString, int searchFor,
+	protected List<?> searchSourceOnly(String patternString, int searchFor,
 			int limitTo, int matchRule, IDLTKSearchScope scope)
 			throws CoreException {
 		if (patternString.indexOf('*') != -1
@@ -628,6 +630,7 @@ public class AbstractDLTKSearchTests extends AbstractModelTests implements
 				requestor, null);
 	}
 
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 		this.resultCollector = new DLTKSearchResultCollector();

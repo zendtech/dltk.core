@@ -32,11 +32,13 @@ public class ModelMembersTests extends AbstractModelTests {
 		return new Suite(ModelMembersTests.class);
 	}
 
+	@Override
 	public void setUpSuite() throws Exception {
 		super.setUpSuite();
 		setUpScriptProjectTo(PRJ_NAME, "ModelMembers");
 	}
 
+	@Override
 	public void tearDownSuite() throws Exception {
 		deleteProject(PRJ_NAME);
 		super.tearDownSuite();

@@ -5,9 +5,7 @@ import org.eclipse.dltk.ast.parser.ISourceParserFactory;
 
 public class TestSourceParserFactory implements ISourceParserFactory {
 
-	/*
-	 * @see org.eclipse.dltk.ast.parser.ISourceParserFactory#createSourceParser()
-	 */
+	@Override
 	public ISourceParser createSourceParser() {
 		return new TestSourceParser();
 	}

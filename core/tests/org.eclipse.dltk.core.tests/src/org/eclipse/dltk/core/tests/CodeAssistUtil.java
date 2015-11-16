@@ -215,6 +215,7 @@ public class CodeAssistUtil {
 			final CompletionProposal[] sorted = proposals
 					.toArray(new CompletionProposal[proposals.size()]);
 			Arrays.sort(sorted, new Comparator<CompletionProposal>() {
+				@Override
 				public int compare(CompletionProposal pr, CompletionProposal pr1) {
 					return pr.getName().compareTo(pr1.getName());
 				}
@@ -304,14 +305,17 @@ public class CodeAssistUtil {
 	public Object[] codeSelectAll(ISelectionEngine engine) {
 		final List<Object> elements = new ArrayList<Object>();
 		engine.setRequestor(new ISelectionRequestor() {
+			@Override
 			public void acceptModelElement(IModelElement element) {
 				elements.add(element);
 			}
 
+			@Override
 			public void acceptForeignElement(Object element) {
 				elements.add(element);
 			}
 
+			@Override
 			public void acceptElement(Object element, ISourceRange range) {
 				elements.add(element);
 			}
@@ -328,16 +332,19 @@ public class CodeAssistUtil {
 		final List<IModelElement> elements = new ArrayList<IModelElement>();
 		engine.setRequestor(new ISelectionRequestor() {
 
+			@Override
 			public void acceptModelElement(IModelElement element) {
 				elements.add(element);
 			}
 
+			@Override
 			public void acceptForeignElement(Object element) {
 				if (element instanceof IModelElement) {
 					elements.add((IModelElement) element);
 				}
 			}
 
+			@Override
 			public void acceptElement(Object element, ISourceRange range) {
 				acceptForeignElement(element);
 			}

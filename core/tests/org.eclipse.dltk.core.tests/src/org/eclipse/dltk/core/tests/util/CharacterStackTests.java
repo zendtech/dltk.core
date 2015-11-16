@@ -21,6 +21,7 @@ public class CharacterStackTests extends TestCase {
 
 	private CharacterStack stack;
 
+	@Override
 	protected void setUp() throws Exception {
 		stack = new CharacterStack();
 	}

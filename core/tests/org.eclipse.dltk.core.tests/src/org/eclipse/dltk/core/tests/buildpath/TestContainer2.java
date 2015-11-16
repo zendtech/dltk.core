@@ -35,18 +35,22 @@ class TestContainer2 implements IBuildpathContainer {
 				.newExtLibraryEntry(EnvironmentPathUtils.getFullPath(folder)) };
 	}
 
+	@Override
 	public IBuildpathEntry[] getBuildpathEntries() {
 		return entries;
 	}
 
+	@Override
 	public String getDescription() {
 		return getClass().getSimpleName();
 	}
 
+	@Override
 	public int getKind() {
 		return K_APPLICATION;
 	}
 
+	@Override
 	public IPath getPath() {
 		return CONTAINER_ID;
 	}

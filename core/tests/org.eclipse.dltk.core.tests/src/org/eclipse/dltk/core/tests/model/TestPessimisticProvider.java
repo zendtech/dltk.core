@@ -36,28 +36,31 @@ public class TestPessimisticProvider extends RepositoryProvider implements IFile
 		soleInstance = this;
 	}
 	
+	@Override
 	public void configureProject() {
 	}
 
+	@Override
 	public String getID() {
 		return NATURE_ID;
 	}
 
+	@Override
 	public void deconfigure() {
 	}
 	
-	/*
-	 * @see IRepositoryProvider#getFileModificationValidator()
-	 */
+	@Override
 	public IFileModificationValidator getFileModificationValidator() {
 		return soleInstance;
 	}
 	
+	@Override
 	public IStatus validateEdit(final IFile[] files, Object context) {
 		if (markWritableOnEdit) {
 			try {
 				ResourcesPlugin.getWorkspace().run(
 					new IWorkspaceRunnable() {
+						@Override
 						public void run(IProgressMonitor monitor)	{
 							for (int i = 0, length = files.length; i < length; i++) {
 								try {
@@ -77,6 +80,7 @@ public class TestPessimisticProvider extends RepositoryProvider implements IFile
 		return Status.OK_STATUS;
 	}
 
+	@Override
 	public IStatus validateSave(IFile file) {
 		if (markWritableOnSave) {
 			try {
