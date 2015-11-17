@@ -150,7 +150,7 @@ public class ExternalSourceModule extends AbstractExternalSourceModule {
 	 * ()
 	 */
 	protected String getModuleType() {
-		return "DLTK External Source Moule"; //$NON-NLS-1$
+		return "DLTK External Source Module"; //$NON-NLS-1$
 	}
 
 	/*
