@@ -11,16 +11,19 @@
  *******************************************************************************/
 package org.eclipse.dltk.formatter.tests;
 
-import java.util.List;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertSame;
 
-import junit.framework.TestCase;
+import java.util.List;
 
 import org.eclipse.dltk.formatter.internal.ExcludeRegionList;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.Region;
+import org.junit.Test;
 
-public class ExcludeRegionListTest extends TestCase {
+public class ExcludeRegionListTest {
 
+	@Test
 	public void testExcludes1() {
 		ExcludeRegionList w = new ExcludeRegionList();
 		w.excludeRegion(new Region(0, 2));
@@ -30,6 +33,7 @@ public class ExcludeRegionListTest extends TestCase {
 		assertEquals(new Region(0, 3), excludes.get(0));
 	}
 
+	@Test
 	public void testExcludes2() {
 		ExcludeRegionList w = new ExcludeRegionList();
 		w.excludeRegion(new Region(0, 1));
@@ -38,7 +42,8 @@ public class ExcludeRegionListTest extends TestCase {
 		assertEquals(1, excludes.size());
 		assertEquals(new Region(0, 3), excludes.get(0));
 	}
-
+	
+	@Test
 	public void testExcludes3() {
 		ExcludeRegionList w = new ExcludeRegionList();
 		final Region r04 = new Region(0, 4);
@@ -50,6 +55,7 @@ public class ExcludeRegionListTest extends TestCase {
 		assertSame(r04, excludes.get(0));
 	}
 
+	@Test
 	public void testExcludes4() {
 		ExcludeRegionList w = new ExcludeRegionList();
 		w.excludeRegion(new Region(0, 2));
@@ -59,7 +65,8 @@ public class ExcludeRegionListTest extends TestCase {
 		assertEquals(new Region(0, 2), excludes.get(0));
 		assertEquals(new Region(4, 2), excludes.get(1));
 	}
-
+	
+	@Test
 	public void testExcludes5() {
 		ExcludeRegionList w = new ExcludeRegionList();
 		w.excludeRegion(new Region(0, 2));
@@ -72,6 +79,7 @@ public class ExcludeRegionListTest extends TestCase {
 		assertSame(r08, excludes.get(0));
 	}
 
+	@Test
 	public void testExcludes6() {
 		ExcludeRegionList w = new ExcludeRegionList();
 		final Region r = new Region(0, 4);
@@ -82,7 +90,8 @@ public class ExcludeRegionListTest extends TestCase {
 		assertEquals(r, excludes.get(0));
 		assertSame(r, excludes.get(0));
 	}
-
+	
+	@Test
 	public void testExcludes7() {
 		ExcludeRegionList w = new ExcludeRegionList();
 		w.excludeRegion(new Region(2, 2));

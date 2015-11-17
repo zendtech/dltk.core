@@ -11,18 +11,12 @@
  *******************************************************************************/
 package org.eclipse.dltk.formatter.tests;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
 
+@RunWith(Suite.class)
+@Suite.SuiteClasses({
+	ExcludeRegionListTest.class
+})
 public class AllTests {
-
-	public static Test suite() {
-		TestSuite suite = new TestSuite(
-				"org.eclipse.dltk.formatter.tests"); //$NON-NLS-1$
-		// $JUnit-BEGIN$
-		suite.addTestSuite(ExcludeRegionListTest.class);
-		// $JUnit-END$
-		return suite;
-	}
-
 }

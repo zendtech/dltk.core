@@ -17,10 +17,6 @@ import java.io.Reader;
 import java.util.Collection;
 import java.util.Map;
 
-import junit.framework.Assert;
-import junit.framework.ComparisonFailure;
-import junit.framework.TestCase;
-
 import org.eclipse.dltk.compiler.util.Util;
 import org.eclipse.dltk.ui.formatter.FormatterException;
 import org.eclipse.dltk.ui.formatter.IScriptFormatter;
@@ -29,6 +25,10 @@ import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.text.edits.TextEdit;
+import org.junit.Assert;
+
+import junit.framework.ComparisonFailure;
+import junit.framework.TestCase;
 
 @SuppressWarnings("nls")
 public abstract class AbstractFormatterTest extends TestCase {
