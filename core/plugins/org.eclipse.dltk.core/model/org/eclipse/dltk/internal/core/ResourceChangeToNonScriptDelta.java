@@ -98,7 +98,6 @@ class ResourceChangeToNonScriptDelta implements IResourceDelta {
 		return resource;
 	}
 
-	@SuppressWarnings("unchecked")
 	public Object getAdapter(Class adapter) {
 		return null;
 	}

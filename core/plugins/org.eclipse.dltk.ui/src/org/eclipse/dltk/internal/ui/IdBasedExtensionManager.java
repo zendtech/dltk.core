@@ -6,7 +6,6 @@ package org.eclipse.dltk.internal.ui;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.dltk.core.PriorityDLTKExtensionManager;
-import org.eclipse.dltk.core.PriorityDLTKExtensionManager.ElementInfo;
 import org.eclipse.dltk.ui.actions.IActionFilterTester;
 
 class IdBasedExtensionManager extends PriorityDLTKExtensionManager {

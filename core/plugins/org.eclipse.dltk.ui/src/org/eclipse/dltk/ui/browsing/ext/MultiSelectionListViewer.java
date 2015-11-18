@@ -15,7 +15,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.ControlListener;
-import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -24,7 +23,7 @@ import org.eclipse.swt.widgets.Tree;
 
 public class MultiSelectionListViewer extends ScrolledComposite {
 	// Contain ListViewers
-	private List viewers = new ArrayList();
+	private List<TreeViewer> viewers = new ArrayList<TreeViewer>();
 	private int elements = 0;
 	private ColumnForm columnForm;
 	private ITreeContentProvider contentProvider;

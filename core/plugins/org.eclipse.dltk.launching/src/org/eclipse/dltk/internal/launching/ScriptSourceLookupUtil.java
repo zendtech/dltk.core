@@ -9,7 +9,6 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.debug.core.sourcelookup.ISourceContainer;
 import org.eclipse.debug.core.sourcelookup.containers.DirectorySourceContainer;
-import org.eclipse.debug.core.sourcelookup.containers.ExternalArchiveSourceContainer;
 import org.eclipse.debug.core.sourcelookup.containers.FolderSourceContainer;
 import org.eclipse.debug.core.sourcelookup.containers.ProjectSourceContainer;
 import org.eclipse.dltk.core.DLTKCore;
@@ -31,8 +30,10 @@ public class ScriptSourceLookupUtil {
 	 * 
 	 * @return source container representation of the build path entries
 	 */
-	public static ISourceContainer[] translate(IRuntimeBuildpathEntry[] entries) {
-		List containers = new ArrayList(entries.length);
+	public static ISourceContainer[] translate(
+			IRuntimeBuildpathEntry[] entries) {
+		List<ISourceContainer> containers = new ArrayList<ISourceContainer>(
+				entries.length);
 		for (int i = 0; i < entries.length; i++) {
 			IRuntimeBuildpathEntry entry = entries[i];
 
@@ -61,11 +62,12 @@ public class ScriptSourceLookupUtil {
 				.toArray(new ISourceContainer[containers.size()]);
 	}
 
-	private static ISourceContainer createArchivePathContainer(IRuntimeBuildpathEntry entry) {
+	private static ISourceContainer createArchivePathContainer(
+			IRuntimeBuildpathEntry entry) {
 		// getPath works, use that?
 		return new BuildpathContainerSourceContainer(entry.getLocation());
 	}
-	
+
 	private static ISourceContainer createBuildPathContainer(
 			IRuntimeBuildpathEntry entry) {
 		ISourceContainer container = null;

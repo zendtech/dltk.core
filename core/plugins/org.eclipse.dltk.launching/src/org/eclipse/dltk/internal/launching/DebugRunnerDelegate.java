@@ -53,18 +53,13 @@ public class DebugRunnerDelegate implements IInterpreterRunner {
 			if (runner != null) {
 				runner.run(config, launch, monitor);
 			} else {
-				throw new CoreException(
-						new Status(
-								IStatus.ERROR,
-								DLTKLaunchingPlugin.PLUGIN_ID,
-								ScriptLaunchConfigurationConstants.ERR_INTERPRETER_RUNNER_DOES_NOT_EXIST,
-								MessageFormat
-										.format(
-												LaunchingMessages.InterpreterRunnerDoesntExist,
-												new String[] {
-														install.getName(),
-														ILaunchManager.DEBUG_MODE }),
-								null));
+				throw new CoreException(new Status(IStatus.ERROR,
+						DLTKLaunchingPlugin.PLUGIN_ID,
+						ScriptLaunchConfigurationConstants.ERR_INTERPRETER_RUNNER_DOES_NOT_EXIST,
+						MessageFormat.format(
+								LaunchingMessages.InterpreterRunnerDoesntExist,
+								install.getName(), ILaunchManager.DEBUG_MODE),
+						null));
 			}
 		}
 	}

@@ -37,8 +37,8 @@ import com.ibm.icu.text.MessageFormat;
 /**
  * Resolves a container for a InterpreterEnvironment buildpath container entry.
  */
-public class InterpreterContainerInitializer extends
-		BuildpathContainerInitializer {
+public class InterpreterContainerInitializer
+		extends BuildpathContainerInitializer {
 
 	/**
 	 * @see BuildpathContainerInitializer#initialize(IPath, IScriptProject)
@@ -48,8 +48,8 @@ public class InterpreterContainerInitializer extends
 			throws CoreException {
 		int size = containerPath.segmentCount();
 		if (size > 0) {
-			if (containerPath.segment(0).equals(
-					ScriptRuntime.INTERPRETER_CONTAINER)) {
+			if (containerPath.segment(0)
+					.equals(ScriptRuntime.INTERPRETER_CONTAINER)) {
 
 				IInterpreterInstall interp = resolveInterpreter(
 						getNatureFromProject(project),
@@ -85,9 +85,8 @@ public class InterpreterContainerInitializer extends
 				return installType.findInterpreterInstallByName(name);
 			}
 		}
-		return ScriptRuntime
-				.getDefaultInterpreterInstall(new DefaultInterpreterEntry(
-						natureId, environment));
+		return ScriptRuntime.getDefaultInterpreterInstall(
+				new DefaultInterpreterEntry(natureId, environment));
 	}
 
 	/**
@@ -116,11 +115,12 @@ public class InterpreterContainerInitializer extends
 	public boolean canUpdateBuildpathContainer(IPath containerPath,
 			IScriptProject project) {
 		if (containerPath != null && containerPath.segmentCount() > 0) {
-			if (ScriptRuntime.INTERPRETER_CONTAINER.equals(containerPath
-					.segment(0))) {
+			if (ScriptRuntime.INTERPRETER_CONTAINER
+					.equals(containerPath.segment(0))) {
 				try {
 					return resolveInterpreter(getNatureFromProject(project),
-							getEnvironmentFromProject(project), containerPath) != null;
+							getEnvironmentFromProject(project),
+							containerPath) != null;
 				} catch (CoreException e) {
 					return false;
 				}
@@ -145,19 +145,17 @@ public class InterpreterContainerInitializer extends
 	@Override
 	public void requestBuildpathContainerUpdate(IPath containerPath,
 			IScriptProject project, IBuildpathContainer containerSuggestion)
-			throws CoreException {
+					throws CoreException {
 		IInterpreterInstall interpreter = resolveInterpreter(
 				getNatureFromProject(project),
 				getEnvironmentFromProject(project), containerPath);
 		if (interpreter == null) {
-			IStatus status = new Status(
-					IStatus.ERROR,
+			IStatus status = new Status(IStatus.ERROR,
 					DLTKLaunchingPlugin.getUniqueIdentifier(),
 					ScriptLaunchConfigurationConstants.ERR_INTERPRETER_INSTALL_DOES_NOT_EXIST,
-					MessageFormat
-							.format(
-									LaunchingMessages.InterpreterEnvironmentContainerInitializer_InterpreterEnvironment_referenced_by_classpath_container__0__does_not_exist__1,
-									new String[] { containerPath.toString() }),
+					MessageFormat.format(
+							LaunchingMessages.InterpreterEnvironmentContainerInitializer_InterpreterEnvironment_referenced_by_classpath_container__0__does_not_exist__1,
+							containerPath.toString()),
 					null);
 			throw new CoreException(status);
 		}
@@ -172,27 +170,23 @@ public class InterpreterContainerInitializer extends
 				if (lib.exists()) {
 					libs[i] = new LibraryLocation(path);
 				} else {
-					IStatus status = new Status(
-							IStatus.ERROR,
+					IStatus status = new Status(IStatus.ERROR,
 							DLTKLaunchingPlugin.getUniqueIdentifier(),
 							ScriptLaunchConfigurationConstants.ERR_INTERNAL_ERROR,
-							MessageFormat
-									.format(
-											LaunchingMessages.InterpreterEnvironmentContainerInitializer_Buildpath_entry__0__does_not_refer_to_an_existing_library__2,
-											new String[] { entry.getPath()
-													.toString() }), null);
+							MessageFormat.format(
+									LaunchingMessages.InterpreterEnvironmentContainerInitializer_Buildpath_entry__0__does_not_refer_to_an_existing_library__2,
+									entry.getPath().toString()),
+							null);
 					throw new CoreException(status);
 				}
 			} else {
-				IStatus status = new Status(
-						IStatus.ERROR,
+				IStatus status = new Status(IStatus.ERROR,
 						DLTKLaunchingPlugin.getUniqueIdentifier(),
 						ScriptLaunchConfigurationConstants.ERR_INTERNAL_ERROR,
-						MessageFormat
-								.format(
-										LaunchingMessages.InterpreterEnvironmentContainerInitializer_Buildpath_entry__0__does_not_refer_to_a_library__3,
-										new String[] { entry.getPath()
-												.toString() }), null);
+						MessageFormat.format(
+								LaunchingMessages.InterpreterEnvironmentContainerInitializer_Buildpath_entry__0__does_not_refer_to_a_library__3,
+								entry.getPath().toString()),
+						null);
 				throw new CoreException(status);
 			}
 		}
@@ -209,10 +203,9 @@ public class InterpreterContainerInitializer extends
 			tag = getInterpreterName(containerPath);
 		}
 		if (tag != null) {
-			return MessageFormat
-					.format(
-							LaunchingMessages.InterpreterEnvironmentContainer_InterpreterEnvironment_System_Library_1,
-							new String[] { tag });
+			return MessageFormat.format(
+					LaunchingMessages.InterpreterEnvironmentContainer_InterpreterEnvironment_System_Library_1,
+					tag);
 		}
 		return LaunchingMessages.InterpreterEnvironmentContainerInitializer_Default_System_Library_1;
 	}

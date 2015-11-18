@@ -9,7 +9,6 @@
  *******************************************************************************/
 package org.eclipse.dltk.internal.corext.util;
 
-import org.eclipse.dltk.core.IDLTKLanguageToolkit;
 import org.eclipse.dltk.core.ISearchPatternProcessor;
 import org.eclipse.dltk.core.ISearchPatternProcessor.ITypePattern;
 import org.eclipse.dltk.core.search.IDLTKSearchConstants;

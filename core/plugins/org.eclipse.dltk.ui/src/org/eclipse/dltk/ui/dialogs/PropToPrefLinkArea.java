@@ -39,8 +39,7 @@ public class PropToPrefLinkArea {
 			result = NLS
 					.bind(WorkbenchMessages.PreferenceNode_NotFound, pageId);
 		} else {
-			result = MessageFormat.format(message, new String[] { node
-					.getLabelText() });
+			result = MessageFormat.format(message, node.getLabelText());
 
 			// only add the selection listener if the node is found
 			pageLink.addSelectionListener(new SelectionAdapter() {

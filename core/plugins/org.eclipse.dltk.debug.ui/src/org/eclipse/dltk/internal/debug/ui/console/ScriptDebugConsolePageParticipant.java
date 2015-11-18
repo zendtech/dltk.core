@@ -51,8 +51,8 @@ import org.eclipse.ui.part.ShowInContext;
 /**
  * Creates and manages process console specific actions
  */
-public class ScriptDebugConsolePageParticipant implements
-		IConsolePageParticipant, IShowInSource, IShowInTargetList,
+public class ScriptDebugConsolePageParticipant
+		implements IConsolePageParticipant, IShowInSource, IShowInTargetList,
 		IDebugEventSetListener, IDebugContextListener {
 
 	// actions
@@ -69,7 +69,7 @@ public class ScriptDebugConsolePageParticipant implements
 	private IConsoleView fView;
 
 	private EOFHandler fEOFHandler;
-	private String fContextId = "org.eclipse.debug.ui.console"; //$NON-NLS-1$;
+	private String fContextId = "org.eclipse.debug.ui.console"; //$NON-NLS-1$ ;
 	private IContextActivation fActivatedContext;
 	private IHandlerActivation fActivatedHandler;
 
@@ -105,18 +105,18 @@ public class ScriptDebugConsolePageParticipant implements
 
 		fRemoveTerminated = new ConsoleRemoveLaunchAction(fConsole.getLaunch());
 		fRemoveAllTerminated = new ConsoleRemoveAllTerminatedAction();
-		fTerminate = new ConsoleTerminateAction(page.getSite()
-				.getWorkbenchWindow(), fConsole);
+		fTerminate = new ConsoleTerminateAction(
+				page.getSite().getWorkbenchWindow(), fConsole);
 		// fStdOut = new ShowStandardOutAction();
 		// fStdErr = new ShowStandardErrorAction();
 
-		fView = (IConsoleView) fPage.getSite().getPage().findView(
-				IConsoleConstants.ID_CONSOLE_VIEW);
+		fView = (IConsoleView) fPage.getSite().getPage()
+				.findView(IConsoleConstants.ID_CONSOLE_VIEW);
 
 		DebugPlugin.getDefault().addDebugEventListener(this);
-		DebugUITools.getDebugContextManager().getContextService(
-				fPage.getSite().getWorkbenchWindow()).addDebugContextListener(
-				this);
+		DebugUITools.getDebugContextManager()
+				.getContextService(fPage.getSite().getWorkbenchWindow())
+				.addDebugContextListener(this);
 
 		// contribute to toolbar
 		IActionBars actionBars = fPage.getSite().getActionBars();
@@ -132,8 +132,8 @@ public class ScriptDebugConsolePageParticipant implements
 	 * @see org.eclipse.ui.console.IConsolePageParticipant#dispose()
 	 */
 	public void dispose() {
-		DebugUITools.getDebugContextManager().getContextService(
-				fPage.getSite().getWorkbenchWindow())
+		DebugUITools.getDebugContextManager()
+				.getContextService(fPage.getSite().getWorkbenchWindow())
 				.removeDebugContextListener(this);
 		DebugPlugin.getDefault().removeDebugEventListener(this);
 		if (fRemoveTerminated != null) {
@@ -173,7 +173,7 @@ public class ScriptDebugConsolePageParticipant implements
 	/*
 	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
 	 */
-	public Object getAdapter(@SuppressWarnings("unchecked") Class required) {
+	public Object getAdapter(Class required) {
 		if (IShowInSource.class.equals(required)) {
 			return this;
 		}
@@ -205,13 +205,13 @@ public class ScriptDebugConsolePageParticipant implements
 				.getAdapter(IDebugTarget.class);
 		ISelection selection = null;
 		if (target == null) {
-			selection = new TreeSelection(new TreePath(new Object[] {
-					DebugPlugin.getDefault().getLaunchManager(),
-					process.getLaunch(), process }));
+			selection = new TreeSelection(new TreePath(
+					new Object[] { DebugPlugin.getDefault().getLaunchManager(),
+							process.getLaunch(), process }));
 		} else {
-			selection = new TreeSelection(new TreePath(new Object[] {
-					DebugPlugin.getDefault().getLaunchManager(),
-					target.getLaunch(), target }));
+			selection = new TreeSelection(new TreePath(
+					new Object[] { DebugPlugin.getDefault().getLaunchManager(),
+							target.getLaunch(), target }));
 		}
 		return new ShowInContext(null, selection);
 	}

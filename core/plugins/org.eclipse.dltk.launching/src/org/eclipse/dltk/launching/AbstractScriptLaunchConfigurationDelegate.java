@@ -67,8 +67,8 @@ import com.ibm.icu.text.MessageFormat;
  * this class.
  * </p>
  */
-public abstract class AbstractScriptLaunchConfigurationDelegate extends
-		LaunchConfigurationDelegate {
+public abstract class AbstractScriptLaunchConfigurationDelegate
+		extends LaunchConfigurationDelegate {
 
 	/**
 	 * A list of prerequisite projects ordered by their build order.
@@ -110,10 +110,10 @@ public abstract class AbstractScriptLaunchConfigurationDelegate extends
 	 */
 	protected CoreException abort(String message, Throwable exception)
 			throws CoreException {
-		throw new CoreException(new Status(IStatus.ERROR,
-				DLTKLaunchingPlugin.PLUGIN_ID,
-				ScriptLaunchConfigurationConstants.ERR_INTERNAL_ERROR, message,
-				exception));
+		throw new CoreException(
+				new Status(IStatus.ERROR, DLTKLaunchingPlugin.PLUGIN_ID,
+						ScriptLaunchConfigurationConstants.ERR_INTERNAL_ERROR,
+						message, exception));
 	}
 
 	/**
@@ -159,16 +159,14 @@ public abstract class AbstractScriptLaunchConfigurationDelegate extends
 			throw abort(
 					MessageFormat.format(
 							LaunchingMessages.AbstractScriptLaunchConfigurationDelegate_InterpreterEnvironment_home_directory_not_specified_for__0__5,
-							new String[] { interpreter.getName() }),
+							interpreter.getName()),
 					null,
 					ScriptLaunchConfigurationConstants.ERR_INTERPRETER_INSTALL_DOES_NOT_EXIST);
 		}
 		if (!location.exists()) {
 			abort(MessageFormat.format(
 					LaunchingMessages.AbstractScriptLaunchConfigurationDelegate_InterpreterEnvironment_home_directory_for__0__does_not_exist___1__6,
-					new String[] { interpreter.getName(),
-							location.toURI().toString() }),
-					null,
+					interpreter.getName(), location.toURI().toString()), null,
 					ScriptLaunchConfigurationConstants.ERR_INTERPRETER_INSTALL_DOES_NOT_EXIST);
 		}
 		return interpreter;
@@ -221,7 +219,8 @@ public abstract class AbstractScriptLaunchConfigurationDelegate extends
 		// Get USER_ENTRY
 		List<String> userEntries = new ArrayList<String>();
 		for (int i = 0; i < entries.length; i++) {
-			if (entries[i].getBuildpathProperty() == IRuntimeBuildpathEntry.USER_ENTRY) {
+			if (entries[i]
+					.getBuildpathProperty() == IRuntimeBuildpathEntry.USER_ENTRY) {
 				final IPath path = entries[i].getPath();
 				final String userPath;
 				if (EnvironmentPathUtils.isFull(path)) {
@@ -278,13 +277,14 @@ public abstract class AbstractScriptLaunchConfigurationDelegate extends
 		boolean empty = true;
 		boolean allStandard = true;
 		for (int i = 0; i < entries.length; i++) {
-			if (entries[i].getBuildpathProperty() != IRuntimeBuildpathEntry.USER_ENTRY) {
+			if (entries[i]
+					.getBuildpathProperty() != IRuntimeBuildpathEntry.USER_ENTRY) {
 				String location = entries[i].getLocation();
 				if (location != null) {
 					empty = false;
 					bootEntries.add(location);
-					allStandard = allStandard
-							&& entries[i].getBuildpathProperty() == IRuntimeBuildpathEntry.STANDARD_ENTRY;
+					allStandard = allStandard && entries[i]
+							.getBuildpathProperty() == IRuntimeBuildpathEntry.STANDARD_ENTRY;
 				}
 			}
 		}
@@ -327,10 +327,11 @@ public abstract class AbstractScriptLaunchConfigurationDelegate extends
 		IEnvironment environment = EnvironmentManager.getEnvironment(project);
 		while (interpreterEnvironmentEntry == null && index < entries.length) {
 			IRuntimeBuildpathEntry entry = entries[index++];
-			if (entry.getBuildpathProperty() == IRuntimeBuildpathEntry.BOOTSTRAP_ENTRY
+			if (entry
+					.getBuildpathProperty() == IRuntimeBuildpathEntry.BOOTSTRAP_ENTRY
 					|| entry.getBuildpathProperty() == IRuntimeBuildpathEntry.STANDARD_ENTRY) {
-				if (ScriptRuntime.isInterpreterInstallReference(
-						getLanguageId(), environment.getId(), entry)) {
+				if (ScriptRuntime.isInterpreterInstallReference(getLanguageId(),
+						environment.getId(), entry)) {
 					interpreterEnvironmentEntry = entry;
 				} else {
 					bootEntriesPrepend.add(entry);
@@ -338,9 +339,9 @@ public abstract class AbstractScriptLaunchConfigurationDelegate extends
 			}
 		}
 		IRuntimeBuildpathEntry[] bootEntriesPrep = ScriptRuntime
-				.resolveRuntimeBuildpath(bootEntriesPrepend
-						.toArray(new IRuntimeBuildpathEntry[bootEntriesPrepend
-								.size()]), configuration);
+				.resolveRuntimeBuildpath(bootEntriesPrepend.toArray(
+						new IRuntimeBuildpathEntry[bootEntriesPrepend.size()]),
+						configuration);
 		String[] entriesPrep = null;
 		if (bootEntriesPrep.length > 0) {
 			entriesPrep = new String[bootEntriesPrep.length];
@@ -352,16 +353,17 @@ public abstract class AbstractScriptLaunchConfigurationDelegate extends
 			List<IRuntimeBuildpathEntry> bootEntriesAppend = new ArrayList<IRuntimeBuildpathEntry>();
 			for (; index < entries.length; index++) {
 				IRuntimeBuildpathEntry entry = entries[index];
-				if (entry.getBuildpathProperty() == IRuntimeBuildpathEntry.BOOTSTRAP_ENTRY) {
+				if (entry
+						.getBuildpathProperty() == IRuntimeBuildpathEntry.BOOTSTRAP_ENTRY) {
 					bootEntriesAppend.add(entry);
 				}
 			}
 			bootpathInfo[0] = entriesPrep;
 			IRuntimeBuildpathEntry[] bootEntriesApp = ScriptRuntime
-					.resolveRuntimeBuildpath(
-							bootEntriesAppend
-									.toArray(new IRuntimeBuildpathEntry[bootEntriesAppend
-											.size()]), configuration);
+					.resolveRuntimeBuildpath(bootEntriesAppend.toArray(
+							new IRuntimeBuildpathEntry[bootEntriesAppend
+									.size()]),
+							configuration);
 			if (bootEntriesApp.length > 0) {
 				bootpathInfo[2] = new String[bootEntriesApp.length];
 				for (int i = 0; i < bootEntriesApp.length; i++) {
@@ -381,17 +383,17 @@ public abstract class AbstractScriptLaunchConfigurationDelegate extends
 				// compare that to the resolved entries for the
 				// "InterpreterEnvironmentEntry" to see if they
 				// are different (requires explicit bootpath)
-				if (!InterpreterRuntimeBuildpathEntryResolver
-						.isSameArchives(
-								libraryLocations,
-								install.getInterpreterInstallType()
-										.getDefaultLibraryLocations(
-												install.getInstallLocation(),
-												install.getEnvironmentVariables(),
-												null))) {
+				if (!InterpreterRuntimeBuildpathEntryResolver.isSameArchives(
+						libraryLocations,
+						install.getInterpreterInstallType()
+								.getDefaultLibraryLocations(
+										install.getInstallLocation(),
+										install.getEnvironmentVariables(),
+										null))) {
 					// resolve bootpath entries in InterpreterEnvironment entry
 					IRuntimeBuildpathEntry[] bootEntries = null;
-					if (interpreterEnvironmentEntry.getType() == IRuntimeBuildpathEntry.CONTAINER) {
+					if (interpreterEnvironmentEntry
+							.getType() == IRuntimeBuildpathEntry.CONTAINER) {
 						IRuntimeBuildpathEntry bootEntry = ScriptRuntime
 								.newRuntimeContainerBuildpathEntry(
 										interpreterEnvironmentEntry.getPath(),
@@ -496,8 +498,8 @@ public abstract class AbstractScriptLaunchConfigurationDelegate extends
 	 * @exception CoreException
 	 *                if unable to retrieve the attribute
 	 */
-	public static String getScriptProjectName(ILaunchConfiguration configuration)
-			throws CoreException {
+	public static String getScriptProjectName(
+			ILaunchConfiguration configuration) throws CoreException {
 		return configuration.getAttribute(
 				ScriptLaunchConfigurationConstants.ATTR_PROJECT_NAME,
 				(String) null);
@@ -584,11 +586,9 @@ public abstract class AbstractScriptLaunchConfigurationDelegate extends
 	 */
 	public Map<String, String> getInterpreterSpecificAttributesMap(
 			ILaunchConfiguration configuration) throws CoreException {
-		@SuppressWarnings("unchecked")
-		Map<String, String> map = configuration
-				.getAttribute(
-						ScriptLaunchConfigurationConstants.ATTR_INTERPRETER_INSTALL_TYPE_SPECIFIC_ATTRS_MAP,
-						(Map<String, String>) null);
+		Map<String, String> map = configuration.getAttribute(
+				ScriptLaunchConfigurationConstants.ATTR_INTERPRETER_INSTALL_TYPE_SPECIFIC_ATTRS_MAP,
+				(Map<String, String>) null);
 		return map;
 	}
 
@@ -662,8 +662,7 @@ public abstract class AbstractScriptLaunchConfigurationDelegate extends
 				if (!dir.isDirectory()) {
 					abort(MessageFormat.format(
 							LaunchingMessages.AbstractScriptLaunchConfigurationDelegate_Working_directory_does_not_exist___0__12,
-							new String[] { dir.toString() }),
-							null,
+							dir.toString()), null,
 							ScriptLaunchConfigurationConstants.ERR_WORKING_DIRECTORY_DOES_NOT_EXIST);
 				}
 				return dir.toOSString();
@@ -684,8 +683,7 @@ public abstract class AbstractScriptLaunchConfigurationDelegate extends
 				}
 				abort(MessageFormat.format(
 						LaunchingMessages.AbstractScriptLaunchConfigurationDelegate_Working_directory_does_not_exist___0__12,
-						new String[] { path.toString() }),
-						null,
+						path.toString()), null,
 						ScriptLaunchConfigurationConstants.ERR_WORKING_DIRECTORY_DOES_NOT_EXIST);
 			} else {
 				IResource res = getWorkspaceRoot().findMember(path);
@@ -694,8 +692,7 @@ public abstract class AbstractScriptLaunchConfigurationDelegate extends
 				}
 				abort(MessageFormat.format(
 						LaunchingMessages.AbstractScriptLaunchConfigurationDelegate_Working_directory_does_not_exist___0__12,
-						new String[] { path.toString() }),
-						null,
+						path.toString()), null,
 						ScriptLaunchConfigurationConstants.ERR_WORKING_DIRECTORY_DOES_NOT_EXIST);
 			}
 		}
@@ -741,16 +738,14 @@ public abstract class AbstractScriptLaunchConfigurationDelegate extends
 						if (!file.exists()) {
 							abort(NLS.bind(
 									LaunchingMessages.AbstractScriptLaunchConfigurationDelegate_Main_script_not_exist,
-									file.toOSString()),
-									null,
+									file.toOSString()), null,
 									ScriptLaunchConfigurationConstants.ERR_UNSPECIFIED_MAIN_SCRIPT);
 						}
 						return file.getPath().toOSString();
 					} else {
 						abort(NLS.bind(
 								LaunchingMessages.AbstractScriptLaunchConfigurationDelegate_Main_script_not_resolved,
-								mainScriptName),
-								null,
+								mainScriptName), null,
 								ScriptLaunchConfigurationConstants.ERR_UNSPECIFIED_MAIN_SCRIPT);
 					}
 				}
@@ -762,7 +757,7 @@ public abstract class AbstractScriptLaunchConfigurationDelegate extends
 	// Should be overriden in for any language
 	protected InterpreterConfig createInterpreterConfig(
 			ILaunchConfiguration configuration, ILaunch launch)
-			throws CoreException {
+					throws CoreException {
 
 		// Validation already included
 		IEnvironment scriptEnvironment = getScriptEnvironment(configuration);
@@ -773,8 +768,8 @@ public abstract class AbstractScriptLaunchConfigurationDelegate extends
 		// if (scriptLaunchPath == null) {
 		// return null;
 		// }
-		final IPath workingDirectory = new Path(getWorkingDirectory(
-				configuration, scriptEnvironment));
+		final IPath workingDirectory = new Path(
+				getWorkingDirectory(configuration, scriptEnvironment));
 
 		IPath mainScript = null;//
 		if (scriptLaunchPath != null) {
@@ -796,7 +791,6 @@ public abstract class AbstractScriptLaunchConfigurationDelegate extends
 		// .getNativeEnvironmentCasePreserved());
 		final boolean append = configuration.getAttribute(
 				ILaunchManager.ATTR_APPEND_ENVIRONMENT_VARIABLES, true);
-		@SuppressWarnings("unchecked")
 		final Map<String, String> configEnv = configuration.getAttribute(
 				ILaunchManager.ATTR_ENVIRONMENT_VARIABLES,
 				(Map<String, String>) null);
@@ -830,8 +824,8 @@ public abstract class AbstractScriptLaunchConfigurationDelegate extends
 		return config;
 	}
 
-	private IEnvironment getScriptEnvironment(ILaunchConfiguration configuration)
-			throws CoreException {
+	private IEnvironment getScriptEnvironment(
+			ILaunchConfiguration configuration) throws CoreException {
 		IScriptProject scriptProject = AbstractScriptLaunchConfigurationDelegate
 				.getScriptProject(configuration);
 		return EnvironmentManager.getEnvironment(scriptProject);
@@ -839,7 +833,7 @@ public abstract class AbstractScriptLaunchConfigurationDelegate extends
 
 	protected void validateLaunchConfiguration(
 			ILaunchConfiguration configuration, String mode, IProject project)
-			throws CoreException {
+					throws CoreException {
 
 		// Validation of available debugging engine
 		if (ILaunchManager.DEBUG_MODE.equals(mode)) {
@@ -903,25 +897,25 @@ public abstract class AbstractScriptLaunchConfigurationDelegate extends
 		 */
 		launch.setAttribute(DebugPlugin.ATTR_CAPTURE_OUTPUT, null);
 		try {
-			IScriptProject scriptProject = ScriptRuntime.getScriptProject(configuration);
-			IProject project = scriptProject == null ? null : scriptProject.getProject();
+			IScriptProject scriptProject = ScriptRuntime
+					.getScriptProject(configuration);
+			IProject project = scriptProject == null ? null
+					: scriptProject.getProject();
 
 			if (monitor == null) {
 				monitor = new NullProgressMonitor();
 			}
 
-			monitor.beginTask(
-					MessageFormat
-							.format(LaunchingMessages.AbstractScriptLaunchConfigurationDelegate_startingLaunchConfiguration,
-									new Object[] { configuration.getName() }),
-					10);
+			monitor.beginTask(MessageFormat.format(
+					LaunchingMessages.AbstractScriptLaunchConfigurationDelegate_startingLaunchConfiguration,
+					new Object[] { configuration.getName() }), 10);
 			if (monitor.isCanceled()) {
 				return;
 			}
 
-			monitor.subTask(MessageFormat
-					.format(LaunchingMessages.AbstractScriptLaunchConfigurationDelegate_validatingLaunchConfiguration,
-							new Object[] { configuration.getName() }));
+			monitor.subTask(MessageFormat.format(
+					LaunchingMessages.AbstractScriptLaunchConfigurationDelegate_validatingLaunchConfiguration,
+					new Object[] { configuration.getName() }));
 			validateLaunchConfiguration(configuration, mode, project);
 			monitor.worked(1);
 			if (monitor.isCanceled()) {
@@ -929,7 +923,8 @@ public abstract class AbstractScriptLaunchConfigurationDelegate extends
 			}
 
 			// Getting InterpreterConfig
-			monitor.subTask(LaunchingMessages.AbstractScriptLaunchConfigurationDelegate_generatingInterpreterConfiguration);
+			monitor.subTask(
+					LaunchingMessages.AbstractScriptLaunchConfigurationDelegate_generatingInterpreterConfiguration);
 			final InterpreterConfig config = createInterpreterConfig(
 					configuration, launch);
 			if (config == null) {
@@ -942,7 +937,8 @@ public abstract class AbstractScriptLaunchConfigurationDelegate extends
 			monitor.worked(1);
 
 			// Getting IInterpreterRunner
-			monitor.subTask(LaunchingMessages.AbstractScriptLaunchConfigurationDelegate_gettingInterpreterRunner);
+			monitor.subTask(
+					LaunchingMessages.AbstractScriptLaunchConfigurationDelegate_gettingInterpreterRunner);
 			final IInterpreterRunner runner = getInterpreterRunner(
 					configuration, mode);
 			if (monitor.isCanceled()) {
@@ -951,28 +947,25 @@ public abstract class AbstractScriptLaunchConfigurationDelegate extends
 			monitor.worked(1);
 
 			// Real run
-			monitor.subTask(LaunchingMessages.AbstractScriptLaunchConfigurationDelegate_executingRunner);
+			monitor.subTask(
+					LaunchingMessages.AbstractScriptLaunchConfigurationDelegate_executingRunner);
 			runRunner(configuration, runner, config, launch,
 					new SubProgressMonitor(monitor, 7));
 
 		} catch (CoreException e) {
 			tryHandleStatus(e, this);
 		} catch (AssertionFailedException e) {
-			tryHandleStatus(
-					new CoreException(
-							new Status(
-									IStatus.ERROR,
-									DLTKLaunchingPlugin.PLUGIN_ID,
-									ScriptLaunchConfigurationConstants.ERR_INTERNAL_ERROR,
-									e.getMessage(), e)), this);
+			tryHandleStatus(new CoreException(
+					new Status(IStatus.ERROR, DLTKLaunchingPlugin.PLUGIN_ID,
+							ScriptLaunchConfigurationConstants.ERR_INTERNAL_ERROR,
+							e.getMessage(), e)),
+					this);
 		} catch (IllegalArgumentException e) {
-			tryHandleStatus(
-					new CoreException(
-							new Status(
-									IStatus.ERROR,
-									DLTKLaunchingPlugin.PLUGIN_ID,
-									ScriptLaunchConfigurationConstants.ERR_INTERNAL_ERROR,
-									e.getMessage(), e)), this);
+			tryHandleStatus(new CoreException(
+					new Status(IStatus.ERROR, DLTKLaunchingPlugin.PLUGIN_ID,
+							ScriptLaunchConfigurationConstants.ERR_INTERNAL_ERROR,
+							e.getMessage(), e)),
+					this);
 		} finally {
 			monitor.done();
 		}
@@ -993,8 +986,8 @@ public abstract class AbstractScriptLaunchConfigurationDelegate extends
 	}
 
 	protected void runRunner(ILaunchConfiguration configuration,
-			IInterpreterRunner runner, InterpreterConfig config,
-			ILaunch launch, IProgressMonitor monitor) throws CoreException {
+			IInterpreterRunner runner, InterpreterConfig config, ILaunch launch,
+			IProgressMonitor monitor) throws CoreException {
 		try {
 			runner.run(config, launch, monitor);
 		} catch (CoreException e) {
@@ -1044,16 +1037,15 @@ public abstract class AbstractScriptLaunchConfigurationDelegate extends
 	@Override
 	protected IProject[] getProjectsForProblemSearch(
 			ILaunchConfiguration configuration, String mode)
-			throws CoreException {
+					throws CoreException {
 		return fOrderedProjects;
 	}
 
 	@Override
 	protected boolean isLaunchProblem(IMarker problemMarker)
 			throws CoreException {
-		return super.isLaunchProblem(problemMarker)
-				&& problemMarker.getType().equals(
-						IScriptModelMarker.DLTK_MODEL_PROBLEM_MARKER);
+		return super.isLaunchProblem(problemMarker) && problemMarker.getType()
+				.equals(IScriptModelMarker.DLTK_MODEL_PROBLEM_MARKER);
 	}
 
 	@Override
@@ -1061,7 +1053,8 @@ public abstract class AbstractScriptLaunchConfigurationDelegate extends
 			String mode, IProgressMonitor monitor) throws CoreException {
 
 		if (monitor != null) {
-			monitor.subTask(LaunchingMessages.AbstractScriptLaunchConfigurationDelegate_20);
+			monitor.subTask(
+					LaunchingMessages.AbstractScriptLaunchConfigurationDelegate_20);
 		}
 
 		fOrderedProjects = null;
@@ -1069,8 +1062,8 @@ public abstract class AbstractScriptLaunchConfigurationDelegate extends
 				.getScriptProject(configuration);
 
 		if (scriptProject != null) {
-			fOrderedProjects = computeReferencedBuildOrder(new IProject[] { scriptProject
-					.getProject() });
+			fOrderedProjects = computeReferencedBuildOrder(
+					new IProject[] { scriptProject.getProject() });
 		}
 
 		return super.preLaunchCheck(configuration, mode, monitor);
@@ -1100,16 +1093,16 @@ public abstract class AbstractScriptLaunchConfigurationDelegate extends
 	 */
 	public IInterpreterRunner getInterpreterRunner(
 			ILaunchConfiguration configuration, String mode)
-			throws CoreException {
+					throws CoreException {
 
-		final IInterpreterInstall install = verifyInterpreterInstall(configuration);
+		final IInterpreterInstall install = verifyInterpreterInstall(
+				configuration);
 		final IInterpreterRunner runner = install.getInterpreterRunner(mode);
 
 		if (runner == null) {
 			abort(MessageFormat.format(
 					LaunchingMessages.InterpreterRunnerDoesntExist,
-					new String[] { install.getName(), mode }),
-					null,
+					install.getName(), mode), null,
 					ScriptLaunchConfigurationConstants.ERR_INTERPRETER_RUNNER_DOES_NOT_EXIST);
 		}
 
@@ -1152,7 +1145,8 @@ public abstract class AbstractScriptLaunchConfigurationDelegate extends
 			IEnvironment environment = EnvironmentManager
 					.getEnvironment(project);
 			if (environment != null) {
-				final String mainScriptName = verifyMainScriptName(configuration);
+				final String mainScriptName = verifyMainScriptName(
+						configuration);
 				if (mainScriptName.length() == 0) {
 					final URI projectURI = project.getLocationURI();
 					if (projectURI != null) {

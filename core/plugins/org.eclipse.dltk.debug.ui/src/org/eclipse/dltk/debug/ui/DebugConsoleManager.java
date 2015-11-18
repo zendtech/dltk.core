@@ -298,8 +298,8 @@ public class DebugConsoleManager implements ILaunchesListener2 {
 				}
 				DLTKDebugUIPlugin.logErrorMessage(MessageFormat.format(
 						"Extension {0} must specify an instanceof IConsoleColorProvider for class attribute.", //$NON-NLS-1$
-						new String[] { extension.getDeclaringExtension()
-								.getUniqueIdentifier() }));
+						extension.getDeclaringExtension()
+								.getUniqueIdentifier()));
 			} catch (CoreException e) {
 				DLTKDebugUIPlugin.log(e);
 			}

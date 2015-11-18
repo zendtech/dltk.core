@@ -121,7 +121,7 @@ public abstract class LazyEnvironment implements IEnvironment {
 		return environment != null ? environment.isLocal() : false;
 	}
 
-	public Object getAdapter(@SuppressWarnings("unchecked") Class adapter) {
+	public Object getAdapter(Class adapter) {
 		initialize();
 		return environment != null ? environment.getAdapter(adapter) : null;
 	}

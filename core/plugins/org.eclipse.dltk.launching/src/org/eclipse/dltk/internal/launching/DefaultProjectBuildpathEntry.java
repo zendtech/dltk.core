@@ -36,7 +36,8 @@ import com.ibm.icu.text.MessageFormat;
 /**
  * Default user buildpath entries for a script project
  */
-public class DefaultProjectBuildpathEntry extends AbstractRuntimeBuildpathEntry {
+public class DefaultProjectBuildpathEntry
+		extends AbstractRuntimeBuildpathEntry {
 
 	public static final String TYPE_ID = "org.eclipse.dltk.launching.buildpathentry.defaultBuildpath"; //$NON-NLS-1$
 
@@ -65,8 +66,8 @@ public class DefaultProjectBuildpathEntry extends AbstractRuntimeBuildpathEntry 
 	protected void buildMemento(Document document, Element memento)
 			throws CoreException {
 		memento.setAttribute("project", getScriptProject().getElementName()); //$NON-NLS-1$
-		memento.setAttribute(
-				"exportedEntriesOnly", Boolean.toString(fExportedEntriesOnly)); //$NON-NLS-1$
+		memento.setAttribute("exportedEntriesOnly", //$NON-NLS-1$
+				Boolean.toString(fExportedEntriesOnly));
 	}
 
 	public void initializeFrom(Element memento) throws CoreException {
@@ -74,8 +75,8 @@ public class DefaultProjectBuildpathEntry extends AbstractRuntimeBuildpathEntry 
 		if (name == null) {
 			abort(LaunchingMessages.DefaultProjectBuildpathEntry_3, null);
 		}
-		IScriptProject project = DLTKCore.create(ResourcesPlugin.getWorkspace()
-				.getRoot().getProject(name));
+		IScriptProject project = DLTKCore.create(
+				ResourcesPlugin.getWorkspace().getRoot().getProject(name));
 		setScriptProject(project);
 		name = memento.getAttribute("exportedEntriesOnly"); //$NON-NLS-1$
 		if (name == null) {
@@ -115,8 +116,8 @@ public class DefaultProjectBuildpathEntry extends AbstractRuntimeBuildpathEntry 
 
 	public IRuntimeBuildpathEntry[] getRuntimeBuildpathEntries(
 			ILaunchConfiguration configuration) throws CoreException {
-		IBuildpathEntry entry = DLTKCore.newProjectEntry(getScriptProject()
-				.getProject().getFullPath());
+		IBuildpathEntry entry = DLTKCore
+				.newProjectEntry(getScriptProject().getProject().getFullPath());
 		List buildpathEntries = new ArrayList(5);
 		List expanding = new ArrayList(5);
 		expandProject(entry, buildpathEntries, expanding);
@@ -134,7 +135,8 @@ public class DefaultProjectBuildpathEntry extends AbstractRuntimeBuildpathEntry 
 		// remove bootpath entries - this is a default user buildpath
 		List ordered = new ArrayList(runtimeEntries.length);
 		for (int i = 0; i < runtimeEntries.length; i++) {
-			if (runtimeEntries[i].getBuildpathProperty() == IRuntimeBuildpathEntry.USER_ENTRY) {
+			if (runtimeEntries[i]
+					.getBuildpathProperty() == IRuntimeBuildpathEntry.USER_ENTRY) {
 				ordered.add(runtimeEntries[i]);
 			}
 		}
@@ -163,8 +165,8 @@ public class DefaultProjectBuildpathEntry extends AbstractRuntimeBuildpathEntry 
 		// 1. Get the raw buildpath
 		// 2. Replace source folder entries with a project entry
 		IPath projectPath = projectEntry.getPath();
-		IResource res = ResourcesPlugin.getWorkspace().getRoot().findMember(
-				projectPath.lastSegment());
+		IResource res = ResourcesPlugin.getWorkspace().getRoot()
+				.findMember(projectPath.lastSegment());
 		if (res == null) {
 			// add project entry and return
 			expandedPath.add(projectEntry);
@@ -232,28 +234,28 @@ public class DefaultProjectBuildpathEntry extends AbstractRuntimeBuildpathEntry 
 							break;
 						}
 						IRuntimeBuildpathEntry r = ScriptRuntime
-								.newRuntimeContainerBuildpathEntry(entry
-										.getPath(), property, project);
+								.newRuntimeContainerBuildpathEntry(
+										entry.getPath(), property, project);
 						// check for duplicate/redundant entries
 						boolean duplicate = false;
 						BuildpathContainerInitializer initializer = DLTKCore
-								.getBuildpathContainerInitializer(r.getPath()
-										.segment(0));
+								.getBuildpathContainerInitializer(
+										r.getPath().segment(0));
 						for (int i = 0; i < expandedPath.size(); i++) {
 							Object o = expandedPath.get(i);
 							if (o instanceof IRuntimeBuildpathEntry) {
 								IRuntimeBuildpathEntry re = (IRuntimeBuildpathEntry) o;
 								if (re.getType() == IRuntimeBuildpathEntry.CONTAINER) {
 									BuildpathContainerInitializer initializer2 = DLTKCore
-											.getBuildpathContainerInitializer(re
-													.getPath().segment(0));
+											.getBuildpathContainerInitializer(
+													re.getPath().segment(0));
 									Object id1 = null;
 									Object id2 = null;
 									if (initializer == null) {
 										id1 = r.getPath().segment(0);
 									} else {
-										id1 = initializer.getComparisonID(r
-												.getPath(), project);
+										id1 = initializer.getComparisonID(
+												r.getPath(), project);
 									}
 									if (initializer2 == null) {
 										id2 = re.getPath().segment(0);
@@ -263,8 +265,8 @@ public class DefaultProjectBuildpathEntry extends AbstractRuntimeBuildpathEntry 
 										if (context == null) {
 											context = project;
 										}
-										id2 = initializer2.getComparisonID(re
-												.getPath(), context);
+										id2 = initializer2.getComparisonID(
+												re.getPath(), context);
 									}
 									if (id1 == null) {
 										duplicate = id2 == null;
@@ -301,11 +303,11 @@ public class DefaultProjectBuildpathEntry extends AbstractRuntimeBuildpathEntry 
 		if (isExportedEntriesOnly()) {
 			return MessageFormat.format(
 					LaunchingMessages.DefaultProjectBuildpathEntry_2,
-					new String[] { getScriptProject().getElementName() });
+					getScriptProject().getElementName());
 		}
 		return MessageFormat.format(
 				LaunchingMessages.DefaultProjectBuildpathEntry_4,
-				new String[] { getScriptProject().getElementName() });
+				getScriptProject().getElementName());
 	}
 
 	/*

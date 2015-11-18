@@ -62,8 +62,9 @@ import org.xml.sax.helpers.DefaultHandler;
 
 import com.ibm.icu.text.MessageFormat;
 
-public class DLTKLaunchingPlugin extends Plugin implements
-		Preferences.IPropertyChangeListener, IInterpreterInstallChangedListener {
+public class DLTKLaunchingPlugin extends Plugin
+		implements Preferences.IPropertyChangeListener,
+		IInterpreterInstallChangedListener {
 
 	public static final String PLUGIN_ID = "org.eclipse.dltk.launching"; //$NON-NLS-1$
 
@@ -73,9 +74,8 @@ public class DLTKLaunchingPlugin extends Plugin implements
 			+ ".LAUNCH_COMMAND_LINE"; //$NON-NLS-1$
 
 	public static final boolean TRACE_EXECUTION = Boolean
-			.valueOf(
-					Platform
-							.getDebugOption("org.eclipse.dltk.launching/traceExecution")) //$NON-NLS-1$
+			.valueOf(Platform.getDebugOption(
+					"org.eclipse.dltk.launching/traceExecution")) //$NON-NLS-1$
 			.booleanValue();
 
 	/**
@@ -87,7 +87,7 @@ public class DLTKLaunchingPlugin extends Plugin implements
 	/**
 	 * Runtime buildpath extensions
 	 */
-	private HashMap fBuildpathEntryExtensions = null;
+	private HashMap<String, IConfigurationElement> fBuildpathEntryExtensions = null;
 
 	private String fOldInterpreterPrefString = EMPTY_STRING;
 
@@ -135,8 +135,8 @@ public class DLTKLaunchingPlugin extends Plugin implements
 	}
 
 	public static void logWarning(Throwable t) {
-		log(new Status(IStatus.WARNING, getUniqueIdentifier(), IStatus.ERROR, t
-				.getMessage(), t));
+		log(new Status(IStatus.WARNING, getUniqueIdentifier(), IStatus.ERROR,
+				t.getMessage(), t));
 	}
 
 	public static void logWarning(String message, Throwable t) {
@@ -145,8 +145,8 @@ public class DLTKLaunchingPlugin extends Plugin implements
 	}
 
 	public static void log(Throwable e) {
-		log(new Status(IStatus.ERROR, getUniqueIdentifier(), IStatus.ERROR, e
-				.getMessage(), e));
+		log(new Status(IStatus.ERROR, getUniqueIdentifier(), IStatus.ERROR,
+				e.getMessage(), e));
 	}
 
 	public static void log(String message, Throwable e) {
@@ -176,8 +176,8 @@ public class DLTKLaunchingPlugin extends Plugin implements
 	 *            document to serialize
 	 * @return the document as a string
 	 */
-	public static String serializeDocument(Document doc) throws IOException,
-			TransformerException {
+	public static String serializeDocument(Document doc)
+			throws IOException, TransformerException {
 		ByteArrayOutputStream s = new ByteArrayOutputStream();
 
 		TransformerFactory factory = TransformerFactory.newInstance();
@@ -189,7 +189,7 @@ public class DLTKLaunchingPlugin extends Plugin implements
 		StreamResult outputTarget = new StreamResult(s);
 		transformer.transform(source, outputTarget);
 
-		return s.toString("UTF8"); //$NON-NLS-1$			
+		return s.toString("UTF8"); //$NON-NLS-1$
 	}
 
 	/**
@@ -226,8 +226,9 @@ public class DLTKLaunchingPlugin extends Plugin implements
 	 */
 	protected static void abort(String message, Throwable exception)
 			throws CoreException {
-		IStatus status = new Status(IStatus.ERROR, DLTKLaunchingPlugin
-				.getUniqueIdentifier(), 0, message, exception);
+		IStatus status = new Status(IStatus.ERROR,
+				DLTKLaunchingPlugin.getUniqueIdentifier(), 0, message,
+				exception);
 		throw new CoreException(status);
 	}
 
@@ -249,7 +250,7 @@ public class DLTKLaunchingPlugin extends Plugin implements
 				.get(id);
 		if (config == null) {
 			abort(MessageFormat.format(LaunchingMessages.LaunchingPlugin_32,
-					new String[] { id }), null);
+					id), null);
 		}
 		return (IRuntimeBuildpathEntry2) config
 				.createExecutableExtension("class"); //$NON-NLS-1$
@@ -264,10 +265,11 @@ public class DLTKLaunchingPlugin extends Plugin implements
 						ID_EXTENSION_POINT_RUNTIME_BUILDPATH_ENTRIES);
 		IConfigurationElement[] configs = extensionPoint
 				.getConfigurationElements();
-		fBuildpathEntryExtensions = new HashMap(configs.length);
+		fBuildpathEntryExtensions = new HashMap<String, IConfigurationElement>(
+				configs.length);
 		for (int i = 0; i < configs.length; i++) {
-			fBuildpathEntryExtensions.put(
-					configs[i].getAttribute("id"), configs[i]); //$NON-NLS-1$
+			fBuildpathEntryExtensions.put(configs[i].getAttribute("id"), //$NON-NLS-1$
+					configs[i]);
 		}
 	}
 
@@ -279,10 +281,11 @@ public class DLTKLaunchingPlugin extends Plugin implements
 
 		// Exclude launch configurations from being copied to the output
 		// directory
-		String launchFilter = "*." + ILaunchConfiguration.LAUNCH_CONFIGURATION_FILE_EXTENSION; //$NON-NLS-1$
-		Hashtable optionsMap = DLTKCore.getOptions();
-		String filters = (String) optionsMap
-				.get("org.eclipse.dltk.core.builder.resourceCopyExclusionFilter"); //$NON-NLS-1$
+		String launchFilter = "*." //$NON-NLS-1$
+				+ ILaunchConfiguration.LAUNCH_CONFIGURATION_FILE_EXTENSION;
+		Hashtable<String, String> optionsMap = DLTKCore.getOptions();
+		String filters = (String) optionsMap.get(
+				"org.eclipse.dltk.core.builder.resourceCopyExclusionFilter"); //$NON-NLS-1$
 		boolean modified = false;
 		if (filters == null || filters.length() == 0) {
 			filters = launchFilter;
@@ -293,9 +296,9 @@ public class DLTKLaunchingPlugin extends Plugin implements
 		}
 
 		if (modified) {
-			optionsMap
-					.put(
-							"org.eclipse.dltk.core.builder.resourceCopyExclusionFilter", filters); //$NON-NLS-1$
+			optionsMap.put(
+					"org.eclipse.dltk.core.builder.resourceCopyExclusionFilter", //$NON-NLS-1$
+					filters);
 			DLTKCore.setOptions(optionsMap);
 		}
 
@@ -411,10 +414,12 @@ public class DLTKLaunchingPlugin extends Plugin implements
 					.addInterpreterInstallChangedListener(InterpreterChanges);
 
 			// Generate the previous Interpreters
-			InterpreterDefinitionsContainer oldResults = getInterpreterDefinitions(oldPrefString);
+			InterpreterDefinitionsContainer oldResults = getInterpreterDefinitions(
+					oldPrefString);
 
 			// Generate the current
-			InterpreterDefinitionsContainer newResults = getInterpreterDefinitions(newPrefString);
+			InterpreterDefinitionsContainer newResults = getInterpreterDefinitions(
+					newPrefString);
 
 			// Determine the deteled Interpreters
 			List deleted = oldResults.getInterpreterList();
@@ -466,8 +471,8 @@ public class DLTKLaunchingPlugin extends Plugin implements
 			// stop batch changes
 			fBatchingChanges = false;
 			if (InterpreterChanges != null) {
-				ScriptRuntime
-						.removeInterpreterInstallChangedListener(InterpreterChanges);
+				ScriptRuntime.removeInterpreterInstallChangedListener(
+						InterpreterChanges);
 				try {
 					InterpreterChanges.process();
 				} catch (CoreException e) {
@@ -485,7 +490,8 @@ public class DLTKLaunchingPlugin extends Plugin implements
 	 * @param xml
 	 * @return InterpreterDefinitionsContainer
 	 */
-	private InterpreterDefinitionsContainer getInterpreterDefinitions(String xml) {
+	private InterpreterDefinitionsContainer getInterpreterDefinitions(
+			String xml) {
 		if (xml.length() > 0) {
 			try {
 				Reader stream = new StringReader(xml);
@@ -580,8 +586,8 @@ public class DLTKLaunchingPlugin extends Plugin implements
 						} else {
 							// replace old bp entry with a new one
 							IBuildpathEntry newEntry = DLTKCore
-									.newContainerEntry(newBinding, entry
-											.isExported());
+									.newContainerEntry(newBinding,
+											entry.isExported());
 							entries[j] = newEntry;
 							replace = true;
 						}
@@ -606,7 +612,7 @@ public class DLTKLaunchingPlugin extends Plugin implements
 	class InterpreterChanges implements IInterpreterInstallChangedListener {
 
 		// old container ids to new
-		private HashMap fRenamedContainerIds = new HashMap();
+		private HashMap<IPath, IPath> fRenamedContainerIds = new HashMap<IPath, IPath>();
 
 		public void defaultInterpreterInstallChanged(
 				IInterpreterInstall previous, IInterpreterInstall current) {
@@ -628,8 +634,8 @@ public class DLTKLaunchingPlugin extends Plugin implements
 				String oldName = (String) event.getOldValue();
 				String oldTypeId = Interpreter.getInterpreterInstallType()
 						.getId();
-				IPath oldId = ScriptRuntime.newInterpreterContainerPath(
-						oldTypeId, oldName);
+				IPath oldId = ScriptRuntime
+						.newInterpreterContainerPath(oldTypeId, oldName);
 				if (oldId != null) {
 					fRenamedContainerIds.put(oldId, newId);
 				}
@@ -650,9 +656,10 @@ public class DLTKLaunchingPlugin extends Plugin implements
 
 		protected void doit(IProgressMonitor monitor) throws CoreException {
 			IWorkspaceRunnable runnable = new IWorkspaceRunnable() {
-				public void run(IProgressMonitor monitor1) throws CoreException {
-					IScriptProject[] projects = DLTKCore.create(
-							ResourcesPlugin.getWorkspace().getRoot())
+				public void run(IProgressMonitor monitor1)
+						throws CoreException {
+					IScriptProject[] projects = DLTKCore
+							.create(ResourcesPlugin.getWorkspace().getRoot())
 							.getScriptProjects();
 					monitor1.beginTask(LaunchingMessages.LaunchingPlugin_0,
 							projects.length + 1);

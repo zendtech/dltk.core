@@ -633,7 +633,6 @@ public class ScriptDisplayView extends PageBookView
 	/**
 	 * Initialize the PageSwitcher.
 	 */
-	@SuppressWarnings("unused")
 	private void initPageSwitcher() {
 		new PageSwitcher(this) {
 			public void activatePage(Object page) {

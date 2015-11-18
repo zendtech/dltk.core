@@ -256,7 +256,6 @@ public class HereDocEnabledPartitioner extends FastPartitioner {
 		Assert.isNotNull(ident,
 				"unable to find line of a starting heredoc partition");
 
-		@SuppressWarnings("null")
 		int hdLine = fDocument.getLineOfOffset(ident.getOffset());
 
 		return findReparseStartForIdent(hdLine, positions, index);
