@@ -452,6 +452,10 @@ public class BPListElement {
 		return fParentContainer;
 	}
 
+	public void setParentContainer(Object parent) {
+		fParentContainer = parent;
+	}
+
 	private void attributeChanged(String key) {
 
 		fCachedEntry = null;
