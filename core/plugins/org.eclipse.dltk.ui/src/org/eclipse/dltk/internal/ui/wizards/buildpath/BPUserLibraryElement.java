@@ -11,6 +11,7 @@ package org.eclipse.dltk.internal.ui.wizards.buildpath;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -49,9 +50,7 @@ public class BPUserLibraryElement {
 		}
 
 		public Map<String, String> getAttributes() {
-			return fAttributes != null
-					? Collections.<String, String>unmodifiableMap(fAttributes)
-					: Collections.<String, String> emptyMap();
+			return BPUserLibraryElement.this.getAttributes();
 		}
 	}
 
@@ -86,7 +85,8 @@ public class BPUserLibraryElement {
 		} else {
 			fIsSystemLibrary = false;
 		}
-		fAttributes = attributes;
+		if (attributes != null)
+			fAttributes = new HashMap<String, String>(attributes);
 	}
 
 	public BPUserLibraryElement(String name, boolean isSystemLibrary,
@@ -106,7 +106,8 @@ public class BPUserLibraryElement {
 			}
 		}
 		fIsSystemLibrary = isSystemLibrary;
-		fAttributes = attributes;
+		if (attributes != null)
+			fAttributes = new HashMap<String, String>(attributes);
 	}
 
 	public BPListElement[] getChildren() {
@@ -124,6 +125,12 @@ public class BPUserLibraryElement {
 
 	public boolean isSystemLibrary() {
 		return fIsSystemLibrary;
+	}
+
+	public Map<String, String> getAttributes() {
+		return fAttributes != null
+				? Collections.<String, String> unmodifiableMap(fAttributes)
+				: Collections.<String, String> emptyMap();
 	}
 
 	public String getAttribute(String name) {

@@ -228,11 +228,13 @@ public abstract class UserLibraryPreferencePage extends PreferencePage
 
 		public BPUserLibraryElement getNewLibrary() {
 			BPListElement[] entries = null;
+			Map<String, String> attributes = null;
 			if (fElementToEdit != null) {
 				entries = fElementToEdit.getChildren();
+				attributes = fElementToEdit.getAttributes();
 			}
 			return new BPUserLibraryElement(fNameField.getText(),
-					fIsSystemField.isSelected(), entries);
+					fIsSystemField.isSelected(), entries, attributes);
 		}
 
 	}
