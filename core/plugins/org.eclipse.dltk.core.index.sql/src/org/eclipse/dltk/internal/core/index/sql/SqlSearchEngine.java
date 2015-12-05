@@ -267,16 +267,17 @@ public class SqlSearchEngine implements ISearchEngineExtension {
 				ISourceModule sourceModule = sourceModuleCache
 						.get(resourcePath);
 				if (sourceModule == null) {
-					if (projectFragment.isExternal()) {
-						IScriptFolder scriptFolder = new ExternalScriptFolder(
-								(ProjectFragment) projectFragment, new Path(
-										folderPath));
-						sourceModule = scriptFolder.getSourceModule(fileName);
-					} else if (projectFragment.isArchive()) {
+					if (projectFragment.isArchive()) {
 						IScriptFolder scriptFolder = new ArchiveFolder(
-								(ProjectFragment) projectFragment, new Path(
-										folderPath));
+								(ProjectFragment) projectFragment,
+								new Path(folderPath));
 						sourceModule = scriptFolder.getSourceModule(fileName);
+					} else if (projectFragment.isExternal()) {
+						IScriptFolder scriptFolder = new ExternalScriptFolder(
+								(ProjectFragment) projectFragment,
+								new Path(folderPath));
+						sourceModule = scriptFolder.getSourceModule(fileName);
+
 					} else if (projectFragment.isBuiltin()) {
 						IScriptFolder scriptFolder = new BuiltinScriptFolder(
 								(ProjectFragment) projectFragment, new Path(
