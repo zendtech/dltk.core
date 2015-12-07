@@ -396,8 +396,10 @@ public class ScriptStackFrame extends ScriptDebugElement implements
 		final ScriptVariableContainer newVars = readAllVariables();
 		newVars.sort(getDebugTarget());
 		variables.locals = refreshVariables(newVars.locals, variables.locals);
-		variables.globals = refreshVariables(newVars.globals, variables.globals);
-		variables.classes = refreshVariables(newVars.classes, variables.classes);
+		variables.globals = refreshVariables(newVars.globals,
+				variables.globals);
+		variables.classes = refreshVariables(newVars.classes,
+				variables.classes);
 	}
 
 	/**
@@ -406,8 +408,9 @@ public class ScriptStackFrame extends ScriptDebugElement implements
 	 * @return
 	 * @throws DebugException
 	 */
-	static IVariable[] refreshVariables(IVariable[] newVars, IVariable[] oldVars)
-			throws DebugException {
+	static IVariable[] refreshVariables(IVariable[] newVars,
+			IVariable[] oldVars)
+					throws DebugException {
 		if (oldVars != null) {
 			final Map map = new HashMap();
 			for (int i = 0; i < oldVars.length; ++i) {
@@ -416,12 +419,15 @@ public class ScriptStackFrame extends ScriptDebugElement implements
 					map.put(variable.getName(), variable);
 				}
 			}
-			for (int i = 0; i < newVars.length; ++i) {
-				final IVariable variable = newVars[i];
-				final IRefreshableScriptVariable old;
-				old = (IRefreshableScriptVariable) map.get(variable.getName());
-				if (old != null) {
-					newVars[i] = old.refreshVariable(variable);
+			if (newVars != null) {
+				for (int i = 0; i < newVars.length; ++i) {
+					final IVariable variable = newVars[i];
+					final IRefreshableScriptVariable old;
+					old = (IRefreshableScriptVariable) map
+							.get(variable.getName());
+					if (old != null) {
+						newVars[i] = old.refreshVariable(variable);
+					}
 				}
 			}
 		}
