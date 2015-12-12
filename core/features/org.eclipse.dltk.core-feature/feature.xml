@@ -4,10 +4,9 @@
       label="%featureName"
       version="5.4.0.qualifier"
       provider-name="%providerName"
-      plugin="org.eclipse.dltk"
+      image="eclipse_update_120.jpg"
       license-feature="org.eclipse.license"
-      license-feature-version="0.0.0"
-      image="eclipse_update_120.jpg">
+      license-feature-version="0.0.0">
 
    <description url="http://www.eclipse.org/dltk">
       %description
@@ -88,13 +87,6 @@ http://www.eclipse.org/legal/epl-v10.html
 
    <plugin
          id="org.eclipse.dltk.validators.ui"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="org.eclipse.dltk"
          download-size="0"
          install-size="0"
          version="0.0.0"
