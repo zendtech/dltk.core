@@ -189,7 +189,7 @@ public class ScriptProject extends Openable implements IScriptProject,
 	}
 
 	public IProjectFragment getProjectFragment(String path) {
-		return getProjectFragment(canonicalizedPath(new Path(path)));
+		return getProjectFragment(canonicalizedPath(Path.fromPortableString(path)));
 	}
 
 	/*
