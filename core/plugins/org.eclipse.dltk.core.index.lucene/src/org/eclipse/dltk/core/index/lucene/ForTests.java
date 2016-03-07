@@ -12,7 +12,6 @@ import org.apache.lucene.index.Term;
 import org.apache.lucene.queries.BooleanFilter;
 import org.apache.lucene.queries.TermFilter;
 import org.apache.lucene.search.BooleanClause.Occur;
-import org.apache.lucene.search.Filter;
 import org.apache.lucene.search.FilterCachingPolicy;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.LRUFilterCache;
@@ -84,11 +83,11 @@ public class ForTests {
 			// booleanFilter.add(new TermFilter(new Term(IndexFields.CONTAINER,
 			// "/magento2")), Occur.MUST);
 
-			Filter f1 = new NumberFilter(IndexFields.ELEMENT_TYPE, 7);
-			booleanFilter.add(f1, Occur.MUST);
-
-			Filter f2 = new NumberFilter(IndexFields.TYPE, 2);
-			booleanFilter.add(f2, Occur.MUST);
+//			Filter f1 = new NumberFilter(IndexFields.ELEMENT_TYPE, 7);
+//			booleanFilter.add(f1, Occur.MUST);
+//
+//			Filter f2 = new NumberFilter(IndexFields.TYPE, 2);
+//			booleanFilter.add(f2, Occur.MUST);
 
 			collector = new DocumentCollector();
 			SimpleCollector simpleCollector = new SimpleCollector() {

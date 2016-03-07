@@ -89,10 +89,10 @@ public class LuceneSearchEngine implements ISearchEngine, ISearchEngineExtension
 			booleanFilter.add(new TermFilter(new Term(IndexFields.PARENT, parent)), Occur.MUST);
 		}
 
-		booleanFilter.add(new NumberFilter(IndexFields.ELEMENT_TYPE, elementType), Occur.MUST);
+		//booleanFilter.add(new NumberFilter(IndexFields.ELEMENT_TYPE, elementType), Occur.MUST);
 
 		int occurenceType = searchForRefs ? IndexFields.TYPE_REFERENCE : IndexFields.TYPE_DECLARATION;
-		booleanFilter.add(new NumberFilter(IndexFields.TYPE, occurenceType), Occur.MUST);
+		//booleanFilter.add(new NumberFilter(IndexFields.TYPE, occurenceType), Occur.MUST);
 
 		if (trueFlags != 0 || falseFlags != 0) {
 			booleanFilter.add(new BitFlagsFilter(IndexFields.FLAGS, trueFlags, falseFlags), Occur.MUST);

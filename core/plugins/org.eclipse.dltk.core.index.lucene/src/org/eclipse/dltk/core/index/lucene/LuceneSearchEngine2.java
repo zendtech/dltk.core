@@ -10,6 +10,8 @@ import java.util.List;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.queries.BooleanFilter;
 import org.apache.lucene.queries.TermFilter;
+import org.apache.lucene.search.BooleanClause.Occur;
+import org.apache.lucene.search.DocValuesRangeFilter;
 import org.apache.lucene.search.Filter;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.MatchAllDocsQuery;
@@ -18,7 +20,6 @@ import org.apache.lucene.search.Query;
 import org.apache.lucene.search.QueryWrapperFilter;
 import org.apache.lucene.search.SearcherManager;
 import org.apache.lucene.search.WildcardQuery;
-import org.apache.lucene.search.BooleanClause.Occur;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.dltk.core.ScriptModelUtil;
@@ -95,8 +96,8 @@ public class LuceneSearchEngine2 implements ISearchEngine, ISearchEngineExtensio
 		}
 	}
 
-	private BooleanFilter createFilter(final int elementType, String qualifier, String elementName,
-			String parent, final int trueFlags, final int falseFlags, final boolean searchForRefs, MatchRule matchRule,
+	private BooleanFilter createFilter(final int elementType, String qualifier, String elementName, String parent,
+			final int trueFlags, final int falseFlags, final boolean searchForRefs, MatchRule matchRule,
 			IDLTKSearchScope scope) {
 		BooleanFilter filter = new BooleanFilter();
 		if (elementName != null && !elementName.isEmpty()) {
@@ -119,13 +120,15 @@ public class LuceneSearchEngine2 implements ISearchEngine, ISearchEngineExtensio
 				filter.add(nameFilter, Occur.MUST);
 			}
 		}
-		if (qualifier != null) {
+		if (qualifier != null && !qualifier.isEmpty()) {
 			filter.add(new TermFilter(new Term(IndexFields.QUALIFIER, qualifier)), Occur.MUST);
 		}
-		if (parent != null) {
+		if (parent != null && !parent.isEmpty()) {
 			filter.add(new TermFilter(new Term(IndexFields.PARENT, parent)), Occur.MUST);
 		}
-		filter.add(new NumberFilter(IndexFields.ELEMENT_TYPE, elementType), Occur.MUST);
+
+		filter.add(DocValuesRangeFilter.newLongRange(IndexFields.ELEMENT_TYPE, Long.valueOf(elementType),
+				Long.valueOf(elementType), true, true), Occur.MUST);
 		if (trueFlags != 0 || falseFlags != 0) {
 			filter.add(new BitFlagsFilter(IndexFields.FLAGS, trueFlags, falseFlags), Occur.MUST);
 		}

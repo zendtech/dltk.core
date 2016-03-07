@@ -23,10 +23,8 @@ public class BitFlagsFilter extends Filter {
 	}
 
 	@Override
-	public DocIdSet getDocIdSet(LeafReaderContext context, Bits acceptDocs)
-			throws IOException {
-		final NumericDocValues values = DocValues.getNumeric(context.reader(),
-				field);
+	public DocIdSet getDocIdSet(LeafReaderContext context, Bits acceptDocs) throws IOException {
+		final NumericDocValues values = DocValues.getNumeric(context.reader(), field);
 
 		return new DocValuesDocIdSet(context.reader().maxDoc(), acceptDocs) {
 
@@ -47,6 +45,11 @@ public class BitFlagsFilter extends Filter {
 				return true;
 			}
 		};
+	}
+
+	@Override
+	public int hashCode() {
+		return field.hashCode() * trueFlags * falseFlags;
 	}
 
 }
