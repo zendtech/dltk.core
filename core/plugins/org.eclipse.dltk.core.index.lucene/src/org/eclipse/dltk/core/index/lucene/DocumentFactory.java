@@ -13,22 +13,20 @@ public enum DocumentFactory {
 
 	INSTANCE;
 
-	public Document buildReference(String source, ReferenceInfo info) {
+	public Document createForReference(String source, ReferenceInfo info) {
 		Document doc = new Document();
 		addTextEntry(doc, IndexFields.PATH, source);
 		addTextEntry(doc, IndexFields.ELEMENT_NAME, info.elementName);
 		addStringEntry(doc, IndexFields.QUALIFIER, info.qualifier);
 		addMetadataEntry(doc, info.metadata);
-
 		addTextLCEntry(doc, IndexFields.ELEMENT_NAME_LC, info.elementName);
-
 		addLongEntry(doc, IndexFields.ELEMENT_TYPE, info.elementType);
 		addLongEntry(doc, IndexFields.OFFSET, info.offset);
 		addLongEntry(doc, IndexFields.LENGTH, info.length);
 		return doc;
 	}
 
-	public Document buildDeclaration(String source, DeclarationInfo info) {
+	public Document createForDeclaration(String source, DeclarationInfo info) {
 		Document doc = new Document();
 		addTextEntry(doc, IndexFields.PATH, source);
 		addTextEntry(doc, IndexFields.ELEMENT_NAME, info.elementName);
@@ -36,10 +34,8 @@ public enum DocumentFactory {
 		addStringEntry(doc, IndexFields.QUALIFIER, info.qualifier);
 		addMetadataEntry(doc, info.metadata);
 		addDocEntry(doc, info.doc);
-
 		addTextLCEntry(doc, IndexFields.ELEMENT_NAME_LC, info.elementName);
 		addCCNameEntry(doc, info.elementName);
-
 		addLongEntry(doc, IndexFields.ELEMENT_TYPE, info.elementType);
 		addLongEntry(doc, IndexFields.OFFSET, info.offset);
 		addLongEntry(doc, IndexFields.LENGTH, info.length);
@@ -49,7 +45,7 @@ public enum DocumentFactory {
 		return doc;
 	}
 
-	public Document buildSourceInfo(String source, long timestamp) {
+	public Document createForTimestamp(String source, long timestamp) {
 		Document doc = new Document();
 		addTextEntry(doc, IndexFields.PATH, source);
 		addLongEntry(doc, IndexFields.TIMESTAMP, timestamp);

@@ -21,6 +21,7 @@ import org.eclipse.dltk.internal.core.ModelManager;
 import org.eclipse.dltk.internal.core.ProjectFragment;
 import org.eclipse.dltk.internal.core.search.DLTKSearchScope;
 
+@SuppressWarnings("restriction")
 public class SearchElementHandler {
 
 	private class FilePathHandler {
@@ -69,12 +70,9 @@ public class SearchElementHandler {
 		if (containerPath.length() != 0 && containerPath.charAt(containerPath.length() - 1) != IPath.SEPARATOR) {
 			containerPath = containerPath + IPath.SEPARATOR;
 		}
-
 		String filePath = document.getPath();
 		final String resourcePath = containerPath + filePath;
-
 		IProjectFragment projectFragment = projectFragmentCache.get(containerPath);
-
 		if (projectFragment == null) {
 			projectFragment = ((DLTKSearchScope) scope).projectFragment(resourcePath);
 			if (projectFragment == null) {
@@ -85,7 +83,6 @@ public class SearchElementHandler {
 		if (projectFragment == null) {
 			return;
 		}
-
 		if (!scope.encloses(resourcePath)) {
 			return;
 		}
@@ -112,7 +109,6 @@ public class SearchElementHandler {
 			}
 			sourceModuleCache.put(resourcePath, sourceModule);
 		}
-
 		String name = document.getElementName();
 		if (name == null) {
 			return;
@@ -120,13 +116,13 @@ public class SearchElementHandler {
 		ModelManager modelManager = ModelManager.getModelManager();
 		name = modelManager.intern(name);
 		String metadata = document.getMetadata();
-		String docz = document.getDoc();
-		String qualifierz = document.getQualifier();
-		String parentz = document.getParent();
-
+		String doc = document.getDoc();
+		String qualifier = document.getQualifier();
+		String parent = document.getParent();
+		// Pass to requestor
 		searchRequestor.match(document.getElementType(), document.getFlags(), document.getOffset(),
-				document.getLength(), document.getNameOffset(), document.getNameLength(), name, metadata, docz,
-				qualifierz, parentz, sourceModule, isReference);
+				document.getLength(), document.getNameOffset(), document.getNameLength(), name, metadata, doc,
+				qualifier, parent, sourceModule, isReference);
 
 	}
 

@@ -4,7 +4,7 @@
    <extension
          point="org.eclipse.dltk.core.indexer">
       <indexer
-            class="org.eclipse.dltk.core.index.lucene.LuceneIndexer2"
+            class="org.eclipse.dltk.core.index.lucene.LuceneIndexer"
             id="org.eclipse.dltk.core.index.sql.indexer">
       </indexer>
    </extension>

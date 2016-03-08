@@ -1,27 +1,183 @@
 package org.eclipse.dltk.core.index.lucene;
 
-import java.io.IOException;
-import java.util.Iterator;
+import static org.eclipse.dltk.core.index.lucene.IndexFields.DOC;
+import static org.eclipse.dltk.core.index.lucene.IndexFields.ELEMENT_NAME;
+import static org.eclipse.dltk.core.index.lucene.IndexFields.ELEMENT_TYPE;
+import static org.eclipse.dltk.core.index.lucene.IndexFields.FLAGS;
+import static org.eclipse.dltk.core.index.lucene.IndexFields.LENGTH;
+import static org.eclipse.dltk.core.index.lucene.IndexFields.METADATA;
+import static org.eclipse.dltk.core.index.lucene.IndexFields.NAME_LENGTH;
+import static org.eclipse.dltk.core.index.lucene.IndexFields.NAME_OFFSET;
+import static org.eclipse.dltk.core.index.lucene.IndexFields.OFFSET;
+import static org.eclipse.dltk.core.index.lucene.IndexFields.PARENT;
+import static org.eclipse.dltk.core.index.lucene.IndexFields.PATH;
+import static org.eclipse.dltk.core.index.lucene.IndexFields.QUALIFIER;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import org.apache.lucene.index.FieldInfo;
+import org.apache.lucene.index.LeafReader;
+import org.apache.lucene.index.LeafReaderContext;
+import org.apache.lucene.index.NumericDocValues;
+import org.apache.lucene.index.StoredFieldVisitor;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.queries.BooleanFilter;
 import org.apache.lucene.queries.TermFilter;
-import org.apache.lucene.search.BooleanClause;
 import org.apache.lucene.search.BooleanClause.Occur;
-import org.apache.lucene.search.BooleanQuery;
+import org.apache.lucene.search.Collector;
+import org.apache.lucene.search.DocValuesRangeFilter;
 import org.apache.lucene.search.Filter;
 import org.apache.lucene.search.IndexSearcher;
+import org.apache.lucene.search.LeafCollector;
+import org.apache.lucene.search.MatchAllDocsQuery;
 import org.apache.lucene.search.PrefixFilter;
-import org.apache.lucene.search.TermQuery;
+import org.apache.lucene.search.Query;
+import org.apache.lucene.search.QueryWrapperFilter;
+import org.apache.lucene.search.Scorer;
+import org.apache.lucene.search.SearcherManager;
 import org.apache.lucene.search.WildcardQuery;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.dltk.core.ScriptModelUtil;
+import org.eclipse.dltk.core.index.lucene.LuceneIndexerManager.IndexType;
 import org.eclipse.dltk.core.index2.search.ISearchEngine;
 import org.eclipse.dltk.core.index2.search.ISearchEngineExtension;
 import org.eclipse.dltk.core.index2.search.ISearchRequestor;
 import org.eclipse.dltk.core.search.IDLTKSearchScope;
+import org.eclipse.dltk.internal.core.search.DLTKSearchScope;
 
+@SuppressWarnings("restriction")
 public class LuceneSearchEngine implements ISearchEngine, ISearchEngineExtension {
+
+	private static final class SearchScope {
+
+		static List<String> getContainers(IDLTKSearchScope scope) {
+			List<String> containers = new ArrayList<String>();
+			for (IPath path : scope.enclosingProjectsAndZips()) {
+				containers.add(path.toString());
+			}
+			return containers;
+		}
+
+		static List<String> getScripts(IDLTKSearchScope scope) {
+			List<String> scripts = new ArrayList<String>();
+			if (scope instanceof DLTKSearchScope) {
+				String[] relativePaths = ((DLTKSearchScope) scope).getRelativePaths();
+				String[] fileExtensions = ScriptModelUtil.getFileExtensions(scope.getLanguageToolkit());
+				for (String relativePath : relativePaths) {
+					if (relativePath.length() > 0) {
+						if (fileExtensions != null) {
+							boolean isScriptFile = false;
+							for (String ext : fileExtensions) {
+								if (relativePath.endsWith("." + ext)) { //$NON-NLS-1$
+									isScriptFile = true;
+									break;
+								}
+							}
+							if (!isScriptFile) {
+								break;
+							}
+						}
+						scripts.add(relativePath);
+					}
+				}
+			}
+			return scripts;
+		}
+
+	}
+
+	private static final class ResultsCollector implements Collector {
+
+		private static final String[] NUMERIC_FIELDS = new String[] { ELEMENT_TYPE, OFFSET, LENGTH, FLAGS, NAME_OFFSET,
+				NAME_LENGTH };
+		private static final String[] TEXTUAL_FIELDS = new String[] { PATH, ELEMENT_NAME, QUALIFIER, PARENT, METADATA,
+				DOC };
+		private static final Set<String> fFields = new HashSet<>(Arrays.asList(TEXTUAL_FIELDS));
+		private Map<String, NumericDocValues> fDocNumValues;
+		private String fContainer;
+		private List<DocumentEntity> fResult;
+		private Map<String, String> fValues = new HashMap<>(fFields.size());
+
+		public ResultsCollector(String container, List<DocumentEntity> result) {
+			this.fContainer = container;
+			this.fResult = result;
+		}
+
+		@Override
+		public LeafCollector getLeafCollector(final LeafReaderContext context) throws IOException {
+			final LeafReader reader = context.reader();
+			fDocNumValues = new HashMap<String, NumericDocValues>();
+			for (String field : NUMERIC_FIELDS) {
+				NumericDocValues docValues = context.reader().getNumericDocValues(field);
+				if (docValues != null) {
+					fDocNumValues.put(field, docValues);
+				}
+			}
+			return new LeafCollector() {
+				@Override
+				public void setScorer(Scorer scorer) throws IOException {
+					// ignore
+				}
+
+				@Override
+				public void collect(int docId) throws IOException {
+					addDocument(docId, reader);
+				}
+			};
+
+		}
+
+		private void addDocument(int docId, LeafReader reader) throws IOException {
+			DocumentEntity documentEntity = new DocumentEntity();
+			documentEntity.setContainer(fContainer);
+			// Read numeric doc values
+			documentEntity.setElementType(get(ELEMENT_TYPE, docId));
+			documentEntity.setOffset(get(OFFSET, docId));
+			documentEntity.setLength(get(LENGTH, docId));
+			documentEntity.setFlags(get(FLAGS, docId));
+			documentEntity.setNameOffset(get(NAME_OFFSET, docId));
+			documentEntity.setNameLength(get(NAME_LENGTH, docId));
+			// Read other field values
+			reader.document(docId, new StoredFieldVisitor() {
+				@Override
+				public Status needsField(FieldInfo fieldInfo) throws IOException {
+					return fFields.contains(fieldInfo.name) == true ? Status.YES : Status.STOP;
+				}
+
+				@Override
+				public void stringField(FieldInfo fieldInfo, String value) throws IOException {
+					fValues.put(fieldInfo.name, value);
+				}
+			});
+			documentEntity.setQualifier(fValues.get(QUALIFIER));
+			documentEntity.setParent(fValues.get(PARENT));
+			documentEntity.setElementName(fValues.get(ELEMENT_NAME));
+			documentEntity.setPath(fValues.get(PATH));
+			documentEntity.setDoc(fValues.get(DOC));
+			documentEntity.setMetadata(fValues.get(METADATA));
+			// Add result entity
+			fResult.add(documentEntity);
+			fValues.clear();
+		}
+
+		private int get(String field, int docId) {
+			NumericDocValues docValues = fDocNumValues.get(field);
+			if (docValues != null) {
+				return (int) docValues.get(docId);
+			}
+			return 0;
+		}
+	}
 
 	@Override
 	public void search(int elementType, String qualifier, String elementName, int trueFlags, int falseFlags, int limit,
@@ -37,104 +193,101 @@ public class LuceneSearchEngine implements ISearchEngine, ISearchEngineExtension
 			ISearchRequestor requestor, IProgressMonitor monitor) {
 		boolean searchForDecls = searchFor == SearchFor.DECLARATIONS || searchFor == SearchFor.ALL_OCCURRENCES;
 		boolean searchForRefs = searchFor == SearchFor.REFERENCES || searchFor == SearchFor.ALL_OCCURRENCES;
-
 		if (searchForRefs) {
-			doSearch(elementType, qualifier, elementName, parent, trueFlags, falseFlags, limit, true, searchFor,
-					matchRule, scope, requestor, monitor);
+			doSearch(elementType, qualifier, elementName, parent, trueFlags, falseFlags, limit, true, matchRule, scope,
+					requestor, monitor);
 		}
 		if (searchForDecls) {
-			doSearch(elementType, qualifier, elementName, parent, trueFlags, falseFlags, limit, false, searchFor,
-					matchRule, scope, requestor, monitor);
+			doSearch(elementType, qualifier, elementName, parent, trueFlags, falseFlags, limit, false, matchRule, scope,
+					requestor, monitor);
 		}
 	}
 
-	private void doSearch(final int elementType, String qualifier, String elementName, String parent,
-			final int trueFlags, final int falseFlags, int limit, final boolean searchForRefs, SearchFor searchFor,
-			MatchRule matchRule, IDLTKSearchScope scope, ISearchRequestor requestor, IProgressMonitor monitor) {
-		long time = System.currentTimeMillis();
-		BooleanQuery booleanQuery = new BooleanQuery();
-		BooleanFilter booleanFilter = new BooleanFilter();
-
-		if (elementType == 9) {
-			System.out.print(' ');
-		}
-
+	private BooleanFilter createFilter(final int elementType, String qualifier, String elementName, String parent,
+			final int trueFlags, final int falseFlags, final boolean searchForRefs, MatchRule matchRule,
+			IDLTKSearchScope scope) {
+		BooleanFilter filter = new BooleanFilter();
 		if (elementName != null && !elementName.isEmpty()) {
-			elementName = elementName.toLowerCase();
-
-			Filter filter = null;
-			Term nameTerm = new Term(IndexFields.ELEMENT_NAME, elementName);
+			String elementNameLC = elementName.toLowerCase();
+			Filter nameFilter = null;
+			Term nameCaseInsensitiveTerm = new Term(IndexFields.ELEMENT_NAME_LC, elementNameLC);
 			if (matchRule == MatchRule.PREFIX) {
-				filter = new PrefixFilter(nameTerm);
+				nameFilter = new PrefixFilter(nameCaseInsensitiveTerm);
 			} else if (matchRule == MatchRule.EXACT) {
-				filter = new TermFilter(nameTerm);
+				nameFilter = new TermFilter(nameCaseInsensitiveTerm);
 			} else if (matchRule == MatchRule.CAMEL_CASE) {
 				Term term = new Term(IndexFields.CC_NAME, elementName);
-				filter = new PrefixFilter(term);
+				nameFilter = new PrefixFilter(term);
 			} else if (matchRule == MatchRule.PATTERN) {
-				booleanQuery.add(new WildcardQuery(nameTerm), BooleanClause.Occur.MUST);
+				nameFilter = new QueryWrapperFilter(new WildcardQuery(nameCaseInsensitiveTerm));
 			} else {
 				throw new UnsupportedOperationException();
 			}
-			if (filter != null) {
-				booleanFilter.add(filter, Occur.MUST);
+			if (nameFilter != null) {
+				filter.add(nameFilter, Occur.MUST);
 			}
 		}
-
-		if (qualifier != null) {
-			booleanFilter.add(new TermFilter(new Term(IndexFields.QUALIFIER, qualifier)), Occur.MUST);
+		if (qualifier != null && !qualifier.isEmpty()) {
+			filter.add(new TermFilter(new Term(IndexFields.QUALIFIER, qualifier)), Occur.MUST);
 		}
-
-		if (parent != null) {
-			booleanFilter.add(new TermFilter(new Term(IndexFields.PARENT, parent)), Occur.MUST);
+		if (parent != null && !parent.isEmpty()) {
+			filter.add(new TermFilter(new Term(IndexFields.PARENT, parent)), Occur.MUST);
 		}
-
-		//booleanFilter.add(new NumberFilter(IndexFields.ELEMENT_TYPE, elementType), Occur.MUST);
-
-		int occurenceType = searchForRefs ? IndexFields.TYPE_REFERENCE : IndexFields.TYPE_DECLARATION;
-		//booleanFilter.add(new NumberFilter(IndexFields.TYPE, occurenceType), Occur.MUST);
-
+		filter.add(DocValuesRangeFilter.newLongRange(IndexFields.ELEMENT_TYPE, Long.valueOf(elementType),
+				Long.valueOf(elementType), true, true), Occur.MUST);
 		if (trueFlags != 0 || falseFlags != 0) {
-			booleanFilter.add(new BitFlagsFilter(IndexFields.FLAGS, trueFlags, falseFlags), Occur.MUST);
+			filter.add(new BitFlagsFilter(IndexFields.FLAGS, trueFlags, falseFlags), Occur.MUST);
 		}
-
-		for (IPath path : scope.enclosingProjectsAndZips()) {
-			String container = path.toString().toLowerCase();
-			booleanQuery.add(new TermQuery(new Term(IndexFields.CONTAINER, container)), BooleanClause.Occur.SHOULD);
-		}
-
-		IndexSearcher indexSearcher = null;
-
-		try {
-			LuceneIndexerPlugin.getSearcherManager().maybeRefresh();
-			indexSearcher = LuceneIndexerPlugin.getSearcherManager().acquire();
-
-			// if (limit == 0) {
-			// limit = Integer.MAX_VALUE;
-			// }
-
-			SearchElementHandler elementHandler = new SearchElementHandler(scope, requestor);
-			DocumentCollector collector = new DocumentCollector();
-			indexSearcher.search(booleanQuery, booleanFilter, collector);
-			Iterator<DocumentEntity> iterator = collector.iterator();
-			while (iterator.hasNext()) {
-				DocumentEntity documentEntity = iterator.next();
-				elementHandler.handle(documentEntity, searchForRefs);
+		List<String> scripts = SearchScope.getScripts(scope);
+		if (!scripts.isEmpty()) {
+			BooleanFilter scriptFilter = new BooleanFilter();
+			for (String script : scripts) {
+				scriptFilter.add(new TermFilter(new Term(IndexFields.PATH, script)), Occur.MUST);
 			}
-			System.out.println("SEARCH: elementName:" + elementName + " -> elementType:" + elementType
-					+ " -> searchFor:" + searchFor + " -> results:" + collector.resultSize() + " TIME: "
-					+ (System.currentTimeMillis() - time));
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} finally {
-			if (indexSearcher != null) {
-				try {
-					LuceneIndexerPlugin.getSearcherManager().release(indexSearcher);
-				} catch (IOException e) {
-					e.printStackTrace();
+			filter.add(scriptFilter, Occur.MUST);
+		}
+		return filter;
+	}
+
+	private void doSearch(final int elementType, String qualifier, String elementName, String parent,
+			final int trueFlags, final int falseFlags, int limit, final boolean searchForRefs, MatchRule matchRule,
+			IDLTKSearchScope scope, ISearchRequestor requestor, IProgressMonitor monitor) {
+		BooleanFilter filter = createFilter(elementType, qualifier, elementName, parent, trueFlags, falseFlags,
+				searchForRefs, matchRule, scope);
+		IndexSearcher indexSearcher = null;
+		Query query = new MatchAllDocsQuery();
+		final SearchElementHandler entityHandler = new SearchElementHandler(scope, requestor);
+		List<DocumentEntity> results = new ArrayList<>();
+		for (String container : SearchScope.getContainers(scope)) {
+			// Use index searcher for given container and index type
+			SearcherManager searcherManager = LuceneIndexerManager.INSTANCE.findSearcher(container,
+					searchForRefs ? IndexType.REFERENCES : IndexType.DECLARATIONS);
+			try {
+				indexSearcher = searcherManager.acquire();
+				indexSearcher.search(query, filter, new ResultsCollector(container, results));
+			} catch (IOException e) {
+				Logger.logException(e);
+			} finally {
+				if (indexSearcher != null) {
+					try {
+						searcherManager.release(indexSearcher);
+					} catch (IOException e) {
+						Logger.logException(e);
+					}
 				}
 			}
 		}
+		// Sort final results by element name
+		Collections.sort(results, new Comparator<DocumentEntity>() {
+			@Override
+			public int compare(DocumentEntity e1, DocumentEntity e2) {
+				return e1.getElementName().compareToIgnoreCase(e2.getElementName());
+			}
+		});
+		// Pass results to entity handler
+		for (DocumentEntity result : results) {
+			entityHandler.handle(result, searchForRefs);
+		}
 	}
+
 }

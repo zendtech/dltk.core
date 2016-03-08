@@ -1,12 +1,12 @@
 package org.eclipse.dltk.core.index.lucene;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.atomic.AtomicLong;
 
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.IndexWriter;
@@ -16,15 +16,14 @@ import org.apache.lucene.index.NumericDocValues;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.queries.BooleanFilter;
 import org.apache.lucene.queries.TermFilter;
-import org.apache.lucene.search.BooleanClause.Occur;
 import org.apache.lucene.search.Collector;
 import org.apache.lucene.search.ConstantScoreQuery;
-import org.apache.lucene.search.FilteredQuery;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.LeafCollector;
 import org.apache.lucene.search.MatchAllDocsQuery;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.Scorer;
+import org.apache.lucene.search.BooleanClause.Occur;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.dltk.core.DLTKLanguageManager;
 import org.eclipse.dltk.core.IDLTKLanguageToolkit;
@@ -33,220 +32,164 @@ import org.eclipse.dltk.core.IModelElement;
 import org.eclipse.dltk.core.ISourceModule;
 import org.eclipse.dltk.core.environment.EnvironmentPathUtils;
 import org.eclipse.dltk.core.environment.IFileHandle;
+import org.eclipse.dltk.core.index.lucene.LuceneIndexerManager.IndexType;
 import org.eclipse.dltk.core.index2.AbstractIndexer;
 import org.eclipse.dltk.core.index2.search.ISearchEngine;
 import org.eclipse.dltk.internal.core.ExternalSourceModule;
 import org.eclipse.dltk.internal.core.SourceModule;
 import org.eclipse.dltk.internal.core.util.Util;
 
+@SuppressWarnings("restriction")
 public class LuceneIndexer extends AbstractIndexer {
 
-	private String filename;
-	private String container;
-
-	private IndexWriter indexWriter;
-
-	@Override
-	public void addDeclaration(DeclarationInfo info) {
-		DocumentWrapper document = new DocumentWrapper();
-		document.setPath(filename);
-		document.setContainer(container);
-		document.setType(IndexFields.TYPE_DECLARATION);
-
-		document.setElementName(info.elementName);
-		document.setElementType(info.elementType);
-
-		document.setOffset(info.offset);
-		document.setLength(info.length);
-
-		document.setMetadata(info.metadata);
-		document.setQualifier(info.qualifier);
-		document.setDoc(info.doc);
-		document.setParent(info.parent);
-
-		document.setFlags(info.flags);
-		document.setNameOffset(info.nameOffset);
-		document.setNameLength(info.nameLength);
-		document.setCCName(info.elementName);
-
-		try {
-			indexWriter.addDocument(document.getDocument());
-			// System.out.println(document.getDocument());
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+	private static final class TimestampsCollector implements Collector {
+		
+		private static final Set<String> fFields = new HashSet<>(Arrays.asList(IndexFields.PATH));
+		
+		private final Map<String, Long> fResult;
+		
+		public TimestampsCollector(Map<String, Long> result) {
+			this.fResult = result;
 		}
+
+		@Override
+		public LeafCollector getLeafCollector(LeafReaderContext context) throws IOException {
+			final LeafReader reader = context.reader();
+			final NumericDocValues timestampField = context.reader().getNumericDocValues(IndexFields.TIMESTAMP);
+			return new LeafCollector() {
+				@Override
+				public void setScorer(Scorer scorer) throws IOException {
+					// ignore
+				}
+
+				@Override
+				public void collect(int docId) throws IOException {
+					Document document = reader.document(docId, fFields);
+					fResult.put(document.get(IndexFields.PATH), timestampField.get(docId));
+				}
+			};
+		}
+		
 	}
+	
+	private String fFilename;
+	private String fContainer;
 
 	@Override
-	public void addReference(ReferenceInfo info) {
-		DocumentWrapper document = new DocumentWrapper();
-		document.setPath(filename);
-		document.setContainer(container);
-		document.setType(IndexFields.TYPE_REFERENCE);
-
-		document.setElementName(info.elementName);
-		document.setElementType(info.elementType);
-
-		document.setOffset(info.offset);
-		document.setLength(info.length);
-
-		document.setMetadata(info.metadata);
-		document.setQualifier(info.qualifier);
-
-		try {
-			indexWriter.addDocument(document.getDocument());
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-
-	@Override
-	public void indexDocument(ISourceModule sourceModule) {
-		indexWriter = LuceneIndexerPlugin.getIndexWriter();
-		if (indexWriter == null) {
-			return;
-		}
-		final IFileHandle fileHandle = EnvironmentPathUtils.getFile(sourceModule);
-		// IndexSearcher indexSearcher = null;
-		try {
-			IDLTKLanguageToolkit toolkit = DLTKLanguageManager.getLanguageToolkit(sourceModule);
-			if (toolkit == null) {
-				return;
-			}
-
-			IPath containerPath;
-			if (sourceModule instanceof SourceModule) {
-				containerPath = sourceModule.getScriptProject().getPath();
-			} else {
-				containerPath = sourceModule.getAncestor(IModelElement.PROJECT_FRAGMENT).getPath();
-			}
-
-			String relativePath;
-			if (toolkit instanceof IDLTKLanguageToolkitExtension
-					&& ((IDLTKLanguageToolkitExtension) toolkit).isArchiveFileName(sourceModule.getPath().toString())) {
-				relativePath = ((ExternalSourceModule) sourceModule).getFullPath().toString();
-			} else {
-				relativePath = Util.relativePath(sourceModule.getPath(), containerPath.segmentCount());
-			}
-
-			long lastModified = fileHandle == null ? 0 : fileHandle.lastModified();
-
-			this.container = containerPath.toString();
-			this.filename = relativePath;
-
-			BooleanFilter booleanFilter = new BooleanFilter();
-			booleanFilter.add(new TermFilter(new Term(IndexFields.CONTAINER, container.toLowerCase())), Occur.MUST);
-			booleanFilter.add(new TermFilter(new Term(IndexFields.PATH, filename)), Occur.MUST);
-
-			indexWriter.deleteDocuments(new ConstantScoreQuery(booleanFilter));
-
-			DocumentWrapper document = new DocumentWrapper();
-			document.setPath(relativePath);
-			document.setContainer(container);
-			document.setTimestamp(lastModified);
-
-			indexWriter.addDocument(document.getDocument());
-			super.indexDocument(sourceModule);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-
-	@Override
-	public void removeContainer(IPath containerPath) {
-		IndexWriter indexWriter = LuceneIndexerPlugin.getIndexWriter();
-		if (indexWriter == null) {
-			return;
-		}
-		try {
-			System.out.println("All before docs: " + indexWriter.numDocs());
-			indexWriter.deleteDocuments(new Term(IndexFields.CONTAINER, containerPath.toString().toLowerCase()));
-			System.out.println("All after docs: " + indexWriter.numDocs());
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
-
-	@Override
-	public void removeDocument(IPath containerPath, String relativePath) {
-		IndexWriter indexWriter = LuceneIndexerPlugin.getIndexWriter();
-		if (indexWriter == null) {
-			return;
-		}
-		try {
-			System.out.println("All before ONE doc: " + indexWriter.numDocs());
-
-			String container = containerPath.toString().toLowerCase();
-			BooleanFilter booleanFilter = new BooleanFilter();
-			booleanFilter.add(new TermFilter(new Term(IndexFields.CONTAINER, container)), Occur.MUST);
-			booleanFilter.add(new TermFilter(new Term(IndexFields.PATH, relativePath.toLowerCase())), Occur.MUST);
-
-			indexWriter.deleteDocuments(new ConstantScoreQuery(booleanFilter));
-
-			System.out.println("All after ONE doc: " + indexWriter.numDocs());
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
-
-	@Override
-	public Map<String, Long> getDocuments(IPath containerPath) {
+	public Map<String, Long> getDocuments(IPath container) {
 		IndexSearcher indexSearcher = null;
 		try {
 			final Map<String, Long> result = new HashMap<String, Long>();
-			indexSearcher = LuceneIndexerPlugin.getSearcherManager().acquire();
-
+			indexSearcher = LuceneIndexerManager.INSTANCE
+					.findSearcher(container.toString(), IndexType.TIMESTAMPS).acquire();
 			final Set<String> fields = new HashSet<>();
 			fields.add(IndexFields.PATH);
-
-			String container = containerPath.toString().toLowerCase();
-
-			Collector collector = new Collector() {
-
-				@Override
-				public LeafCollector getLeafCollector(final LeafReaderContext context) throws IOException {
-					final LeafReader reader = context.reader();
-					final NumericDocValues timestampField = context.reader().getNumericDocValues(IndexFields.TIMESTAMP);
-
-					return new LeafCollector() {
-
-						@Override
-						public void setScorer(Scorer arg0) throws IOException {
-						}
-
-						@Override
-						public void collect(int docId) throws IOException {
-							Document document = reader.document(docId, fields);
-							result.put(document.get(IndexFields.PATH), timestampField.get(docId));
-						}
-					};
-				}
-			};
-			BooleanFilter booleanFilter = new BooleanFilter();
-			booleanFilter.add(new TermFilter(new Term(IndexFields.CONTAINER, container)), Occur.MUST);
-			booleanFilter.add(new TimestampFilter(IndexFields.TIMESTAMP), Occur.MUST);
-			indexSearcher.search(new MatchAllDocsQuery(), booleanFilter, collector);
+			indexSearcher.search(new MatchAllDocsQuery(), new TimestampsCollector(result));
 			return result;
 		} catch (IOException e) {
 			e.printStackTrace();
 		} finally {
 			if (indexSearcher != null) {
 				try {
-					LuceneIndexerPlugin.getSearcherManager().release(indexSearcher);
+					LuceneIndexerManager.INSTANCE.findSearcher(container.toString(), IndexType.TIMESTAMPS)
+							.release(indexSearcher);
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
-			}
+			} 
 		}
-
 		return Collections.emptyMap();
 	}
 
 	@Override
 	public ISearchEngine createSearchEngine() {
 		return new LuceneSearchEngine();
+	}
+
+	@Override
+	public void addDeclaration(DeclarationInfo info) {
+		try {
+			IndexWriter writer = LuceneIndexerManager.INSTANCE.findWriter(fContainer, IndexType.DECLARATIONS);
+			writer.addDocument(DocumentFactory.INSTANCE.createForDeclaration(fFilename, info));
+		} catch (IOException e) {
+			Logger.logException(e);
+		}
+	}
+
+	@Override
+	public void addReference(ReferenceInfo info) {
+		try {
+			IndexWriter writer = LuceneIndexerManager.INSTANCE.findWriter(fContainer, IndexType.REFERENCES);
+			writer.addDocument(DocumentFactory.INSTANCE.createForReference(fFilename, info));
+		} catch (IOException e) {
+			Logger.logException(e);
+		}
+	}
+
+	@Override
+	public void indexDocument(ISourceModule sourceModule) {
+		final IFileHandle fileHandle = EnvironmentPathUtils.getFile(sourceModule);
+		try {
+			IDLTKLanguageToolkit toolkit = DLTKLanguageManager.getLanguageToolkit(sourceModule);
+			if (toolkit == null) {
+				return;
+			}
+			resetDocument(sourceModule, toolkit);
+			long lastModified = fileHandle == null ? 0 : fileHandle.lastModified();
+			// Cleanup and write new info...
+			cleanupDocument(fContainer, fFilename);
+			IndexWriter indexWriter = LuceneIndexerManager.INSTANCE.findWriter(fContainer, IndexType.TIMESTAMPS);
+			indexWriter.addDocument(DocumentFactory.INSTANCE.createForTimestamp(fFilename, lastModified));
+			super.indexDocument(sourceModule);
+		} catch (Exception e) {
+			Logger.logException(e);
+		}
+	}
+
+	@Override
+	public void removeContainer(IPath containerPath) {
+		cleanupContainer(containerPath.toString());
+	}
+
+	@Override
+	public void removeDocument(IPath containerPath, String relativePath) {
+		cleanupDocument(containerPath.toString(), relativePath);
+	}
+
+	private void cleanupContainer(String container) {
+		LuceneIndexerManager.INSTANCE.cleanup(container);
+	}
+
+	private void cleanupDocument(String container, String source) {
+		BooleanFilter filter = new BooleanFilter();
+		filter.add(new TermFilter(new Term(IndexFields.PATH, source)), Occur.MUST);
+		Query query = new ConstantScoreQuery(filter);
+		for (IndexType type : IndexType.values()) {
+			IndexWriter writer = LuceneIndexerManager.INSTANCE.findWriter(container, type);
+			try {
+				writer.deleteDocuments(query);
+			} catch (IOException e) {
+				Logger.logException(e);
+			}
+		}
+	}
+
+	private void resetDocument(ISourceModule sourceModule, IDLTKLanguageToolkit toolkit) {
+		IPath containerPath;
+		if (sourceModule instanceof SourceModule) {
+			containerPath = sourceModule.getScriptProject().getPath();
+		} else {
+			containerPath = sourceModule.getAncestor(IModelElement.PROJECT_FRAGMENT).getPath();
+		}
+		String relativePath;
+		if (toolkit instanceof IDLTKLanguageToolkitExtension
+				&& ((IDLTKLanguageToolkitExtension) toolkit).isArchiveFileName(sourceModule.getPath().toString())) {
+			relativePath = ((ExternalSourceModule) sourceModule).getFullPath().toString();
+		} else {
+			relativePath = Util.relativePath(sourceModule.getPath(), containerPath.segmentCount());
+		}
+		this.fContainer = containerPath.toString();
+		this.fFilename = relativePath;
 	}
 
 }

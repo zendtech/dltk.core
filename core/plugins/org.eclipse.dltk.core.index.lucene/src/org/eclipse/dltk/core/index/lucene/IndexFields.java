@@ -6,7 +6,6 @@ public interface IndexFields {
 	String CONTAINER = "container"; //$NON-NLS-1$
 	String TYPE = "type"; //$NON-NLS-1$
 	String TIMESTAMP = "timestamp"; //$NON-NLS-1$
-
 	String ELEMENT_NAME = "elementName"; //$NON-NLS-1$
 	String ELEMENT_NAME_LC = "elementNameLC"; //$NON-NLS-1$
 	String ELEMENT_TYPE = "elementType"; //$NON-NLS-1$
@@ -21,6 +20,4 @@ public interface IndexFields {
 	String NAME_LENGTH = "nameLength"; //$NON-NLS-1$
 	String PARENT = "parent"; //$NON-NLS-1$
 
-	int TYPE_REFERENCE = 1;
-	int TYPE_DECLARATION = 2;
 }
