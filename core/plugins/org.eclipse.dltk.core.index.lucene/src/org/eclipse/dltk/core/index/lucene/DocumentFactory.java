@@ -16,32 +16,36 @@ public enum DocumentFactory {
 	public Document buildReference(String source, ReferenceInfo info) {
 		Document doc = new Document();
 		addTextEntry(doc, IndexFields.PATH, source);
-		addTextLCEntry(doc, IndexFields.ELEMENT_NAME_LC, info.elementName);
 		addTextEntry(doc, IndexFields.ELEMENT_NAME, info.elementName);
 		addStringEntry(doc, IndexFields.QUALIFIER, info.qualifier);
+		addMetadataEntry(doc, info.metadata);
+
+		addTextLCEntry(doc, IndexFields.ELEMENT_NAME_LC, info.elementName);
+
 		addLongEntry(doc, IndexFields.ELEMENT_TYPE, info.elementType);
 		addLongEntry(doc, IndexFields.OFFSET, info.offset);
 		addLongEntry(doc, IndexFields.LENGTH, info.length);
-		addMetadataEntry(doc, info.metadata);
 		return doc;
 	}
 
 	public Document buildDeclaration(String source, DeclarationInfo info) {
 		Document doc = new Document();
 		addTextEntry(doc, IndexFields.PATH, source);
-		addTextLCEntry(doc, IndexFields.ELEMENT_NAME_LC, info.elementName);
 		addTextEntry(doc, IndexFields.ELEMENT_NAME, info.elementName);
-		addCCNameEntry(doc, info.elementName);
 		addStringEntry(doc, IndexFields.PARENT, info.parent);
 		addStringEntry(doc, IndexFields.QUALIFIER, info.qualifier);
+		addMetadataEntry(doc, info.metadata);
+		addDocEntry(doc, info.doc);
+
+		addTextLCEntry(doc, IndexFields.ELEMENT_NAME_LC, info.elementName);
+		addCCNameEntry(doc, info.elementName);
+
 		addLongEntry(doc, IndexFields.ELEMENT_TYPE, info.elementType);
 		addLongEntry(doc, IndexFields.OFFSET, info.offset);
 		addLongEntry(doc, IndexFields.LENGTH, info.length);
 		addLongEntry(doc, IndexFields.NAME_OFFSET, info.nameOffset);
 		addLongEntry(doc, IndexFields.NAME_LENGTH, info.nameLength);
 		addLongEntry(doc, IndexFields.FLAGS, info.flags);
-		addMetadataEntry(doc, info.metadata);
-		addDocEntry(doc, info.doc);
 		return doc;
 	}
 
@@ -111,8 +115,7 @@ public enum DocumentFactory {
 				break;
 			}
 		}
-		camelCaseName = camelCaseNameBuf.length() > 0 ? camelCaseNameBuf
-				.toString() : null;
+		camelCaseName = camelCaseNameBuf.length() > 0 ? camelCaseNameBuf.toString() : null;
 		addTextEntry(doc, IndexFields.CC_NAME, camelCaseName);
 	}
 

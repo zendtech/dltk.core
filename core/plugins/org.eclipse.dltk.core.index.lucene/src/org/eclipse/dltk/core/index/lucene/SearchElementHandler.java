@@ -23,45 +23,62 @@ import org.eclipse.dltk.internal.core.search.DLTKSearchScope;
 
 public class SearchElementHandler {
 
-	private static final String EMPTY = ""; //$NON-NLS-1$
+	private class FilePathHandler {
+
+		private IPath folderPath = Path.EMPTY;
+		private String fileName;
+
+		public FilePathHandler(String filePath) {
+			this.fileName = filePath;
+			int i = filePath.lastIndexOf('/');
+			if (i == -1) {
+				i = filePath.lastIndexOf('\\');
+			}
+			if (i != -1) {
+				this.folderPath = new Path(filePath.substring(0, i));
+				this.fileName = filePath.substring(i + 1);
+			}
+		}
+
+		public IPath getFolderPath() {
+			return folderPath;
+		}
+
+		public String getFileName() {
+			return fileName;
+		}
+	}
+
 	private Map<String, IProjectFragment> projectFragmentCache = new HashMap<String, IProjectFragment>();
 	private Map<String, ISourceModule> sourceModuleCache = new HashMap<String, ISourceModule>();
 	private ISearchRequestor searchRequestor;
 	private IDLTKSearchScope scope;
 
-	public SearchElementHandler(IDLTKSearchScope scope,
-			ISearchRequestor searchRequestor) {
+	public SearchElementHandler(IDLTKSearchScope scope, ISearchRequestor searchRequestor) {
 		this.scope = scope;
 		this.searchRequestor = searchRequestor;
 	}
 
 	public void handle(DocumentEntity document, boolean isReference) {
 		String containerPath = document.getContainer();
-		IDLTKLanguageToolkit toolkit = ((DLTKSearchScope) scope)
-				.getLanguageToolkit();
+		IDLTKLanguageToolkit toolkit = ((DLTKSearchScope) scope).getLanguageToolkit();
 		if (toolkit instanceof IDLTKLanguageToolkitExtension
-				&& ((IDLTKLanguageToolkitExtension) toolkit)
-						.isArchiveFileName(containerPath)) {
-			containerPath = containerPath
-					+ IDLTKSearchScope.FILE_ENTRY_SEPARATOR;
+				&& ((IDLTKLanguageToolkitExtension) toolkit).isArchiveFileName(containerPath)) {
+			containerPath = containerPath + IDLTKSearchScope.FILE_ENTRY_SEPARATOR;
 		}
-		if (containerPath.length() != 0
-				&& containerPath.charAt(containerPath.length() - 1) != IPath.SEPARATOR) {
+		if (containerPath.length() != 0 && containerPath.charAt(containerPath.length() - 1) != IPath.SEPARATOR) {
 			containerPath = containerPath + IPath.SEPARATOR;
 		}
 
 		String filePath = document.getPath();
 		final String resourcePath = containerPath + filePath;
 
-		IProjectFragment projectFragment = projectFragmentCache
-				.get(containerPath);
+		IProjectFragment projectFragment = projectFragmentCache.get(containerPath);
 
 		if (projectFragment == null) {
-			projectFragment = ((DLTKSearchScope) scope)
-					.projectFragment(resourcePath);
+			projectFragment = ((DLTKSearchScope) scope).projectFragment(resourcePath);
 			if (projectFragment == null) {
-				projectFragment = ((DLTKSearchScope) scope)
-						.projectFragment(containerPath);
+				projectFragment = ((DLTKSearchScope) scope).projectFragment(containerPath);
 			}
 			projectFragmentCache.put(containerPath, projectFragment);
 		}
@@ -74,33 +91,24 @@ public class SearchElementHandler {
 		}
 		ISourceModule sourceModule = sourceModuleCache.get(resourcePath);
 		if (sourceModule == null) {
-			String folderPath = EMPTY;
-			String fileName = filePath;
-			int i = filePath.lastIndexOf('/');
-			if (i == -1) {
-				i = filePath.lastIndexOf('\\');
-			}
-			if (i != -1) {
-				folderPath = filePath.substring(0, i);
-				fileName = filePath.substring(i + 1);
-			}
-			if (projectFragment.isExternal()) {
-				IScriptFolder scriptFolder = new ExternalScriptFolder(
-						(ProjectFragment) projectFragment, new Path(folderPath));
-				sourceModule = scriptFolder.getSourceModule(fileName);
-			} else if (projectFragment.isArchive()) {
-				IScriptFolder scriptFolder = new ArchiveFolder(
-						(ProjectFragment) projectFragment, new Path(folderPath));
-				sourceModule = scriptFolder.getSourceModule(fileName);
+			if (projectFragment.isArchive()) {
+				FilePathHandler filePathHandler = new FilePathHandler(filePath);
+				IScriptFolder scriptFolder = new ArchiveFolder((ProjectFragment) projectFragment,
+						filePathHandler.getFolderPath());
+				sourceModule = scriptFolder.getSourceModule(filePathHandler.getFileName());
+			} else if (projectFragment.isExternal()) {
+				FilePathHandler filePathHandler = new FilePathHandler(filePath);
+				IScriptFolder scriptFolder = new ExternalScriptFolder((ProjectFragment) projectFragment,
+						filePathHandler.getFolderPath());
+				sourceModule = scriptFolder.getSourceModule(filePathHandler.getFileName());
 			} else if (projectFragment.isBuiltin()) {
-				IScriptFolder scriptFolder = new BuiltinScriptFolder(
-						(ProjectFragment) projectFragment, new Path(folderPath));
-				sourceModule = scriptFolder.getSourceModule(fileName);
+				FilePathHandler filePathHandler = new FilePathHandler(filePath);
+				IScriptFolder scriptFolder = new BuiltinScriptFolder((ProjectFragment) projectFragment,
+						filePathHandler.getFolderPath());
+				sourceModule = scriptFolder.getSourceModule(filePathHandler.getFileName());
 			} else {
-				IProject project = projectFragment.getScriptProject()
-						.getProject();
-				sourceModule = DLTKCore.createSourceModuleFrom(project
-						.getFile(filePath));
+				IProject project = projectFragment.getScriptProject().getProject();
+				sourceModule = DLTKCore.createSourceModuleFrom(project.getFile(filePath));
 			}
 			sourceModuleCache.put(resourcePath, sourceModule);
 		}
@@ -116,10 +124,9 @@ public class SearchElementHandler {
 		String qualifierz = document.getQualifier();
 		String parentz = document.getParent();
 
-		searchRequestor.match(document.getElementType(), document.getFlags(),
-				document.getOffset(), document.getLength(),
-				document.getNameOffset(), document.getNameLength(), name,
-				metadata, docz, qualifierz, parentz, sourceModule, isReference);
+		searchRequestor.match(document.getElementType(), document.getFlags(), document.getOffset(),
+				document.getLength(), document.getNameOffset(), document.getNameLength(), name, metadata, docz,
+				qualifierz, parentz, sourceModule, isReference);
 
 	}
 

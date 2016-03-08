@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Iterator;
 import java.util.List;
 
 import org.apache.lucene.index.Term;
@@ -151,16 +150,15 @@ public class LuceneSearchEngine2 implements ISearchEngine, ISearchEngineExtensio
 		IndexSearcher indexSearcher = null;
 		Query query = new MatchAllDocsQuery();
 		final SearchElementHandler entityHandler = new SearchElementHandler(scope, requestor);
-		List<DocumentEntity> results = new ArrayList<DocumentEntity>();
+		List<DocumentEntity> results = new ArrayList<>();
 		for (String container : SearchScope.getContainers(scope)) {
 			// Use index searcher for given container and index type
 			SearcherManager searcherManager = LuceneIndexManager.INSTANCE.findSearcher(container,
 					searchForRefs ? IndexType.REFERENCES : IndexType.DECLARATIONS);
-			DocumentCollector2 collector = new DocumentCollector2(container);
 			try {
 				searcherManager.maybeRefresh();
 				indexSearcher = searcherManager.acquire();
-				indexSearcher.search(query, filter, collector);
+				indexSearcher.search(query, filter, new DocumentCollector2(container, results));
 			} catch (IOException e) {
 				Logger.logException(e);
 			} finally {
@@ -172,10 +170,6 @@ public class LuceneSearchEngine2 implements ISearchEngine, ISearchEngineExtensio
 					}
 				}
 			}
-			Iterator<DocumentEntity> iterator = collector.iterator();
-			while (iterator.hasNext()) {
-				results.add(iterator.next());
-			}
 		}
 		// Sort final results by element name
 		Collections.sort(results, new Comparator<DocumentEntity>() {
@@ -184,7 +178,7 @@ public class LuceneSearchEngine2 implements ISearchEngine, ISearchEngineExtensio
 				return e1.getElementName().compareToIgnoreCase(e2.getElementName());
 			}
 		});
-		
+
 		// Pass results to entity handler
 		for (DocumentEntity result : results) {
 			entityHandler.handle(result, searchForRefs);

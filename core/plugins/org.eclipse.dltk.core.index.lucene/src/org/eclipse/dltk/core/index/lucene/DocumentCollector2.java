@@ -1,74 +1,62 @@
 package org.eclipse.dltk.core.index.lucene;
 
-import static org.eclipse.dltk.core.index.lucene.IndexFields.*;
+import static org.eclipse.dltk.core.index.lucene.IndexFields.DOC;
+import static org.eclipse.dltk.core.index.lucene.IndexFields.ELEMENT_NAME;
+import static org.eclipse.dltk.core.index.lucene.IndexFields.ELEMENT_TYPE;
+import static org.eclipse.dltk.core.index.lucene.IndexFields.FLAGS;
+import static org.eclipse.dltk.core.index.lucene.IndexFields.LENGTH;
+import static org.eclipse.dltk.core.index.lucene.IndexFields.METADATA;
+import static org.eclipse.dltk.core.index.lucene.IndexFields.NAME_LENGTH;
+import static org.eclipse.dltk.core.index.lucene.IndexFields.NAME_OFFSET;
+import static org.eclipse.dltk.core.index.lucene.IndexFields.OFFSET;
+import static org.eclipse.dltk.core.index.lucene.IndexFields.PARENT;
+import static org.eclipse.dltk.core.index.lucene.IndexFields.PATH;
+import static org.eclipse.dltk.core.index.lucene.IndexFields.QUALIFIER;
 
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.lucene.document.Document;
+import org.apache.lucene.index.FieldInfo;
 import org.apache.lucene.index.LeafReader;
 import org.apache.lucene.index.LeafReaderContext;
 import org.apache.lucene.index.NumericDocValues;
+import org.apache.lucene.index.StoredFieldVisitor;
+import org.apache.lucene.search.Collector;
 import org.apache.lucene.search.LeafCollector;
 import org.apache.lucene.search.Scorer;
 
-public class DocumentCollector2 implements CollectionCollector {
-	
+public class DocumentCollector2 implements Collector {
+
 	private String fContainer;
-	
-	private static final String[] NUMERIC_FIELDS = new String[] { ELEMENT_TYPE,
-			OFFSET, LENGTH, FLAGS, NAME_OFFSET, NAME_LENGTH };
 
-	private static final String[] TEXTUAL_FIELDS = new String[] { PATH,
-			ELEMENT_NAME, QUALIFIER, PARENT, METADATA, DOC };
+	private static final String[] NUMERIC_FIELDS = new String[] { ELEMENT_TYPE, OFFSET, LENGTH, FLAGS, NAME_OFFSET,
+			NAME_LENGTH };
 
-	private class IteratorWrapper implements Iterator<DocumentEntity> {
-
-		private Iterator<DocumentEntity> fIterator;
-
-		public IteratorWrapper(Set<DocumentEntity> result) {
-			this.fIterator = result.iterator();
-		}
-
-		@Override
-		public boolean hasNext() {
-			return fIterator.hasNext();
-		}
-
-		@Override
-		public DocumentEntity next() {
-			return fIterator.next();
-		}
-
-		@Override
-		public void remove() {
-			fIterator.remove();
-		}
-
-	}
+	private static final String[] TEXTUAL_FIELDS = new String[] { PATH, ELEMENT_NAME, QUALIFIER, PARENT, METADATA,
+			DOC };
 
 	private Set<String> fFields;
 	private Map<String, NumericDocValues> fDocNumValues;
-	private Set<DocumentEntity> fResult = new HashSet<>();
+	private List<DocumentEntity> fResult;
+	private Map<String, String> fValues = new HashMap<>(6);
 
-	public DocumentCollector2(String container) {
+	public DocumentCollector2(String container, List<DocumentEntity> result) {
 		this.fContainer = container;
+		this.fResult = result;
 		this.fFields = new HashSet<>(Arrays.asList(TEXTUAL_FIELDS));
 	}
 
 	@Override
-	public LeafCollector getLeafCollector(final LeafReaderContext context)
-			throws IOException {
+	public LeafCollector getLeafCollector(final LeafReaderContext context) throws IOException {
 		final LeafReader reader = context.reader();
 		fDocNumValues = new HashMap<String, NumericDocValues>();
 		for (String field : NUMERIC_FIELDS) {
-			NumericDocValues docValues = context.reader().getNumericDocValues(
-					field);
+			NumericDocValues docValues = context.reader().getNumericDocValues(field);
 			if (docValues != null) {
 				fDocNumValues.put(field, docValues);
 			}
@@ -85,21 +73,7 @@ public class DocumentCollector2 implements CollectionCollector {
 			}
 
 		};
-		
-	}
 
-	@Override
-	public int resultSize() {
-		return fResult.size();
-	}
-
-	@Override
-	public Iterator<DocumentEntity> iterator() {
-		return new IteratorWrapper(fResult);
-	}
-
-	private int get(String field, int docId) {
-		return (int) fDocNumValues.get(field).get(docId);
 	}
 
 	private void addDocument(int docId, LeafReader reader) throws IOException {
@@ -112,15 +86,38 @@ public class DocumentCollector2 implements CollectionCollector {
 		documentEntity.setFlags(get(FLAGS, docId));
 		documentEntity.setNameOffset(get(NAME_OFFSET, docId));
 		documentEntity.setNameLength(get(NAME_LENGTH, docId));
+
 		// Read other field values
-		Document document = reader.document(docId, fFields);
-		documentEntity.setPath(document.get(PATH));
-		documentEntity.setElementName(document.get(ELEMENT_NAME));
-		documentEntity.setQualifier(document.get(QUALIFIER));
-		documentEntity.setParent(document.get(PARENT));
-		documentEntity.setDoc(document.get(DOC));
-		documentEntity.setMetadata(document.get(METADATA));
+		reader.document(docId, new StoredFieldVisitor() {
+
+			@Override
+			public Status needsField(FieldInfo fieldInfo) throws IOException {
+				return fFields.contains(fieldInfo.name) == true ? Status.YES : Status.STOP;
+			}
+
+			@Override
+			public void stringField(FieldInfo fieldInfo, String value) throws IOException {
+				fValues.put(fieldInfo.name, value);
+			}
+		});
+		documentEntity.setQualifier(fValues.get(QUALIFIER));
+		documentEntity.setParent(fValues.get(PARENT));
+		documentEntity.setElementName(fValues.get(ELEMENT_NAME));
+
+		documentEntity.setPath(fValues.get(PATH));
+		documentEntity.setDoc(fValues.get(DOC));
+		documentEntity.setMetadata(fValues.get(METADATA));
+
 		fResult.add(documentEntity);
+
+		fValues.clear();
 	}
 
+	private int get(String field, int docId) {
+		NumericDocValues docValues = fDocNumValues.get(field);
+		if (docValues != null) {
+			return (int) docValues.get(docId);
+		}
+		return 0;
+	}
 }
