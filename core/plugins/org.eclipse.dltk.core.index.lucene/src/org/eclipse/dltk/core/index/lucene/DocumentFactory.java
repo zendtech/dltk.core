@@ -9,46 +9,46 @@ import org.apache.lucene.document.TextField;
 import org.eclipse.dltk.core.index2.IIndexingRequestor.DeclarationInfo;
 import org.eclipse.dltk.core.index2.IIndexingRequestor.ReferenceInfo;
 
+import static org.eclipse.dltk.core.index.lucene.IndexFields.*;
+
 public enum DocumentFactory {
 
 	INSTANCE;
 
 	public Document createForReference(String source, ReferenceInfo info) {
 		Document doc = new Document();
-		addTextEntry(doc, IndexFields.PATH, source);
-		addTextEntry(doc, IndexFields.ELEMENT_NAME, info.elementName);
-		addStringEntry(doc, IndexFields.QUALIFIER, info.qualifier);
+		addTextEntry(doc, PATH, source);
+		addTextEntry(doc, ELEMENT_NAME, info.elementName);
+		addStringEntry(doc, QUALIFIER, info.qualifier);
 		addMetadataEntry(doc, info.metadata);
-		addTextLCEntry(doc, IndexFields.ELEMENT_NAME_LC, info.elementName);
-		addLongEntry(doc, IndexFields.ELEMENT_TYPE, info.elementType);
-		addLongEntry(doc, IndexFields.OFFSET, info.offset);
-		addLongEntry(doc, IndexFields.LENGTH, info.length);
+		addTextLCEntry(doc, ELEMENT_NAME_LC, info.elementName);
+		addLongEntry(doc, OFFSET, info.offset);
+		addLongEntry(doc, LENGTH, info.length);
 		return doc;
 	}
 
 	public Document createForDeclaration(String source, DeclarationInfo info) {
 		Document doc = new Document();
-		addTextEntry(doc, IndexFields.PATH, source);
-		addTextEntry(doc, IndexFields.ELEMENT_NAME, info.elementName);
-		addStringEntry(doc, IndexFields.PARENT, info.parent);
-		addStringEntry(doc, IndexFields.QUALIFIER, info.qualifier);
+		addTextEntry(doc, PATH, source);
+		addTextEntry(doc, ELEMENT_NAME, info.elementName);
+		addStringEntry(doc, PARENT, info.parent);
+		addStringEntry(doc, QUALIFIER, info.qualifier);
 		addMetadataEntry(doc, info.metadata);
 		addDocEntry(doc, info.doc);
-		addTextLCEntry(doc, IndexFields.ELEMENT_NAME_LC, info.elementName);
+		addTextLCEntry(doc, ELEMENT_NAME_LC, info.elementName);
 		addCCNameEntry(doc, info.elementName);
-		addLongEntry(doc, IndexFields.ELEMENT_TYPE, info.elementType);
-		addLongEntry(doc, IndexFields.OFFSET, info.offset);
-		addLongEntry(doc, IndexFields.LENGTH, info.length);
-		addLongEntry(doc, IndexFields.NAME_OFFSET, info.nameOffset);
-		addLongEntry(doc, IndexFields.NAME_LENGTH, info.nameLength);
-		addLongEntry(doc, IndexFields.FLAGS, info.flags);
+		addLongEntry(doc, OFFSET, info.offset);
+		addLongEntry(doc, LENGTH, info.length);
+		addLongEntry(doc, NAME_OFFSET, info.nameOffset);
+		addLongEntry(doc, NAME_LENGTH, info.nameLength);
+		addLongEntry(doc, FLAGS, info.flags);
 		return doc;
 	}
 
 	public Document createForTimestamp(String source, long timestamp) {
 		Document doc = new Document();
-		addTextEntry(doc, IndexFields.PATH, source);
-		addLongEntry(doc, IndexFields.TIMESTAMP, timestamp);
+		addTextEntry(doc, PATH, source);
+		addLongEntry(doc, TIMESTAMP, timestamp);
 		return doc;
 	}
 
@@ -85,7 +85,7 @@ public enum DocumentFactory {
 		fieldType.setOmitNorms(true);
 		fieldType.setStored(true);
 		fieldType.setTokenized(false);
-		doc.add(new Field(IndexFields.METADATA, metadata, fieldType));
+		doc.add(new Field(METADATA, metadata, fieldType));
 	}
 	
 	private void addDocEntry(Document doc, String phpDoc) {
@@ -96,7 +96,7 @@ public enum DocumentFactory {
 		fieldType.setOmitNorms(true);
 		fieldType.setStored(true);
 		fieldType.setTokenized(false);
-		doc.add(new Field(IndexFields.DOC, phpDoc, fieldType));
+		doc.add(new Field(DOC, phpDoc, fieldType));
 	}
 	
 	private void addCCNameEntry(Document doc, String name) {
@@ -112,7 +112,7 @@ public enum DocumentFactory {
 			}
 		}
 		camelCaseName = camelCaseNameBuf.length() > 0 ? camelCaseNameBuf.toString() : null;
-		addTextEntry(doc, IndexFields.CC_NAME, camelCaseName);
+		addTextEntry(doc, CC_NAME, camelCaseName);
 	}
 
 }

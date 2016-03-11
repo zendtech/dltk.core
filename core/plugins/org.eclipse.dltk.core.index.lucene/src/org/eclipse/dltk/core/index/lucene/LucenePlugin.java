@@ -4,13 +4,13 @@ import org.eclipse.core.runtime.Plugin;
 import org.eclipse.core.runtime.jobs.Job;
 import org.osgi.framework.BundleContext;
 
-public class LuceneIndexerPlugin extends Plugin {
+public class LucenePlugin extends Plugin {
 
 	public static final Object LUCENE_JOB_FAMILY = new Object();
 
-	private static LuceneIndexerPlugin plugin;
+	private static LucenePlugin plugin;
 	
-	public static LuceneIndexerPlugin getDefault() {
+	public static LucenePlugin getDefault() {
 		return plugin;
 	}
 
@@ -38,8 +38,8 @@ public class LuceneIndexerPlugin extends Plugin {
 	@Override
 	public void stop(BundleContext context) throws Exception {
 		try {
-			Job.getJobManager().join(LUCENE_JOB_FAMILY, null);;
-			LuceneIndexerManager.INSTANCE.shutdown();
+			Job.getJobManager().join(LUCENE_JOB_FAMILY, null);
+			LuceneManager.INSTANCE.shutdown();
 			plugin = null;
 		} finally {
 			super.stop(context);

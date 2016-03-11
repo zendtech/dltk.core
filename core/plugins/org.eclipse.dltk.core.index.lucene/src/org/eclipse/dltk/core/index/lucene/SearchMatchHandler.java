@@ -22,47 +22,47 @@ import org.eclipse.dltk.internal.core.ProjectFragment;
 import org.eclipse.dltk.internal.core.search.DLTKSearchScope;
 
 @SuppressWarnings("restriction")
-public class SearchElementHandler {
+public class SearchMatchHandler {
 
 	private class FilePathHandler {
 
-		private IPath folderPath = Path.EMPTY;
-		private String fileName;
+		private IPath fFolderPath = Path.EMPTY;
+		private String fFileName;
 
 		public FilePathHandler(String filePath) {
-			this.fileName = filePath;
+			this.fFileName = filePath;
 			int i = filePath.lastIndexOf('/');
 			if (i == -1) {
 				i = filePath.lastIndexOf('\\');
 			}
 			if (i != -1) {
-				this.folderPath = new Path(filePath.substring(0, i));
-				this.fileName = filePath.substring(i + 1);
+				this.fFolderPath = new Path(filePath.substring(0, i));
+				this.fFileName = filePath.substring(i + 1);
 			}
 		}
 
 		public IPath getFolderPath() {
-			return folderPath;
+			return fFolderPath;
 		}
 
 		public String getFileName() {
-			return fileName;
+			return fFileName;
 		}
 	}
 
-	private Map<String, IProjectFragment> projectFragmentCache = new HashMap<String, IProjectFragment>();
-	private Map<String, ISourceModule> sourceModuleCache = new HashMap<String, ISourceModule>();
-	private ISearchRequestor searchRequestor;
-	private IDLTKSearchScope scope;
+	private Map<String, IProjectFragment> fProjectFragmentCache = new HashMap<String, IProjectFragment>();
+	private Map<String, ISourceModule> fSourceModuleCache = new HashMap<String, ISourceModule>();
+	private ISearchRequestor fSearchRequestor;
+	private IDLTKSearchScope fScope;
 
-	public SearchElementHandler(IDLTKSearchScope scope, ISearchRequestor searchRequestor) {
-		this.scope = scope;
-		this.searchRequestor = searchRequestor;
+	public SearchMatchHandler(IDLTKSearchScope scope, ISearchRequestor searchRequestor) {
+		this.fScope = scope;
+		this.fSearchRequestor = searchRequestor;
 	}
 
-	public void handle(DocumentEntity document, boolean isReference) {
-		String containerPath = document.getContainer();
-		IDLTKLanguageToolkit toolkit = ((DLTKSearchScope) scope).getLanguageToolkit();
+	public void handle(SearchMatch match, boolean isReference) {
+		String containerPath = match.getContainer();
+		IDLTKLanguageToolkit toolkit = ((DLTKSearchScope) fScope).getLanguageToolkit();
 		if (toolkit instanceof IDLTKLanguageToolkitExtension
 				&& ((IDLTKLanguageToolkitExtension) toolkit).isArchiveFileName(containerPath)) {
 			containerPath = containerPath + IDLTKSearchScope.FILE_ENTRY_SEPARATOR;
@@ -70,23 +70,23 @@ public class SearchElementHandler {
 		if (containerPath.length() != 0 && containerPath.charAt(containerPath.length() - 1) != IPath.SEPARATOR) {
 			containerPath = containerPath + IPath.SEPARATOR;
 		}
-		String filePath = document.getPath();
+		String filePath = match.getPath();
 		final String resourcePath = containerPath + filePath;
-		IProjectFragment projectFragment = projectFragmentCache.get(containerPath);
+		IProjectFragment projectFragment = fProjectFragmentCache.get(containerPath);
 		if (projectFragment == null) {
-			projectFragment = ((DLTKSearchScope) scope).projectFragment(resourcePath);
+			projectFragment = ((DLTKSearchScope) fScope).projectFragment(resourcePath);
 			if (projectFragment == null) {
-				projectFragment = ((DLTKSearchScope) scope).projectFragment(containerPath);
+				projectFragment = ((DLTKSearchScope) fScope).projectFragment(containerPath);
 			}
-			projectFragmentCache.put(containerPath, projectFragment);
+			fProjectFragmentCache.put(containerPath, projectFragment);
 		}
 		if (projectFragment == null) {
 			return;
 		}
-		if (!scope.encloses(resourcePath)) {
+		if (!fScope.encloses(resourcePath)) {
 			return;
 		}
-		ISourceModule sourceModule = sourceModuleCache.get(resourcePath);
+		ISourceModule sourceModule = fSourceModuleCache.get(resourcePath);
 		if (sourceModule == null) {
 			if (projectFragment.isArchive()) {
 				FilePathHandler filePathHandler = new FilePathHandler(filePath);
@@ -107,21 +107,21 @@ public class SearchElementHandler {
 				IProject project = projectFragment.getScriptProject().getProject();
 				sourceModule = DLTKCore.createSourceModuleFrom(project.getFile(filePath));
 			}
-			sourceModuleCache.put(resourcePath, sourceModule);
+			fSourceModuleCache.put(resourcePath, sourceModule);
 		}
-		String name = document.getElementName();
+		String name = match.getElementName();
 		if (name == null) {
 			return;
 		}
 		ModelManager modelManager = ModelManager.getModelManager();
 		name = modelManager.intern(name);
-		String metadata = document.getMetadata();
-		String doc = document.getDoc();
-		String qualifier = document.getQualifier();
-		String parent = document.getParent();
+		String metadata = match.getMetadata();
+		String doc = match.getDoc();
+		String qualifier = match.getQualifier();
+		String parent = match.getParent();
 		// Pass to requestor
-		searchRequestor.match(document.getElementType(), document.getFlags(), document.getOffset(),
-				document.getLength(), document.getNameOffset(), document.getNameLength(), name, metadata, doc,
+		fSearchRequestor.match(match.getElementType(), match.getFlags(), match.getOffset(),
+				match.getLength(), match.getNameOffset(), match.getNameLength(), name, metadata, doc,
 				qualifier, parent, sourceModule, isReference);
 
 	}

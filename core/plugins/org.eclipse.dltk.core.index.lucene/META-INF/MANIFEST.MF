@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Indexer
 Bundle-SymbolicName: org.eclipse.dltk.core.index.lucene;singleton:=true
 Bundle-Version: 1.0.0.qualifier
-Bundle-Activator: org.eclipse.dltk.core.index.lucene.LuceneIndexerPlugin
+Bundle-Activator: org.eclipse.dltk.core.index.lucene.LucenePlugin
 Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.core.resources,
  org.eclipse.dltk.core

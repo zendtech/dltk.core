@@ -1,17 +1,6 @@
 package org.eclipse.dltk.core.index.lucene;
 
-import static org.eclipse.dltk.core.index.lucene.IndexFields.DOC;
-import static org.eclipse.dltk.core.index.lucene.IndexFields.ELEMENT_NAME;
-import static org.eclipse.dltk.core.index.lucene.IndexFields.ELEMENT_TYPE;
-import static org.eclipse.dltk.core.index.lucene.IndexFields.FLAGS;
-import static org.eclipse.dltk.core.index.lucene.IndexFields.LENGTH;
-import static org.eclipse.dltk.core.index.lucene.IndexFields.METADATA;
-import static org.eclipse.dltk.core.index.lucene.IndexFields.NAME_LENGTH;
-import static org.eclipse.dltk.core.index.lucene.IndexFields.NAME_OFFSET;
-import static org.eclipse.dltk.core.index.lucene.IndexFields.OFFSET;
-import static org.eclipse.dltk.core.index.lucene.IndexFields.PARENT;
-import static org.eclipse.dltk.core.index.lucene.IndexFields.PATH;
-import static org.eclipse.dltk.core.index.lucene.IndexFields.QUALIFIER;
+import static org.eclipse.dltk.core.index.lucene.IndexFields.*;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -24,6 +13,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.lucene.index.DocValues;
 import org.apache.lucene.index.FieldInfo;
 import org.apache.lucene.index.LeafReader;
 import org.apache.lucene.index.LeafReaderContext;
@@ -33,8 +23,10 @@ import org.apache.lucene.index.Term;
 import org.apache.lucene.queries.BooleanFilter;
 import org.apache.lucene.queries.TermFilter;
 import org.apache.lucene.search.BooleanClause.Occur;
+import org.apache.lucene.util.Bits;
 import org.apache.lucene.search.Collector;
-import org.apache.lucene.search.DocValuesRangeFilter;
+import org.apache.lucene.search.DocIdSet;
+import org.apache.lucene.search.DocValuesDocIdSet;
 import org.apache.lucene.search.Filter;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.LeafCollector;
@@ -48,7 +40,7 @@ import org.apache.lucene.search.WildcardQuery;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.dltk.core.ScriptModelUtil;
-import org.eclipse.dltk.core.index.lucene.LuceneIndexerManager.IndexType;
+import org.eclipse.dltk.core.index.lucene.LuceneManager.ContainerDataType;
 import org.eclipse.dltk.core.index2.search.ISearchEngine;
 import org.eclipse.dltk.core.index2.search.ISearchEngineExtension;
 import org.eclipse.dltk.core.index2.search.ISearchRequestor;
@@ -98,18 +90,18 @@ public class LuceneSearchEngine implements ISearchEngine, ISearchEngineExtension
 
 	private static final class ResultsCollector implements Collector {
 
-		private static final String[] NUMERIC_FIELDS = new String[] { ELEMENT_TYPE, OFFSET, LENGTH, FLAGS, NAME_OFFSET,
-				NAME_LENGTH };
-		private static final String[] TEXTUAL_FIELDS = new String[] { PATH, ELEMENT_NAME, QUALIFIER, PARENT, METADATA,
-				DOC };
+		private static final String[] NUMERIC_FIELDS = new String[] { OFFSET, LENGTH, FLAGS, NAME_OFFSET, NAME_LENGTH };
+		private static final String[] TEXTUAL_FIELDS = new String[] { PATH, ELEMENT_NAME, QUALIFIER, PARENT, METADATA, DOC };
 		private static final Set<String> fFields = new HashSet<>(Arrays.asList(TEXTUAL_FIELDS));
 		private Map<String, NumericDocValues> fDocNumValues;
 		private String fContainer;
-		private List<DocumentEntity> fResult;
+		private int fElementType;
+		private List<SearchMatch> fResult;
 		private Map<String, String> fValues = new HashMap<>(fFields.size());
 
-		public ResultsCollector(String container, List<DocumentEntity> result) {
+		public ResultsCollector(String container, int elementType, List<SearchMatch> result) {
 			this.fContainer = container;
+			this.fElementType = elementType;
 			this.fResult = result;
 		}
 
@@ -131,23 +123,13 @@ public class LuceneSearchEngine implements ISearchEngine, ISearchEngineExtension
 
 				@Override
 				public void collect(int docId) throws IOException {
-					addDocument(docId, reader);
+					addResult(docId, reader);
 				}
 			};
 
 		}
 
-		private void addDocument(int docId, LeafReader reader) throws IOException {
-			DocumentEntity documentEntity = new DocumentEntity();
-			documentEntity.setContainer(fContainer);
-			// Read numeric doc values
-			documentEntity.setElementType(get(ELEMENT_TYPE, docId));
-			documentEntity.setOffset(get(OFFSET, docId));
-			documentEntity.setLength(get(LENGTH, docId));
-			documentEntity.setFlags(get(FLAGS, docId));
-			documentEntity.setNameOffset(get(NAME_OFFSET, docId));
-			documentEntity.setNameLength(get(NAME_LENGTH, docId));
-			// Read other field values
+		private void addResult(int docId, LeafReader reader) throws IOException {
 			reader.document(docId, new StoredFieldVisitor() {
 				@Override
 				public Status needsField(FieldInfo fieldInfo) throws IOException {
@@ -159,13 +141,12 @@ public class LuceneSearchEngine implements ISearchEngine, ISearchEngineExtension
 					fValues.put(fieldInfo.name, value);
 				}
 			});
-			documentEntity.setQualifier(fValues.get(QUALIFIER));
-			documentEntity.setParent(fValues.get(PARENT));
-			documentEntity.setElementName(fValues.get(ELEMENT_NAME));
-			documentEntity.setPath(fValues.get(PATH));
-			documentEntity.setDoc(fValues.get(DOC));
-			documentEntity.setMetadata(fValues.get(METADATA));
 			// Add result entity
+			SearchMatch documentEntity = new SearchMatch(fContainer, fElementType, get(OFFSET, docId),
+					get(LENGTH, docId), get(NAME_OFFSET, docId), get(NAME_LENGTH, docId), get(FLAGS, docId),
+					fValues.get(ELEMENT_NAME), fValues.get(PATH), fValues.get(PARENT), fValues.get(QUALIFIER),
+					fValues.get(DOC), fValues.get(METADATA));
+
 			fResult.add(documentEntity);
 			fValues.clear();
 		}
@@ -177,6 +158,47 @@ public class LuceneSearchEngine implements ISearchEngine, ISearchEngineExtension
 			}
 			return 0;
 		}
+	}
+	
+	private static final class BitFlagsFilter extends Filter {
+
+		private String fField;
+		private int fTrueFlags;
+		private int fFalseFlags;
+
+		public BitFlagsFilter(String field, int trueFlags, int falseFlags) {
+			fField = field;
+			fTrueFlags = trueFlags;
+			fFalseFlags = falseFlags;
+		}
+
+		@Override
+		public DocIdSet getDocIdSet(LeafReaderContext context, Bits acceptDocs) throws IOException {
+			final NumericDocValues values = DocValues.getNumeric(context.reader(), fField);
+			return new DocValuesDocIdSet(context.reader().maxDoc(), acceptDocs) {
+				@Override
+				protected boolean matchDoc(int doc) {
+					long flags = values.get(doc);
+					if (fTrueFlags != 0) {
+						if ((fTrueFlags & flags) == 0) {
+							return false;
+						}
+					}
+					if (fFalseFlags != 0) {
+						if ((fFalseFlags & flags) != 0) {
+							return false;
+						}
+					}
+					return true;
+				}
+			};
+		}
+
+		@Override
+		public int hashCode() {
+			return fField.hashCode() * fTrueFlags * fFalseFlags;
+		}
+
 	}
 
 	@Override
@@ -203,20 +225,20 @@ public class LuceneSearchEngine implements ISearchEngine, ISearchEngineExtension
 		}
 	}
 
-	private BooleanFilter createFilter(final int elementType, String qualifier, String elementName, String parent,
+	private Filter createFilter(final int elementType, String qualifier, String elementName, String parent,
 			final int trueFlags, final int falseFlags, final boolean searchForRefs, MatchRule matchRule,
 			IDLTKSearchScope scope) {
 		BooleanFilter filter = new BooleanFilter();
 		if (elementName != null && !elementName.isEmpty()) {
 			String elementNameLC = elementName.toLowerCase();
 			Filter nameFilter = null;
-			Term nameCaseInsensitiveTerm = new Term(IndexFields.ELEMENT_NAME_LC, elementNameLC);
+			Term nameCaseInsensitiveTerm = new Term(ELEMENT_NAME_LC, elementNameLC);
 			if (matchRule == MatchRule.PREFIX) {
 				nameFilter = new PrefixFilter(nameCaseInsensitiveTerm);
 			} else if (matchRule == MatchRule.EXACT) {
 				nameFilter = new TermFilter(nameCaseInsensitiveTerm);
 			} else if (matchRule == MatchRule.CAMEL_CASE) {
-				Term term = new Term(IndexFields.CC_NAME, elementName);
+				Term term = new Term(CC_NAME, elementName);
 				nameFilter = new PrefixFilter(term);
 			} else if (matchRule == MatchRule.PATTERN) {
 				nameFilter = new QueryWrapperFilter(new WildcardQuery(nameCaseInsensitiveTerm));
@@ -228,43 +250,46 @@ public class LuceneSearchEngine implements ISearchEngine, ISearchEngineExtension
 			}
 		}
 		if (qualifier != null && !qualifier.isEmpty()) {
-			filter.add(new TermFilter(new Term(IndexFields.QUALIFIER, qualifier)), Occur.MUST);
+			filter.add(new TermFilter(new Term(QUALIFIER, qualifier)), Occur.MUST);
 		}
 		if (parent != null && !parent.isEmpty()) {
-			filter.add(new TermFilter(new Term(IndexFields.PARENT, parent)), Occur.MUST);
+			filter.add(new TermFilter(new Term(PARENT, parent)), Occur.MUST);
 		}
-		filter.add(DocValuesRangeFilter.newLongRange(IndexFields.ELEMENT_TYPE, Long.valueOf(elementType),
-				Long.valueOf(elementType), true, true), Occur.MUST);
 		if (trueFlags != 0 || falseFlags != 0) {
-			filter.add(new BitFlagsFilter(IndexFields.FLAGS, trueFlags, falseFlags), Occur.MUST);
+			filter.add(new BitFlagsFilter(FLAGS, trueFlags, falseFlags), Occur.MUST);
 		}
 		List<String> scripts = SearchScope.getScripts(scope);
 		if (!scripts.isEmpty()) {
 			BooleanFilter scriptFilter = new BooleanFilter();
 			for (String script : scripts) {
-				scriptFilter.add(new TermFilter(new Term(IndexFields.PATH, script)), Occur.MUST);
+				scriptFilter.add(new TermFilter(new Term(PATH, script)), Occur.MUST);
 			}
 			filter.add(scriptFilter, Occur.MUST);
 		}
-		return filter;
+		return filter.clauses().isEmpty() ? null : filter;
 	}
 
 	private void doSearch(final int elementType, String qualifier, String elementName, String parent,
 			final int trueFlags, final int falseFlags, int limit, final boolean searchForRefs, MatchRule matchRule,
 			IDLTKSearchScope scope, ISearchRequestor requestor, IProgressMonitor monitor) {
-		BooleanFilter filter = createFilter(elementType, qualifier, elementName, parent, trueFlags, falseFlags,
-				searchForRefs, matchRule, scope);
+		Filter filter = createFilter(elementType, qualifier, elementName, parent, trueFlags, falseFlags, searchForRefs,
+				matchRule, scope);
 		IndexSearcher indexSearcher = null;
 		Query query = new MatchAllDocsQuery();
-		final SearchElementHandler entityHandler = new SearchElementHandler(scope, requestor);
-		List<DocumentEntity> results = new ArrayList<>();
+		final SearchMatchHandler searchMatchHandler = new SearchMatchHandler(scope, requestor);
+		List<SearchMatch> results = new ArrayList<>();
 		for (String container : SearchScope.getContainers(scope)) {
-			// Use index searcher for given container and index type
-			SearcherManager searcherManager = LuceneIndexerManager.INSTANCE.findSearcher(container,
-					searchForRefs ? IndexType.REFERENCES : IndexType.DECLARATIONS);
+			// Use index searcher for given container, data type and element type
+			SearcherManager searcherManager = LuceneManager.INSTANCE.findDataSearcher(container,
+					searchForRefs ? ContainerDataType.REFERENCES : ContainerDataType.DECLARATIONS, elementType);
 			try {
 				indexSearcher = searcherManager.acquire();
-				indexSearcher.search(query, filter, new ResultsCollector(container, results));
+				ResultsCollector collector = new ResultsCollector(container, elementType, results);
+				if (filter != null) {
+					indexSearcher.search(query, filter, collector);
+				} else {
+					indexSearcher.search(query, collector);
+				}
 			} catch (IOException e) {
 				Logger.logException(e);
 			} finally {
@@ -278,15 +303,15 @@ public class LuceneSearchEngine implements ISearchEngine, ISearchEngineExtension
 			}
 		}
 		// Sort final results by element name
-		Collections.sort(results, new Comparator<DocumentEntity>() {
+		Collections.sort(results, new Comparator<SearchMatch>() {
 			@Override
-			public int compare(DocumentEntity e1, DocumentEntity e2) {
+			public int compare(SearchMatch e1, SearchMatch e2) {
 				return e1.getElementName().compareToIgnoreCase(e2.getElementName());
 			}
 		});
 		// Pass results to entity handler
-		for (DocumentEntity result : results) {
-			entityHandler.handle(result, searchForRefs);
+		for (SearchMatch result : results) {
+			searchMatchHandler.handle(result, searchForRefs);
 		}
 	}
 
