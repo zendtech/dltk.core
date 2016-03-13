@@ -30,6 +30,7 @@ import org.apache.lucene.search.SearcherManager;
 import org.apache.lucene.search.BooleanClause.Occur;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
+import org.apache.lucene.store.NRTCachingDirectory;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -92,9 +93,10 @@ public enum LuceneManager {
 				try {
 					Directory indexDir = FSDirectory.open(Paths.get(
 							fBundlePath.append(INDEX_DIR).append(fContainerId).append(TIMESTAMPS_ID).toOSString()));
+					NRTCachingDirectory nrtCachingDir = new NRTCachingDirectory(indexDir, 2.0, 8.0);
 					IndexWriterConfig config = new IndexWriterConfig(new DefaultAnalyzer());
 					config.setOpenMode(OpenMode.CREATE_OR_APPEND);
-					fTimestampsWriter = new IndexWriter(indexDir, config);
+					fTimestampsWriter = new IndexWriter(nrtCachingDir, config);
 				} catch (IOException e) {
 					Logger.logException(e);
 				}
@@ -121,9 +123,10 @@ public enum LuceneManager {
 				try {
 					Directory indexDir = FSDirectory.open(Paths.get(fBundlePath.append(INDEX_DIR).append(fContainerId)
 							.append(dataType.getId()).append(String.valueOf(elementType)).toOSString()));
+					NRTCachingDirectory nrtCachingDir = new NRTCachingDirectory(indexDir, 8.0, 32.0);
 					IndexWriterConfig config = new IndexWriterConfig(new DefaultAnalyzer());
 					config.setOpenMode(OpenMode.CREATE_OR_APPEND);
-					writer = new IndexWriter(indexDir, config);
+					writer = new IndexWriter(nrtCachingDir, config);
 					fDataWriters.get(dataType).put(elementType, writer);
 				} catch (IOException e) {
 					Logger.logException(e);
